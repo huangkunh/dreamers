@@ -1,0 +1,18 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="DREAMERS"
+config/description="测试游戏画面DEMO"
+config/version="v0.01"
+run/main_scene="res://Tilesets/base.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://Tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
