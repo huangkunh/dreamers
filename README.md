@@ -9,13 +9,13 @@
 
 #### 安装教程
 
-1.  xxxx
+1.  godot4.3
 2.  xxxx
 3.  xxxx
 
 #### 使用说明
 
-1.  xxxx
+1.  使用godot4.3导出即可
 2.  xxxx
 3.  xxxx
 
