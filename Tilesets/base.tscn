@@ -8,12 +8,15 @@
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://Particles/LuminousParticles.tscn" id="6_cy0xp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
-sky_top_color = Color(0.313397, 0.772977, 0.886908, 1)
-sky_horizon_color = Color(0.401781, 0.900834, 0.857608, 1)
-sky_cover_modulate = Color(0.792033, 0.776831, 0.751693, 1)
+sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
+sky_horizon_color = Color(0.129087, 0.426709, 0.40324, 1)
+sky_curve = 0.487351
+sky_cover_modulate = Color(0.746851, 0.729463, 0.700702, 1)
 ground_bottom_color = Color(0.945457, 0.702902, 0.631797, 1)
 ground_horizon_color = Color(0.439216, 0.894118, 0.858824, 1)
-ground_curve = 0.422244
+ground_curve = 0.342969
+sun_angle_max = 1.48
+sun_curve = 0.15529
 
 [sub_resource type="Sky" id="Sky_m0hhm"]
 sky_material = SubResource("ProceduralSkyMaterial_btvy4")
@@ -21,8 +24,11 @@ sky_material = SubResource("ProceduralSkyMaterial_btvy4")
 [sub_resource type="Environment" id="Environment_yhmfj"]
 background_mode = 2
 sky = SubResource("Sky_m0hhm")
+sky_custom_fov = 13.7
 sky_rotation = Vector3(3.6425, 0.678933, 0)
 ambient_light_color = Color(0.855578, 0.81829, 0.670234, 1)
+ambient_light_sky_contribution = 0.3
+ambient_light_energy = 0.8
 tonemap_mode = 2
 ssr_fade_in = 0.439226
 ssao_radius = 2.01

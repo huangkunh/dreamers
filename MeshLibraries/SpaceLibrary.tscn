@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://cnvdm51qwp3xi"]
+[gd_scene load_steps=14 format=3 uid="uid://cnvdm51qwp3xi"]
 
 [ext_resource type="Texture2D" uid="uid://c42nkag0pxhcl" path="res://Tilesets/floor.png" id="1_8ka54"]
 [ext_resource type="Texture2D" uid="uid://bar6llu1vwgrh" path="res://Tilesets/tree.png" id="2_ffr2l"]
+[ext_resource type="Texture2D" uid="uid://b33xiyrljqqya" path="res://Tilesets/tree_n.png" id="3_u4d5n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p5ng1"]
 transparency = 2
@@ -22,8 +23,11 @@ alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_texture = ExtResource("2_ffr2l")
+normal_enabled = true
+normal_texture = ExtResource("3_u4d5n")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_gsrt1"]
+lightmap_size_hint = Vector2i(11, 11)
 material = SubResource("StandardMaterial3D_meujw")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_61r8x"]
@@ -37,6 +41,8 @@ alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_color = Color(0.890869, 0.591697, 0.323316, 1)
 albedo_texture = ExtResource("2_ffr2l")
+normal_enabled = true
+normal_texture = ExtResource("3_u4d5n")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_isbs7"]
 material = SubResource("StandardMaterial3D_m0vbj")
@@ -48,6 +54,8 @@ alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_color = Color(0.561627, 0.368548, 0, 1)
 albedo_texture = ExtResource("2_ffr2l")
+normal_enabled = true
+normal_texture = ExtResource("3_u4d5n")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7v8yo"]
 material = SubResource("StandardMaterial3D_xwper")

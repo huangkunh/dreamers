@@ -1,11 +1,20 @@
-[gd_scene load_steps=21 format=3 uid="uid://baci2p6bwnqan"]
+[gd_scene load_steps=23 format=3 uid="uid://baci2p6bwnqan"]
 
 [ext_resource type="Script" path="res://Tilesets/player.gd" id="1_aa56f"]
+[ext_resource type="Texture2D" uid="uid://o71te1qrdoat" path="res://Sprite/hero__normal.png" id="2_7jj8o"]
 [ext_resource type="Texture2D" uid="uid://m181mv0oe0l7" path="res://Sprite/hero.png" id="2_7006b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_c6sea"]
 radius = 0.121799
 height = 0.349137
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lppow"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("2_7006b")
+normal_enabled = true
+normal_texture = ExtResource("2_7jj8o")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eg2lb"]
 atlas = ExtResource("2_7006b")
@@ -151,6 +160,7 @@ shape = SubResource("CapsuleShape3D_c6sea")
 
 [node name="Animation" type="AnimatedSprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.887997, 0)
+material_override = SubResource("StandardMaterial3D_lppow")
 pixel_size = 0.025
 shaded = true
 alpha_cut = 2
