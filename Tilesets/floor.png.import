@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c42nkag0pxhcl"
-path.s3tc="res://.godot/imported/floor.png-6a96722ed3d3c5c8a84896e37b58b199.s3tc.ctex"
+path.s3tc="res://.godot/imported/floor.png-aeae3e9548f2e21c5031e280b64cf5af.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Tilesets/floor.png"
-dest_files=["res://.godot/imported/floor.png-6a96722ed3d3c5c8a84896e37b58b199.s3tc.ctex"]
+source_file="res://tilesets/floor.png"
+dest_files=["res://.godot/imported/floor.png-aeae3e9548f2e21c5031e280b64cf5af.s3tc.ctex"]
 
 [params]
 

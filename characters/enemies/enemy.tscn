@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://wcbdibb1ugdx"]
+
+[ext_resource type="Texture2D" uid="uid://b1f1vsye0s3rc" path="res://Sprite/OrdinaryEnemies/aoduo/l02_amoeba.png" id="1_w5fe5"]
+[ext_resource type="Texture2D" uid="uid://dfvr1nu5gn45k" path="res://Sprite/OrdinaryEnemies/aoduo/l02_amoeba_n.png" id="2_ymgwj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fsmci"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_w5fe5")
+normal_enabled = true
+normal_texture = ExtResource("2_ymgwj")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ygyp"]
+atlas = ExtResource("1_w5fe5")
+region = Rect2(0, 0, 45, 27)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j0ejl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ygyp")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="L02_Amoeba" type="AnimatedSprite3D"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_fsmci")
+shaded = true
+alpha_cut = 2
+sprite_frames = SubResource("SpriteFrames_j0ejl")

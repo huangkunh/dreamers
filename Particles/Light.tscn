@@ -1,15 +1,15 @@
 [gd_scene load_steps=5 format=3 uid="uid://dwyk8l3vogkja"]
 
-[ext_resource type="Texture2D" uid="uid://djdatdliv3tk8" path="res://Tilesets/godray.png" id="1_fdf8a"]
+[ext_resource type="Texture2D" uid="uid://djdatdliv3tk8" path="res://tilesets/godray.png" id="1_fdf8a"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fgeee"]
 lifetime_randomness = 1.0
 emission_shape_scale = Vector3(0, 0, 0)
 emission_shape = 3
-emission_box_extents = Vector3(10, 10, 10)
+emission_box_extents = Vector3(1, 1, 1)
 angular_velocity_min = -1.60933e-05
-angular_velocity_max = 25.87
-gravity = Vector3(1, 1, 1)
+angular_velocity_max = 9.99998
+gravity = Vector3(0.1, 0.1, 0.1)
 scale_max = 10.0
 scale_over_velocity_max = 10.0
 turbulence_enabled = true

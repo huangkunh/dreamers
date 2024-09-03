@@ -1,0 +1,130 @@
+[gd_scene load_steps=13 format=3 uid="uid://dfvtakknajnao"]
+
+[ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://city/aoduo_city.tscn" id="1_ekfak"]
+[ext_resource type="AudioStream" uid="uid://b2uoab0iuh866" path="res://music/background_music/hum_it_please_drive.mp3" id="2_8iqrx"]
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://characters/hero/player.tscn" id="3_5ckbh"]
+[ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://particles/luminous_particles.tscn" id="4_tacn8"]
+[ext_resource type="Shader" path="res://shader/vignette.gdshader" id="5_kbaj2"]
+[ext_resource type="PackedScene" uid="uid://dwyk8l3vogkja" path="res://particles/light.tscn" id="6_11jsn"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
+sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
+sky_horizon_color = Color(0.129087, 0.426709, 0.40324, 1)
+sky_curve = 0.487351
+sky_cover_modulate = Color(0.746851, 0.729463, 0.700702, 1)
+ground_bottom_color = Color(0.945457, 0.702902, 0.631797, 1)
+ground_horizon_color = Color(0.439216, 0.894118, 0.858824, 1)
+ground_curve = 0.342969
+sun_angle_max = 1.48
+sun_curve = 0.15529
+
+[sub_resource type="Sky" id="Sky_qiksu"]
+sky_material = SubResource("ProceduralSkyMaterial_btvy4")
+
+[sub_resource type="Environment" id="Environment_yhmfj"]
+background_mode = 2
+sky = SubResource("Sky_qiksu")
+sky_custom_fov = 13.7
+sky_rotation = Vector3(3.6425, 0.678933, 0)
+ambient_light_color = Color(0.855578, 0.81829, 0.670234, 1)
+ambient_light_sky_contribution = 0.3
+ambient_light_energy = 0.8
+tonemap_mode = 2
+ssr_fade_in = 0.439226
+ssao_radius = 2.01
+glow_strength = 0.31
+glow_bloom = 0.06
+glow_hdr_threshold = 1.45
+volumetric_fog_enabled = true
+volumetric_fog_albedo = Color(0.635018, 0.62679, 0.406542, 1)
+volumetric_fog_emission = Color(0.999035, 0.906483, 0.849818, 1)
+volumetric_fog_emission_energy = 0.4
+volumetric_fog_anisotropy = -0.52
+volumetric_fog_length = 8.01
+volumetric_fog_detail_spread = 2.89781
+volumetric_fog_ambient_inject = 0.56
+volumetric_fog_sky_affect = 0.5
+volumetric_fog_temporal_reprojection_enabled = false
+volumetric_fog_temporal_reprojection_amount = 0.855
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_0rx03"]
+auto_exposure_enabled = true
+dof_blur_far_enabled = true
+dof_blur_near_enabled = true
+dof_blur_near_distance = 3.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_28j7m"]
+shader = ExtResource("5_kbaj2")
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
+shader_parameter/vignette_rgb = Vector4(0, 0, 0, 1)
+
+[sub_resource type="FogMaterial" id="FogMaterial_4j1lr"]
+density = 0.4665
+albedo = Color(0.817454, 0.915451, 0.836101, 1)
+emission = Color(0.73468, 0.73468, 0.73468, 1)
+edge_fade = 0.292817
+
+[node name="Base" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.90633, 0.223303, -0.358751, 1.93551e-08, 0.848972, 0.528438, 0.422571, -0.478939, 0.769448, 0, 4.969, -0.49)
+light_color = Color(0.962185, 0.766538, 0.384759, 1)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_yhmfj")
+
+[node name="AoduoCity" parent="." instance=ExtResource("1_ekfak")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_8iqrx")
+autoplay = true
+
+[node name="Player" parent="." instance=ExtResource("3_5ckbh")]
+
+[node name="LuminousParticles4" parent="Player" instance=ExtResource("4_tacn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17565, 1.63921, 2.60647)
+
+[node name="Camera3D2" type="Camera3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 0.989606, 0.143804, 0, -0.143804, 0.989606, 0, 2.21234, 3.72886)
+attributes = SubResource("CameraAttributesPractical_0rx03")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_28j7m")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Light" parent="." instance=ExtResource("6_11jsn")]
+transform = Transform3D(0.83708, 0.547081, 0, -0.547081, 0.83708, 0, 0, 0, 1, -4.7823, 1.62059, -2.04516)
+
+[node name="LuminousParticles" parent="." instance=ExtResource("4_tacn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2.45198, -2)
+
+[node name="LuminousParticles2" parent="." instance=ExtResource("4_tacn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.56197, 3.58047, -13.8328)
+
+[node name="LuminousParticles3" parent="." instance=ExtResource("4_tacn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2567, 2.42718, -2.01451)
+
+[node name="FogVolume" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2842, 1.2304, -4.0659)
+size = Vector3(3, 2, 2)
+shape = 2
+material = SubResource("FogMaterial_4j1lr")
+
+[node name="FogVolume2" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.48006, 1.2304, -1.05358)
+size = Vector3(3, 2, 2)
+shape = 2
+material = SubResource("FogMaterial_4j1lr")
+
+[node name="FogVolume3" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.20596, 1.2304, -10.271)
+size = Vector3(3, 2, 2)
+shape = 2
+material = SubResource("FogMaterial_4j1lr")

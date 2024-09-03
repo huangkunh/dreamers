@@ -13,6 +13,11 @@ config_version=5
 config/name="DREAMERS"
 config/description="测试游戏画面DEMO"
 config/version="v0.01"
-run/main_scene="res://Tilesets/base.tscn"
+run/main_scene="res://base.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://Tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
+config/icon="res://tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
+
+[editor]
+
+version_control/plugin_name="GitPlugin"
+version_control/autoload_on_startup=true

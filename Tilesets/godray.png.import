@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djdatdliv3tk8"
-path.s3tc="res://.godot/imported/godray.png-197e9aca35693412f35752a016734917.s3tc.ctex"
+path.s3tc="res://.godot/imported/godray.png-65bcff625e5a342ab998edf9809fd304.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Tilesets/godray.png"
-dest_files=["res://.godot/imported/godray.png-197e9aca35693412f35752a016734917.s3tc.ctex"]
+source_file="res://tilesets/godray.png"
+dest_files=["res://.godot/imported/godray.png-65bcff625e5a342ab998edf9809fd304.s3tc.ctex"]
 
 [params]
 

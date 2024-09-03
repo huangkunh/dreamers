@@ -31,8 +31,3 @@ func player_move(delta:float):
 	else:
 		animated_sprite3D.stop()	
 	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	
-	pass
