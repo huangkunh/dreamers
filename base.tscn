@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://dfvtakknajnao"]
 
 [ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://city/aoduo_city.tscn" id="1_ekfak"]
-[ext_resource type="AudioStream" uid="uid://b2uoab0iuh866" path="res://music/background_music/hum_it_please_drive.mp3" id="2_8iqrx"]
+[ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="2_2dl5q"]
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://characters/hero/player.tscn" id="3_5ckbh"]
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://particles/luminous_particles.tscn" id="4_tacn8"]
 [ext_resource type="Shader" path="res://shader/vignette.gdshader" id="5_kbaj2"]
@@ -78,7 +78,7 @@ environment = SubResource("Environment_yhmfj")
 [node name="AoduoCity" parent="." instance=ExtResource("1_ekfak")]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_8iqrx")
+stream = ExtResource("2_2dl5q")
 autoplay = true
 
 [node name="Player" parent="." instance=ExtResource("3_5ckbh")]

@@ -1,34 +1,79 @@
-[gd_scene load_steps=6 format=3 uid="uid://wcbdibb1ugdx"]
+[gd_scene load_steps=11 format=3 uid="uid://wcbdibb1ugdx"]
 
-[ext_resource type="Texture2D" uid="uid://b1f1vsye0s3rc" path="res://Sprite/OrdinaryEnemies/aoduo/l02_amoeba.png" id="1_w5fe5"]
-[ext_resource type="Texture2D" uid="uid://dfvr1nu5gn45k" path="res://Sprite/OrdinaryEnemies/aoduo/l02_amoeba_n.png" id="2_ymgwj"]
+[ext_resource type="Texture2D" uid="uid://ylab7prh0ae8" path="res://sprite/ordinary_enemies/aoduo/e01_flame_guns.png" id="3_ecfiu"]
+[ext_resource type="Script" path="res://characters/enemies/enemy.gd" id="3_uduwv"]
+[ext_resource type="Texture2D" uid="uid://bp7cbpi54lejb" path="res://sprite/ordinary_enemies/aoduo/e02_cannon.png" id="4_kuy2o"]
+[ext_resource type="Texture2D" uid="uid://w3s4cn8sn5gq" path="res://sprite/ordinary_enemies/aoduo/l01_giant_ants.png" id="5_k0ygs"]
+[ext_resource type="Texture2D" uid="uid://do8fcc7lvf800" path="res://sprite/ordinary_enemies/aoduo/l01_sour_ants.png" id="6_jip52"]
+[ext_resource type="Texture2D" uid="uid://bsf6wsvidmnpb" path="res://sprite/ordinary_enemies/aoduo/l01_giant_ants_n.png" id="6_v3hdj"]
+[ext_resource type="Texture2D" uid="uid://b1f1vsye0s3rc" path="res://sprite/ordinary_enemies/aoduo/l02_amoeba.png" id="7_tr2di"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fsmci"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_y0vgj"]
+radius = 0.170274
+height = 0.340548
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_603il"]
 transparency = 2
 alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
-albedo_texture = ExtResource("1_w5fe5")
+albedo_texture = ExtResource("5_k0ygs")
 normal_enabled = true
-normal_texture = ExtResource("2_ymgwj")
+normal_texture = ExtResource("6_v3hdj")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6ygyp"]
-atlas = ExtResource("1_w5fe5")
-region = Rect2(0, 0, 45, 27)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_j0ejl"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_u8ukk"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6ygyp")
+"texture": ExtResource("3_ecfiu")
 }],
 "loop": true,
-"name": &"default",
+"name": &"e01_flame_guns_default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_kuy2o")
+}],
+"loop": true,
+"name": &"e02_cannon_default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_k0ygs")
+}],
+"loop": true,
+"name": &"l01_giant_ants_default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_jip52")
+}],
+"loop": true,
+"name": &"l01_sour_ants_default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_tr2di")
+}],
+"loop": true,
+"name": &"l02_amoeba_default",
 "speed": 5.0
 }]
 
-[node name="L02_Amoeba" type="AnimatedSprite3D"]
+[node name="Enemy" type="CharacterBody3D"]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_fsmci")
+script = ExtResource("3_uduwv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0407479, 0)
+shape = SubResource("CapsuleShape3D_y0vgj")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+material_override = SubResource("StandardMaterial3D_603il")
 shaded = true
 alpha_cut = 2
-sprite_frames = SubResource("SpriteFrames_j0ejl")
+sprite_frames = SubResource("SpriteFrames_u8ukk")
+animation = &"l02_amoeba_default"
