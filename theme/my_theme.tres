@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bp8jctroi0xhr"]
+
+[ext_resource type="FontFile" uid="uid://dhne8vem0j2uo" path="res://theme/font/fang_zheng_hei.ttf" id="1_gaey8"]
+
+[resource]
+default_font_size = 25
+/fonts/fang_zheng_hei = ExtResource("1_gaey8")
