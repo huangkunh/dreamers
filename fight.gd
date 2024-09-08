@@ -90,7 +90,7 @@ var fight_player_list : Array = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#fight_player_list = enenies_manager.generation_enemy(enemies_init_data)
+	fight_player_list = enenies_manager.generation_enemy(enemies_init_data)
 	fight_player_manager.generation_fight_palyer(fight_player_init_data)
 	player_info_container.init_player_info(ray_ban_na)
 	fight_player_list.append(ray_ban_na)

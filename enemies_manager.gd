@@ -24,8 +24,8 @@ func _process(delta: float) -> void:
 ## 参数 enemies_init_datas 怪物数据
 ## 返回 生成怪物数据列表
 func generation_enemy(enemies_init_datas):
-	var enemy_num = 0
-	#var enemy_num = randi_range(1, 4)
+	#var enemy_num = 0
+	var enemy_num = randi_range(1, 4)
 	
 	if enemy_num == 0:
 		return
