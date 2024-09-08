@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://dm280m52rs1ib"]
+
+[ext_resource type="Script" path="res://characters/hero/fight_player.gd" id="1_yeecu"]
+[ext_resource type="Texture2D" uid="uid://c53rsp0d8brsg" path="res://sprite/battlers/fight_player.png" id="2_2ij7l"]
+[ext_resource type="Texture2D" uid="uid://cjgvh28s2mnht" path="res://sprite/battlers/fight_player_n.png" id="3_hmwyq"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_c6sea"]
+radius = 0.121799
+height = 0.349137
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lppow"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("2_2ij7l")
+normal_enabled = true
+normal_texture = ExtResource("3_hmwyq")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5nejj"]
+atlas = ExtResource("2_2ij7l")
+region = Rect2(0, 0, 32, 34)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1jkta"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5nejj")
+}],
+"loop": true,
+"name": &"ray_ban_na_default",
+"speed": 5.0
+}]
+
+[node name="FightPlayer" type="CharacterBody3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+script = ExtResource("1_yeecu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.653014, 0)
+shape = SubResource("CapsuleShape3D_c6sea")
+
+[node name="Animation" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.887997, 0)
+material_override = SubResource("StandardMaterial3D_lppow")
+pixel_size = 0.025
+shaded = true
+alpha_cut = 2
+sprite_frames = SubResource("SpriteFrames_1jkta")
+animation = &"ray_ban_na_default"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 1, 1)
+light_color = Color(0.972549, 0.560784, 0.321569, 1)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, -0.124766, 1, 0.11871)
+light_color = Color(0.772586, 0.0749484, 0.237059, 1)
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, -1.53522, 1.39061, 0.11871)
+light_color = Color(0.81627, 0.527735, 0.459936, 1)
+omni_range = 9.0
+omni_attenuation = 3.0

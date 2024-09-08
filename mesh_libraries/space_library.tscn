@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://cnvdm51qwp3xi"]
+[gd_scene load_steps=15 format=3 uid="uid://cnvdm51qwp3xi"]
 
 [ext_resource type="Texture2D" uid="uid://c42nkag0pxhcl" path="res://tilesets/floor.png" id="1_8ka54"]
+[ext_resource type="Texture2D" uid="uid://bx146eilv7nmp" path="res://tilesets/floor_n.png" id="2_23bjj"]
 [ext_resource type="Texture2D" uid="uid://bar6llu1vwgrh" path="res://tilesets/tree.png" id="2_ffr2l"]
 [ext_resource type="Texture2D" uid="uid://b33xiyrljqqya" path="res://tilesets/tree_n.png" id="3_u4d5n"]
 
@@ -10,6 +11,8 @@ alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_texture = ExtResource("1_8ka54")
+normal_enabled = true
+normal_texture = ExtResource("2_23bjj")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_yc2ir"]
 material = SubResource("StandardMaterial3D_p5ng1")
@@ -61,7 +64,6 @@ material = SubResource("StandardMaterial3D_xwper")
 [node name="SpaceLibrary" type="Node3D"]
 
 [node name="Floor" type="MeshInstance3D" parent="."]
-visible = false
 mesh = SubResource("PlaneMesh_yc2ir")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
@@ -71,6 +73,7 @@ shape = SubResource("ConcavePolygonShape3D_nwmm5")
 
 [node name="Tree" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.401452, 0.9, 0)
+visible = false
 mesh = SubResource("PlaneMesh_nsf38")
 skeleton = NodePath("../..")
 
@@ -94,7 +97,6 @@ shape = SubResource("CapsuleShape3D_61r8x")
 
 [node name="Tree3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.9, 0.249043)
-visible = false
 mesh = SubResource("PlaneMesh_7v8yo")
 skeleton = NodePath("../..")
 

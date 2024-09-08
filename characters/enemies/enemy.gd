@@ -3,7 +3,7 @@ extends CharacterBody3D
 ## 生命
 @export var health :int = 100
 ## 速度 : 关乎攻击顺序和闪避率
-@export var speed :int = 10
+@export var fight_speed :int = 10
 ## 战斗LV : 关乎白刃战强度
 @export var battle_LV = 10
 ## 强度 : 关乎防御
@@ -39,16 +39,16 @@ func _process(delta: float) -> void:
 func init_enemy(enemy_data):
 	position = enemy_data.enemy_position
 	
-	speed = enemy_data.speed
+	fight_speed = enemy_data.fight_speed
 	health = enemy_data.health
-	battle_LV = enemy_data.speed
+	battle_LV = enemy_data.fight_speed
 	strength = enemy_data.strength	
 	
 	var standar_material3D : StandardMaterial3D = StandardMaterial3D.new()
 	standar_material3D.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	standar_material3D.normal_enabled = true
-	standar_material3D.albedo_texture = load(enemy_data.albedo_textture_path)
-	standar_material3D.normal_texture = load(enemy_data.normal_map_textture_path)
+	standar_material3D.albedo_texture = load(enemy_data.albedo_texture_path)
+	standar_material3D.normal_texture = load(enemy_data.normal_map_texture_path)
 	animated_sprite3D.set_material_override(standar_material3D)
 	animated_sprite3D.play(enemy_data.animated[0])	
 	

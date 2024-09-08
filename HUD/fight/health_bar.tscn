@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cep6lg538cur4"]
 
 [ext_resource type="Texture2D" uid="uid://6nwy54itj13m" path="res://tilesets/health_back.png" id="1_8vxjj"]
-[ext_resource type="Script" path="res://HUD/health_bar.gd" id="1_ye8cp"]
+[ext_resource type="Script" path="res://HUD/fight/health_bar.gd" id="1_ye8cp"]
 [ext_resource type="Texture2D" uid="uid://cdxbjqywo4s0t" path="res://tilesets/health.png" id="2_pknph"]
 [ext_resource type="Texture2D" uid="uid://cay073n82rcm8" path="res://tilesets/health_cure.png" id="3_hifvy"]
 [ext_resource type="Texture2D" uid="uid://dgrfuvf8tweib" path="res://tilesets/health_decrease.png" id="4_st15n"]

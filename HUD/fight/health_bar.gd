@@ -17,7 +17,10 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
-	
+
+
+## 初始化生命条
+## 参数 health_data 生命值数据
 func init_all_health_bar(health_data):
 	health_bar_cure.min_value = 0
 	health_bar_decrease.min_value = 0
@@ -27,11 +30,19 @@ func init_all_health_bar(health_data):
 	health_bar_decrease.max_value = health_data.max_health
 	health_bar_base.max_value = health_data.max_health
 	
-	health_bar_cure.value = health_data.curren_health
-	health_bar_decrease.value = health_data.curren_health
-	health_bar_base.value = health_data.curren_health
 	
-
+	var current_health = health_data.current_health
+	health_bar_cure.value = current_health
+	health_bar_decrease.value = 0
+	health_bar_base.value = 0
+	if current_health > 0:
+		var tween = health_bar_base.create_tween()
+		tween.set_trans(Tween.TRANS_SINE)
+		tween.tween_property(health_bar_base, "value", current_health, 0.5)
+		tween.tween_callback(health_bar_decrease.set_value.bind(current_health))
+			
+## 更新生命值
+## 参数 change_health 改变的生命值 可能为负数
 func health_update(change_health):
 	if change_health == 0 || health_bar_base == null:
 		return

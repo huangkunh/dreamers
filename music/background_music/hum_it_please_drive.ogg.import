@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/hum_it_please_drive.ogg-94ae689407572694ddf6f
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0
