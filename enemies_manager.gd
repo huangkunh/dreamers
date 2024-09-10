@@ -1,13 +1,13 @@
 extends Node3D
 
-@export var enemy_scene :PackedScene
+@export var enemy_scene: PackedScene
 
 ## 位置信息
 @onready var enemies_marker = {
-	1 : $"EnemiesMarker1",
-	2 : $"EnemiesMarker2",
-	3 : $"EnemiesMarker3",
-	4 : $"EnemiesMarker4",
+	1: $"EnemiesMarker1",
+	2: $"EnemiesMarker2",
+	3: $"EnemiesMarker3",
+	4: $"EnemiesMarker4",
 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -24,32 +24,32 @@ func _process(delta: float) -> void:
 ## 参数 enemies_init_datas 怪物数据
 ## 返回 生成怪物数据列表
 func generation_enemy(enemies_init_datas):
-	#var enemy_num = 0
-	var enemy_num = randi_range(1, 4)
+	var enemy_num = enemies_init_datas.size()
 	
 	if enemy_num == 0:
 		return
 		
-	var enemies_marker_p :Node3D =  enemies_marker[enemy_num]
-	var enemy_data_list = []
-	for marker3D in enemies_marker_p.get_children():
-		var enemy_data = generation_enemy_position(marker3D.position, enemies_init_datas)
-		enemy_data_list.append(enemy_data)
+	var enemies_marker_p: Node3D =  enemies_marker[enemy_num]
+	var enemy_list = []
+	for i in range(enemy_num):
+		var marker3D = enemies_marker_p.get_children()[i]
+		var enemies_init_data = enemies_init_datas[i]
+		var enemy_data = generation_enemy_position(marker3D.position, enemies_init_data)
+		enemy_list.append(enemy_data)
 		
-	return enemy_data_list
+	return enemy_list
 
 ## 根据位置信息生成怪物
 ## 参数 marker_position 位置信息
 ## 参数 enemies_init_datas 怪物数据
 ## 返回 生成怪物的数据
-func generation_enemy_position(marker_position, enemies_init_datas):
-	var enemy_data_no = randi_range(1, 5)
-	enemies_init_datas[enemy_data_no].enemy_position = marker_position
+func generation_enemy_position(marker_position, enemies_init_data):
+	enemies_init_data.enemy_position = marker_position
 			
-	var enemy :CharacterBody3D = enemy_scene.instantiate()
+	var enemy: CharacterBody3D = enemy_scene.instantiate()
 	enemy._ready()
-	enemy.init_enemy(enemies_init_datas[enemy_data_no])
+	enemy.init_enemy(enemies_init_data)
 	add_child(enemy)
 	
-	return enemies_init_datas[enemy_data_no]
+	return enemy
 	

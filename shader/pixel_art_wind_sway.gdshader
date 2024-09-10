@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode cull_disabled, depth_draw_opaque;
 
-uniform sampler2D grass_texture : filter_nearest, source_color;
+uniform sampler2D grass_texture: filter_nearest, source_color;
 
 void vertex(){
 	NORMAL = vec3(0.0, 1.0, 0.0);

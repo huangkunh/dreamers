@@ -1,19 +1,24 @@
 extends CharacterBody3D
 
 ## 生命
-@export var health :int = 100
-## 速度 : 关乎攻击顺序和闪避率
-@export var fight_speed :int = 10
-## 战斗LV : 关乎白刃战强度
+@export var health: int = 100
+## 速度: 关乎攻击顺序和闪避率
+@export var fight_speed: int = 10
+## 战斗LV: 关乎白刃战强度
 @export var battle_LV = 10
-## 强度 : 关乎防御
-@export var strength :int = 10
+## 强度: 关乎防御
+@export var strength: int = 10
 ## 重力
-@export var enemy_garvity :int = 1
+@export var enemy_garvity: int = 1
+## 战斗id
+@export var fight_id: String
 
 @onready var animated_sprite3D: AnimatedSprite3D = $AnimatedSprite3D
+@onready var local_player_name: Label3D = $LocalPlayerName
+@onready var audio_stream_player_3d: AudioStreamPlayer3D = $AudioStreamPlayer3D
 
-var target_velocity :Vector3 = Vector3.ZERO
+var target_velocity: Vector3 = Vector3.ZERO
+var fight_data
 
 
 # Called when the node enters the scene tree for the first time.
@@ -43,8 +48,10 @@ func init_enemy(enemy_data):
 	health = enemy_data.health
 	battle_LV = enemy_data.fight_speed
 	strength = enemy_data.strength	
+	fight_id = enemy_data.fight_id
+	local_player_name.text = enemy_data.local_player_name
 	
-	var standar_material3D : StandardMaterial3D = StandardMaterial3D.new()
+	var standar_material3D: StandardMaterial3D = StandardMaterial3D.new()
 	standar_material3D.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	standar_material3D.normal_enabled = true
 	standar_material3D.albedo_texture = load(enemy_data.albedo_texture_path)
@@ -53,3 +60,7 @@ func init_enemy(enemy_data):
 	animated_sprite3D.play(enemy_data.animated[0])	
 	
 	pass
+	
+func enemy_attack():
+	pass
+	

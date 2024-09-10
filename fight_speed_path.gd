@@ -1,12 +1,14 @@
 extends Path2D
 
-@export var fight_speed_scene : PackedScene
+signal uint_fighting
 
-@onready var fight_speed_timer : Timer = $FightSpeedTimer
+@export var fight_speed_scene: PackedScene
 
-var fight_speed_list : Array = []
+@onready var fight_speed_timer: Timer = $FightSpeedTimer
+
+var fight_speed_list: Array = []
  
-var fight_speed_pre_list : Array = []
+var fight_speed_pre_list: Array = []
 
 var last_progress_ratio :float = 0.0
 
@@ -22,14 +24,17 @@ func _process(delta: float) -> void:
 	fight_speed_list_timer(delta)		
 	pass
 
+
 ## 本回合计算战斗顺序
+## 参数 delta 帧间隔时间
 func fight_speed_list_timer(delta):
 	# 剩余距离
 	var fight_distance = 1.0 - last_progress_ratio
 	# 平均速度 
 	var fight_velocity = fight_distance / fight_speed_timer.wait_time
 	if fight_speed_list != null:
-		var fight_in = true
+		#var fighting = false
+		#var fight_unit = 0
 		var size = fight_speed_list.size()
 		for i in range(size):
 			var progress_ratio = fight_speed_list[i].progress_ratio
@@ -37,12 +42,16 @@ func fight_speed_list_timer(delta):
 			progress_ratio += delta * fight_velocity			
 			fight_speed_list[i].progress_ratio = progress_ratio
 	
+			# 单位开始战斗
 			if progress_ratio >= 0.99:
 				fight_speed_list[i].progress_ratio = 1.0
-				fight_in = false
-				print(fight_speed_list[i])
-				
-		#set_process(fight_in)
+				set_process(false)
+				uint_fighting.emit(fight_speed_list[i].fight_id)
+				#fighting = true
+				#fight_unit = i
+				#print(fight_speed_list[i])
+		
+			#if fighting:
 
 ## 本回合已经轮空
 func fight_speed_list_null():
@@ -64,7 +73,7 @@ func fight_speed_list_null():
 					
 		var fight_speed_pre_list_temp = fight_speed_pre_list
 		fight_speed_pre_list = []
-		#init_fight_speed_Path(fight_speed_pre_list_temp)
+		init_fight_speed_Path(fight_speed_pre_list_temp)
 	pass
 
 
@@ -73,24 +82,32 @@ func fight_speed_list_null():
 func init_fight_speed_Path(fight_speed_data_list):
 	if fight_speed_data_list == null:
 		return
+	var fight_speed_map: Dictionary = {}
 	for i in range(fight_speed_data_list.size()):
 		var fight_speed_instance = fight_speed_scene.instantiate()
 		var fight_speed_data = fight_speed_data_list[i]
+		var fight_id = fight_speed_data.fight_id
+		
 		fight_speed_data.player_name += str(i)
+		if fight_id == null:
+			fight_speed_data.fight_id = fight_speed_data.player_name
 		fight_speed_instance._ready()
 		fight_speed_instance.init_fight_speed(fight_speed_data)
 		fight_speed_pre_list.append(fight_speed_instance)
 		add_child(fight_speed_instance)
 		
+		fight_speed_map.fight_id = fight_speed_data
+		
 	fight_speed_pre_sort()
-	print(fight_speed_pre_list)
+	
+	return fight_speed_map
 	
 	
 ## 对准备战斗的玩家和怪物进行排序
 func fight_speed_pre_sort():
 	if fight_speed_pre_list != null:
 		# 速度从小到大排序
-		fight_speed_pre_list.sort_custom(func(a, b) : 
+		fight_speed_pre_list.sort_custom(func(a, b): 
 			if a.fight_speed < b.fight_speed:
 				return true
 			elif( 

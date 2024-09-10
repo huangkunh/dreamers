@@ -7,7 +7,7 @@ extends CharacterBody3D
 
 @onready var animated_sprite3D := $Animation
 
-var target_velocity : Vector3 = Vector3.ZERO
+var target_velocity: Vector3 = Vector3.ZERO
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

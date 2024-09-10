@@ -1,12 +1,12 @@
 extends PanelContainer
 
-@export var change_health_value : int = 100:
+@export var change_health_value: int = 100:
 	set(value):
 		health_update(value)
 
-@onready var health_bar_cure : TextureProgressBar = $HealthBarCure
-@onready var health_bar_decrease : TextureProgressBar = $HealthBarDecrease
-@onready var health_bar_base : TextureProgressBar = $HealthBarBase
+@onready var health_bar_cure: TextureProgressBar = $HealthBarCure
+@onready var health_bar_decrease: TextureProgressBar = $HealthBarDecrease
+@onready var health_bar_base: TextureProgressBar = $HealthBarBase
 
 
 # Called when the node enters the scene tree for the first time.

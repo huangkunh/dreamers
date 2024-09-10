@@ -166,9 +166,21 @@ script = ExtResource("8_ia87s")
 fight_speed_scene = ExtResource("9_xipko")
 
 [node name="FightSpeed" parent="FightSpeedPath" instance=ExtResource("9_xipko")]
-visible = false
-position = Vector2(-77, 39)
-rotation = 3.13903
+position = Vector2(-349.649, 39.7)
+rotation = 0.0
+progress = 272.65
+rotates = false
+
+[node name="NextTime" type="Label" parent="FightSpeedPath/FightSpeed"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 23.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+text = "<<下一回合"
 
 [node name="FightSpeedTimer" type="Timer" parent="FightSpeedPath"]
 wait_time = 3.0
@@ -189,7 +201,7 @@ theme = ExtResource("9_l5pgd")
 layout_mode = 2
 script = ExtResource("12_055ji")
 
-[node name="PlayerName" type="Label" parent="PlayerInfo/PlayerInfoContainer"]
+[node name="LocalPlayerName" type="Label" parent="PlayerInfo/PlayerInfoContainer"]
 layout_mode = 2
 theme = ExtResource("9_l5pgd")
 text = "雷班纳"
@@ -210,6 +222,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[connection signal="uint_fighting" from="FightSpeedPath" to="." method="_on_fight_speed_path_uint_fighting"]
 
 [editable path="FightPlayerManager"]
 [editable path="PlayerInfo/PlayerInfoContainer/HealthBar"]

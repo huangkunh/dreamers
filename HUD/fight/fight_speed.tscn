@@ -1,12 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://bo57225uw37r"]
+[gd_scene load_steps=2 format=3 uid="uid://bo57225uw37r"]
 
 [ext_resource type="Script" path="res://HUD/fight/fight_speed.gd" id="1_icnv6"]
-[ext_resource type="Texture2D" uid="uid://ylab7prh0ae8" path="res://sprite/ordinary_enemies/aoduo/e01_flame_guns.png" id="1_yl8q4"]
-[ext_resource type="Texture2D" uid="uid://d3dfovxtkbyhk" path="res://sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png" id="3_qofgc"]
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_8nddc"]
-diffuse_texture = ExtResource("1_yl8q4")
-normal_texture = ExtResource("3_qofgc")
 
 [node name="FightSpeed" type="PathFollow2D"]
 position = Vector2(-70, 22)
@@ -16,4 +10,3 @@ script = ExtResource("1_icnv6")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0.994873, -2.00254)
 rotation = 3.13905
-texture = SubResource("CanvasTexture_8nddc")
