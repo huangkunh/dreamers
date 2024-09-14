@@ -88,7 +88,6 @@ func init_fight_speed_Path(fight_speed_data_list):
 		var fight_speed_data = fight_speed_data_list[i]
 		var fight_id = fight_speed_data.fight_id
 		
-		fight_speed_data.player_name += str(i)
 		if fight_id == null:
 			fight_speed_data.fight_id = fight_speed_data.player_name
 		fight_speed_instance._ready()
@@ -123,5 +122,15 @@ func fight_speed_pre_sort():
 			# 取路径前 1/3 做下回合
 			var progress_ratio = (1.0 / 3.0) * (1.0 / fight_speed_size) * i
 			fight_speed_pre_list[i].progress_ratio = progress_ratio
+
+
+## 单位战斗结束
+func unit_fight_end(current_fight_id):
+	for i in range(fight_speed_list.size() - 1):
+		var fight_speed = fight_speed_list[i]
+		if fight_speed.fight_id == current_fight_id:
+			fight_speed_list.remove_at(i)
+			fight_speed.queue_free()
+	set_process(true)
 			
 		

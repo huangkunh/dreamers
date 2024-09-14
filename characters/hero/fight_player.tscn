@@ -1,33 +1,122 @@
-[gd_scene load_steps=8 format=3 uid="uid://dm280m52rs1ib"]
+[gd_scene load_steps=21 format=3 uid="uid://dm280m52rs1ib"]
 
 [ext_resource type="Script" path="res://characters/hero/fight_player.gd" id="1_yeecu"]
-[ext_resource type="Texture2D" uid="uid://c53rsp0d8brsg" path="res://sprite/battlers/fight_player.png" id="2_2ij7l"]
-[ext_resource type="Texture2D" uid="uid://cjgvh28s2mnht" path="res://sprite/battlers/fight_player_n.png" id="3_hmwyq"]
+[ext_resource type="Texture2D" uid="uid://bgdu10m1t7rgv" path="res://sprite/battlers/figth_animated.png" id="2_0iwwi"]
+[ext_resource type="Texture2D" uid="uid://c53rsp0d8brsg" path="res://sprite/battlers/fight_player.png" id="2_mrpw8"]
+[ext_resource type="Texture2D" uid="uid://unsbish8cm2m" path="res://sprite/battlers/vfx/stone.png" id="4_0hwsp"]
+[ext_resource type="Texture2D" uid="uid://bsvs36sfapbqt" path="res://sprite/battlers/vfx/base_hit_remotely.png" id="5_kjqks"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_c6sea"]
 radius = 0.121799
 height = 0.349137
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lppow"]
-transparency = 2
-alpha_scissor_threshold = 0.5
-alpha_antialiasing_mode = 0
-albedo_texture = ExtResource("2_2ij7l")
-normal_enabled = true
-normal_texture = ExtResource("3_hmwyq")
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5nejj"]
-atlas = ExtResource("2_2ij7l")
+[sub_resource type="AtlasTexture" id="AtlasTexture_5m2pe"]
+atlas = ExtResource("2_mrpw8")
 region = Rect2(0, 0, 32, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_onm8k"]
+atlas = ExtResource("2_0iwwi")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_44tc5"]
+atlas = ExtResource("2_0iwwi")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4gd1m"]
+atlas = ExtResource("2_0iwwi")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_058vk"]
+atlas = ExtResource("2_0iwwi")
+region = Rect2(96, 64, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1jkta"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5nejj")
+"texture": SubResource("AtlasTexture_5m2pe")
 }],
 "loop": true,
 "name": &"ray_ban_na_default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_onm8k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_44tc5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4gd1m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_058vk")
+}],
+"loop": true,
+"name": &"ray_ban_na_fight_run",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_33jlq"]
+atlas = ExtResource("4_0hwsp")
+region = Rect2(94, 94, 4, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3yqy0"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(76, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pv0f3"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(268, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7x0d"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(460, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_og0ge"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(76, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l4ono"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(268, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fdm0t"]
+atlas = ExtResource("5_kjqks")
+region = Rect2(460, 288, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i0n4n"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_33jlq")
+}],
+"loop": true,
+"name": &"stone",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3yqy0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pv0f3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7x0d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_og0ge")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l4ono")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fdm0t")
+}],
+"loop": true,
+"name": &"stone_hits",
 "speed": 5.0
 }]
 
@@ -41,7 +130,6 @@ shape = SubResource("CapsuleShape3D_c6sea")
 
 [node name="Animation" type="AnimatedSprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.887997, 0)
-material_override = SubResource("StandardMaterial3D_lppow")
 pixel_size = 0.025
 shaded = true
 alpha_cut = 2
@@ -50,16 +138,33 @@ animation = &"ray_ban_na_default"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 1, 1)
+visible = false
 light_color = Color(0.972549, 0.560784, 0.321569, 1)
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, -0.124766, 1, 0.11871)
+visible = false
 light_color = Color(0.772586, 0.0749484, 0.237059, 1)
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, -1.53522, 1.39061, 0.11871)
+visible = false
 light_color = Color(0.81627, 0.527735, 0.459936, 1)
 omni_range = 9.0
 omni_attenuation = 3.0
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+
+[node name="HurtLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.704303, 0.169537)
+visible = false
+billboard = 1
+no_depth_test = true
+modulate = Color(0.939149, 0.55372, 0.532153, 1)
+text = "7
+"
+font_size = 60
+
+[node name="WeaponsAnimated" type="AnimatedSprite3D" parent="."]
+sprite_frames = SubResource("SpriteFrames_i0n4n")
+animation = &"stone_hits"

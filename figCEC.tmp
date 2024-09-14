@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c6ag5micepfpe"]
+[gd_scene load_steps=24 format=3 uid="uid://c6ag5micepfpe"]
 
 [ext_resource type="AudioStream" uid="uid://blcwx0es48qvb" path="res://music/background_music/battle.ogg" id="1_cp5d4"]
 [ext_resource type="Script" path="res://fight.gd" id="1_wrn30"]
@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://brwk48cm8iork" path="res://HUD/fight/fight_player_manager.tscn" id="7_n3q1a"]
 [ext_resource type="Script" path="res://fight_speed_path.gd" id="8_ia87s"]
 [ext_resource type="Theme" uid="uid://bp8jctroi0xhr" path="res://theme/my_theme.tres" id="9_l5pgd"]
-[ext_resource type="Texture2D" uid="uid://brlv3edb4e0se" path="res://sprite/buttons/pointer.png" id="9_nvqh2"]
 [ext_resource type="Script" path="res://fight_hud.gd" id="9_oej4i"]
 [ext_resource type="PackedScene" uid="uid://bo57225uw37r" path="res://HUD/fight/fight_speed.tscn" id="9_xipko"]
 [ext_resource type="PackedScene" uid="uid://cep6lg538cur4" path="res://HUD/fight/health_bar.tscn" id="10_n8ub4"]
@@ -173,13 +172,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.30515, 0.728976, 0.544774)
 [node name="FightingPlayerMarker" type="Marker3D" parent="FightPlayerManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.90832, 0.728976, 0.544774)
 
-[node name="AttackPointer" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.749715, 0)
-visible = false
-billboard = 1
-no_depth_test = true
-texture = ExtResource("9_nvqh2")
-
 [node name="FightHUD" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
@@ -287,17 +279,22 @@ grow_vertical = 2
 [node name="ButtonAudio" type="AudioStreamPlayer3D" parent="FightHUD/FightMenu"]
 stream = ExtResource("17_up6kn")
 
-[node name="FightMenuNextLv" type="VBoxContainer" parent="FightHUD"]
+[node name="FightMenuLv1" type="VBoxContainer" parent="FightHUD"]
 visible = false
-layout_mode = 2
-offset_left = 840.0
-offset_top = 471.0
-offset_right = 954.0
-offset_bottom = 570.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.737
+anchor_top = 0.716
+anchor_right = 0.839
+anchor_bottom = 0.968
+offset_left = -0.0240479
+offset_top = 0.0319824
+offset_right = 0.471924
+offset_bottom = -0.264038
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ButtonAudio" type="AudioStreamPlayer3D" parent="FightHUD/FightMenuNextLv"]
+[node name="ButtonAudio" type="AudioStreamPlayer3D" parent="FightHUD/FightMenuLv1"]
 stream = ExtResource("17_up6kn")
 
 [connection signal="uint_fighting" from="FightHUD/FightSpeedPath" to="." method="_on_fight_speed_path_uint_fighting"]

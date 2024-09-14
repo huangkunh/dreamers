@@ -16,6 +16,7 @@ extends CharacterBody3D
 @export var fight_id: String
 
 @onready var audio_stream_player_3d: AudioStreamPlayer3D = $AudioStreamPlayer3D
+@onready var hurt_label: Label3D = $HurtLabel
 
 @onready var animated_sprite3D := $Animation
 
