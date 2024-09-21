@@ -1,7 +1,7 @@
 [gd_scene load_steps=25 format=3 uid="uid://c6ag5micepfpe"]
 
 [ext_resource type="AudioStream" uid="uid://blcwx0es48qvb" path="res://music/background_music/battle.ogg" id="1_cp5d4"]
-[ext_resource type="Script" path="res://fight.gd" id="1_wrn30"]
+[ext_resource type="Script" path="res://HUD/fight/fight.gd" id="1_wrn30"]
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://particles/luminous_particles.tscn" id="3_u1roc"]
 [ext_resource type="PackedScene" uid="uid://dm280m52rs1ib" path="res://characters/hero/fight_player.tscn" id="4_7qahb"]
 [ext_resource type="Shader" path="res://shader/vignette.gdshader" id="4_hwtqj"]
@@ -9,13 +9,13 @@
 [ext_resource type="PackedScene" uid="uid://dp57x3o4oj7c2" path="res://HUD/fight/enemies_manager.tscn" id="6_4mjfw"]
 [ext_resource type="MeshLibrary" uid="uid://defioe8s6iayu" path="res://mesh_libraries/mesh_libararies.tres" id="6_tpsp6"]
 [ext_resource type="PackedScene" uid="uid://brwk48cm8iork" path="res://HUD/fight/fight_player_manager.tscn" id="7_n3q1a"]
-[ext_resource type="Script" path="res://fight_speed_path.gd" id="8_ia87s"]
+[ext_resource type="Script" path="res://HUD/fight/fight_speed_path.gd" id="8_ia87s"]
 [ext_resource type="Theme" uid="uid://bp8jctroi0xhr" path="res://theme/my_theme.tres" id="9_l5pgd"]
 [ext_resource type="Texture2D" uid="uid://brlv3edb4e0se" path="res://sprite/buttons/pointer.png" id="9_nvqh2"]
-[ext_resource type="Script" path="res://fight_hud.gd" id="9_oej4i"]
+[ext_resource type="Script" path="res://HUD/fight/fight_hud.gd" id="9_oej4i"]
 [ext_resource type="PackedScene" uid="uid://bo57225uw37r" path="res://HUD/fight/fight_speed.tscn" id="9_xipko"]
 [ext_resource type="PackedScene" uid="uid://cep6lg538cur4" path="res://HUD/fight/health_bar.tscn" id="10_n8ub4"]
-[ext_resource type="Script" path="res://player_info_container.gd" id="12_055ji"]
+[ext_resource type="Script" path="res://HUD/fight/player_info_container.gd" id="12_055ji"]
 [ext_resource type="AudioStream" uid="uid://dq7s4bnwi678s" path="res://music/sound_effect/select.wav" id="17_up6kn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tr55t"]
@@ -156,9 +156,10 @@ size = Vector3(3, 2, 2)
 shape = 2
 material = SubResource("FogMaterial_bgp4i")
 
-[node name="EnemiesManager" parent="." instance=ExtResource("6_4mjfw")]
+[node name="EnemiesManager" parent="." groups=["enemy"] instance=ExtResource("6_4mjfw")]
 
 [node name="FightPlayerManager" parent="." instance=ExtResource("7_n3q1a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.36811, 1, 0)
 fight_player_screne = ExtResource("4_7qahb")
 
 [node name="OmniLight3D" parent="FightPlayerManager" index="0"]

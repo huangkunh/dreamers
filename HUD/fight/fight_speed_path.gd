@@ -37,16 +37,16 @@ func fight_speed_list_timer(delta):
 		#var fight_unit = 0
 		var size = fight_speed_list.size()
 		for i in range(size):
-			var progress_ratio = fight_speed_list[i].progress_ratio
+			var progress_ratio = fight_speed_list[i - 1].progress_ratio
 			# 当前位置 = 原来的位置 + 时间 * 速度
 			progress_ratio += delta * fight_velocity			
-			fight_speed_list[i].progress_ratio = progress_ratio
+			fight_speed_list[i - 1].progress_ratio = progress_ratio
 	
 			# 单位开始战斗
 			if progress_ratio >= 0.99:
-				fight_speed_list[i].progress_ratio = 1.0
+				fight_speed_list[i - 1].progress_ratio = 1.0
 				set_process(false)
-				uint_fighting.emit(fight_speed_list[i].fight_id)
+				uint_fighting.emit(fight_speed_list[i - 1].fight_id)
 				#fighting = true
 				#fight_unit = i
 				#print(fight_speed_list[i])
@@ -126,11 +126,19 @@ func fight_speed_pre_sort():
 
 ## 单位战斗结束
 func unit_fight_end(current_fight_id):
-	for i in range(fight_speed_list.size() - 1):
-		var fight_speed = fight_speed_list[i]
+	if fight_speed_list.size() == 1:
+		if fight_speed_list[0].fight_id == current_fight_id:
+			fight_speed_list[0].queue_free()
+			fight_speed_list.resize(0)
+			set_process(true)
+			return
+		
+	for i in range(fight_speed_list.size()):
+		var fight_speed = fight_speed_list[i - 1]
 		if fight_speed.fight_id == current_fight_id:
-			fight_speed_list.remove_at(i)
+			fight_speed_list.remove_at(i - 1)
 			fight_speed.queue_free()
 	set_process(true)
+	pass
 			
 		

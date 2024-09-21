@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b34wj7o2idm2a"
-path.s3tc="res://.godot/imported/weapons.png-44a53885681c0a40c9d61b37b412295a.s3tc.ctex"
+uid="uid://dvj7eciwpwnfn"
+path.s3tc="res://.godot/imported/player_death.png-836eed9e2c4d6e43b3c9f064e090e5d0.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://sprite/battlers/weapons.png"
-dest_files=["res://.godot/imported/weapons.png-44a53885681c0a40c9d61b37b412295a.s3tc.ctex"]
+source_file="res://sprite/battlers/player_death.png"
+dest_files=["res://.godot/imported/player_death.png-836eed9e2c4d6e43b3c9f064e090e5d0.s3tc.ctex"]
 
 [params]
 

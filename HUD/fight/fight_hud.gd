@@ -86,6 +86,7 @@ var enter_stream = preload("res://music/sound_effect/enter.wav")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# 创建菜单按钮
 	var pointer_init_position
 	for i in range(fight_menu_list.size()):
 		var menu_name = fight_menu_list[i].menu_name
@@ -97,6 +98,7 @@ func _ready() -> void:
 			pointer_init_position = button.global_position
 			pointer_init_position.y += button.size.y / 2
 	
+	# 创建菜单光标
 	pointer = Sprite2D.new()
 	pointer.texture = pointer_texture
 	pointer.global_position = pointer_init_position
@@ -112,61 +114,49 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 	
+
+## 处理按键输入
 func _unhandled_key_input(event: InputEvent) -> void:
 	# 处于攻击选择中
 	if attack_pointer.visible == true:
-		var fight = get_parent()
-		var fighting_id = fight.fighting_id
-		var fight_unit = fight.fighting_unit_map[fighting_id]
-		var player_scene_map = fight.player_scene_map
-		var enemy_scene_map = fight.enemy_scene_map
+		# 选择攻击目标
+		self.select_attack_target()
 		
-		if Input.is_action_pressed("ui_up") || Input.is_action_pressed("ui_right"):
-			attack_pointer_index += 1
-		if Input.is_action_pressed("ui_down") || Input.is_action_pressed("ui_left"):
-			attack_pointer_index -= 1
-		
-		if attack_pointer_index < 0:
-			attack_pointer_index = enemy_scene_map.values().size() - 1
-		elif attack_pointer_index >= enemy_scene_map.values().size():
-			attack_pointer_index = 0
-		
-		
-		var enemy_scene = enemy_scene_map.values()[attack_pointer_index]
-		attack_pointer.global_position = enemy_scene.global_position
-		attack_pointer.global_position.z += 0.05
-		
+		# 确定的攻击目标
+		determine_attack_target()
 			
-			
+	# 菜单不可见
 	if fight_menu.visible == false:
-		return
+		return	
 	
-	# 判断在哪一层
-	var current_button_list
-	if pointer_lv_index == 0:
-		current_button_list = button_list
-	elif pointer_lv_index == 1:
-		current_button_list = button_next_lv_list
+	# 上下移动光标选择菜单
+	select_menu()
 	
-	# 上下移动光标
-	if Input.is_action_pressed("ui_down"):
-		pointer_index += 1
-		if pointer_index > current_button_list.size() - 1:
-			pointer_index = 0
-		button_audio.stream = select_stream
-		button_audio.playing = true
-	elif Input.is_action_pressed("ui_up"):
-		pointer_index -= 1
-		if pointer_index < 0:
-			pointer_index = current_button_list.size() - 1
-		button_audio.stream = select_stream
-		button_audio.playing = true
-		
-	var pointer_button = current_button_list[pointer_index]
-	pointer.global_position = pointer_button.global_position
-	pointer.global_position.y += pointer_button.size.y / 2
-
 	# 确认
+	confirm_menu()
+			
+	# 取消
+	cancel_menu()
+	
+	
+# 取消菜单
+func cancel_menu():
+	if Input.is_action_pressed("ui_cancel"):
+		if pointer_lv_index == 1:
+			pointer_index = pointer_pre_index
+			pointer_pre_index = 0
+			var button = button_list[pointer_index]
+			pointer.global_position = button.global_position
+			pointer.global_position.y += button.size.y / 2
+			pointer_lv_index = 0
+			fight_menu_next_lv.visible = false
+			current_fight_menu_list = fight_menu_list
+			button_audio.stream = enter_stream
+			button_audio.playing = true
+		
+			
+## 确认菜单
+func confirm_menu():
 	if Input.is_action_pressed("ui_accept"):			
 		var current_fight_menu = current_fight_menu_list[pointer_index]
 		var next_lv_menu: Array = current_fight_menu.next_lv_menu
@@ -183,7 +173,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				if i == 0:
 					pointer_position = button.global_position
 					pointer_position.y += button.size.y / 2
-					pointer_button = button
+					#pointer_button = button
 			
 			pointer_lv_index = 1
 			pointer_pre_index = pointer_index
@@ -199,7 +189,6 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			var fight = get_parent()
 			var fighting_id = fight.fighting_id
 			var fight_unit = fight.fighting_unit_map[fighting_id]
-			var player_scene_map = fight.player_scene_map
 			var enemy_scene_map = fight.enemy_scene_map
 			
 			var battle_LV = fight_unit.battle_LV
@@ -219,21 +208,76 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				attack_pointer.global_position.z += 0.05
 				attack_pointer.visible = true
 				attack_pointer_index = 0
-			
-	# 取消
-	if Input.is_action_pressed("ui_cancel"):
-		if pointer_lv_index == 1:
-			pointer_index = pointer_pre_index
-			pointer_pre_index = 0
-			var button = button_list[pointer_index]
-			pointer.global_position = button.global_position
-			pointer.global_position.y += button.size.y / 2
-			pointer_lv_index = 0
-			fight_menu_next_lv.visible = false
-			current_fight_menu_list = fight_menu_list
-			button_audio.stream = enter_stream
-			button_audio.playing = true
+
+
+## 选择菜单
+func select_menu():
+	# 判断在哪一层菜单
+	var current_button_list
+	if pointer_lv_index == 0:
+		current_button_list = button_list
+	elif pointer_lv_index == 1:
+		current_button_list = button_next_lv_list
+		
+	if Input.is_action_pressed("ui_down"):
+		pointer_index += 1
+		if pointer_index > current_button_list.size() - 1:
+			pointer_index = 0
+		button_audio.stream = select_stream
+		button_audio.playing = true
+	elif Input.is_action_pressed("ui_up"):
+		pointer_index -= 1
+		if pointer_index < 0:
+			pointer_index = current_button_list.size() - 1
+		button_audio.stream = select_stream
+		button_audio.playing = true
+		
+	var pointer_button = current_button_list[pointer_index]
+	pointer.global_position = pointer_button.global_position
+	pointer.global_position.y += pointer_button.size.y / 2
+
+
+## 确定攻击目标
+func determine_attack_target():
+	if Input.is_action_pressed("ui_accept"):
+		var fight = get_parent()
+		var fighting_id = fight.fighting_id
+		var fight_unit = fight.fighting_unit_map[fighting_id]
+		var weapons = fight_unit.weapons
+		if fight.Attack_Type.REMOTE == weapons.attack_type:
+			if fight.Attack_Target.FOE_ONE == weapons.attack_target:
+				fight.player_remote_foe_one(attack_pointer_index)
+				attack_pointer.visible = false
+				pass
+				
+
+## 选择攻击目标
+func select_attack_target():
+	var fight = get_parent()
+	#var fighting_id = fight.fighting_id
+	#var fight_unit = fight.fighting_unit_map[fighting_id]
+	#var player_scene_map = fight.player_scene_map
+	var enemy_scene_map = fight.enemy_scene_map
 	
+	# 上下左右移动光标
+	if Input.is_action_pressed("ui_up") || Input.is_action_pressed("ui_right"):
+		attack_pointer_index += 1
+		button_audio.stream = select_stream
+		button_audio.playing = true
+	if Input.is_action_pressed("ui_down") || Input.is_action_pressed("ui_left"):
+		attack_pointer_index -= 1
+		button_audio.stream = select_stream
+		button_audio.playing = true
+	
+	if attack_pointer_index < 0:
+		attack_pointer_index = enemy_scene_map.values().size() - 1
+	elif attack_pointer_index >= enemy_scene_map.values().size():
+		attack_pointer_index = 0
+	
+	# 移动位置
+	var enemy_scene = enemy_scene_map.values()[attack_pointer_index]
+	attack_pointer.global_position = enemy_scene.global_position
+	attack_pointer.global_position.z += 0.05
 	
 func show_fight_menu():
 	fight_menu.visible = true
@@ -241,3 +285,19 @@ func show_fight_menu():
 	
 func hide_fight_menu():
 	fight_menu.visible = false
+	
+
+## 行动动画
+## action_name 行动名称
+func action_name_animation(action_name):
+	var skill_name = action_name
+	var skill_name_label = get_node("SkillName")
+	skill_name_label.text = skill_name
+	skill_name_label.visible = true
+	var skill_name_label_position = skill_name_label.position
+	var skill_name_label_position_tween = Vector2(skill_name_label_position)
+	skill_name_label_position_tween.y -= 10
+	var skill_name_label_tween = skill_name_label.create_tween()
+	skill_name_label_tween.tween_property(skill_name_label, "position", skill_name_label_position_tween, 1)
+	skill_name_label_tween.tween_callback(skill_name_label.set_visible.bind(false))
+	skill_name_label_tween.tween_callback(skill_name_label.set_position.bind(skill_name_label_position))

@@ -91,3 +91,14 @@ font_size = 12
 outline_size = 2
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+
+[node name="HurtLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.065695, 0.169537)
+visible = false
+billboard = 1
+no_depth_test = true
+modulate = Color(0.939149, 0.55372, 0.532153, 1)
+text = "7
+"
+font_size = 10
+outline_size = 5

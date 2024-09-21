@@ -9,6 +9,7 @@ extends Node3D
 @onready var fight_menu: VBoxContainer = $FightHUD/FightMenu
 @onready var fighting_player_marker: Marker3D = $FightPlayerManager/FightingPlayerMarker
 @onready var fight_hud: Control = $FightHUD
+@onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 enum Attack_Type {
 	MELEE, ## 近战
@@ -22,7 +23,7 @@ enum Attack_Target {
 
 # 弹弓
 var weapons_slingshot: Dictionary = {
-	"attack_type": Attack_Type.MELEE,
+	"attack_type": Attack_Type.REMOTE,
 	"attack_target": Attack_Target.FOE_ONE,
 	"battle_LV": 8, ## 关乎白刃战强度
 }
@@ -40,7 +41,7 @@ var e01_flame_guns = {
 	"skills": [normal_attack], ## 技能
 	"confirm_player": false, ## 确认玩家
 	"fight_speed": 10, ## 速度,影响攻击顺序
-	"health": 100, ## 生命值
+	"current_health": 100, ## 生命值
 	"battle_LV": 10, ## 关乎白刃战强度
 	"strength": 10, ## 影响防御
 	"enemy_position": Vector3.ZERO, ## 生成位置
@@ -55,7 +56,7 @@ var e02_cannon = {
 	"skills": [normal_attack], ## 技能
 	"confirm_player": false, ## 确认玩家
 	"fight_speed": 5, ## 速度,影响攻击顺序
-	"health": 60, ## 生命值
+	"current_health": 60, ## 生命值
 	"battle_LV": 13, ## 关乎白刃战强度
 	"strength": 15, ## 影响防御
 	"animated": ["e02_cannon_default"],
@@ -69,7 +70,7 @@ var l01_giant_ants = {
 	"skills": [normal_attack], ## 技能
 	"confirm_player": false, ## 确认玩家
 	"fight_speed": 9, ## 速度,影响攻击顺序
-	"health": 70, ## 生命值
+	"current_health": 70, ## 生命值
 	"battle_LV": 20, ## 关乎白刃战强度
 	"strength": 19, ## 影响防御
 	"animated": ["l01_giant_ants_default"],
@@ -83,7 +84,7 @@ var l01_sour_ants = {
 	"skills": [normal_attack], ## 技能
 	"confirm_player": false, ## 确认玩家
 	"fight_speed": 20, ## 速度,影响攻击顺序
-	"health": 150, ## 生命值
+	"current_health": 150, ## 生命值
 	"battle_LV": 25, ## 关乎白刃战强度
 	"strength": 5, ## 影响防御	
 	"animated": ["l01_sour_ants_default"],
@@ -97,7 +98,7 @@ var l02_amoeba = {
 	"skills": [normal_attack], ## 技能
 	"confirm_player": false, ## 确认玩家
 	"fight_speed": 3, ## 速度,影响攻击顺序
-	"health": 300, ## 生命值
+	"current_health": 300, ## 生命值
 	"battle_LV": 8, ## 关乎白刃战强度
 	"strength": 5, ## 影响防御	
 	"animated": ["l02_amoeba_default"],
@@ -121,7 +122,7 @@ var ray_ban_na = {
 	"fight_speed": 3, ## 速度,影响攻击顺序
 	"max_health": 100, ## 最大生命值
 	"min_health": 100, ## 最小生命值
-	"current_health": 81, ## 当前生命值
+	"current_health": 20, ## 当前生命值
 	"battle_LV": 8, ## 关乎白刃战强度
 	"strength": 5, ## 影响防御	
 	"weapons": weapons_slingshot, ## 武器
@@ -212,88 +213,79 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
 		var skill = fighting_unit.skills[skill_index]
 		if skill.attack_type == Attack_Type.MELEE:
 			if skill.attack_type == Attack_Target.FOE_ONE:
-				# 怪物
+				# 技能名字动画
+				fight_hud.action_name_animation(skill.skill_name)
+				
+				# 攻击玩家
 				var enemy_scene: CharacterBody3D = enemy_scene_map[fight_id]
-				var animated_sprite3D: AnimatedSprite3D = enemy_scene.animated_sprite3D
-				var material_override: StandardMaterial3D = animated_sprite3D.get_material_override()
-				
-				# 做插值动画的材质
-				var standar_material3D: StandardMaterial3D = StandardMaterial3D.new()
-				standar_material3D.transparency = material_override.transparency
-				standar_material3D.normal_enabled = true
-				standar_material3D.albedo_texture = material_override.albedo_texture
-				standar_material3D.normal_texture = material_override.normal_texture
-				standar_material3D.emission_enabled = true
-				standar_material3D.emission = Color(1.0, 1.0, 1.0)
-				
-				# 怪物攻击动画 和音效
-				var tween = animated_sprite3D.create_tween()
-				tween.set_trans(Tween.TRANS_SINE)
-				var audio_stream_player_3d: AudioStreamPlayer3D = enemy_scene.audio_stream_player_3d
-				audio_stream_player_3d.stream = load("res://music/sound_effect/normal_attack.wav")
+				var tween = enemy_scene.create_tween()
+				enemy_scene.attack_player(tween)				
 				
 				# 被攻击的玩家
 				var player_scene_index = randi_range(0, player_scene_map.size() - 1)
 				var player_scene: CharacterBody3D = player_scene_map.values()[player_scene_index]
-				var player_audio_stream_player_3d: AudioStreamPlayer3D = player_scene.audio_stream_player_3d
-				player_audio_stream_player_3d.stream = load("res://music/sound_effect/attacked.wav")
-				var player_position = player_scene.position
-				var tween_position = Vector3(player_position)
-				tween_position.x += 0.5
+				player_scene.under_fire(tween)
 				
-				# 技能名字动画
-				var skill_name = skill.skill_name
-				skill_name_label.text = skill_name
-				skill_name_label.visible = true
-				var skill_name_label_position = skill_name_label.position
-				var skill_name_label_position_tween = Vector2(skill_name_label_position)
-				skill_name_label_position_tween.y -= 10
-				var skill_name_label_tween = skill_name_label.create_tween()
-				skill_name_label_tween.tween_property(skill_name_label, "position", skill_name_label_position_tween, 1)
-				skill_name_label_tween.tween_callback(skill_name_label.set_visible.bind(false))
-				skill_name_label_tween.tween_callback(skill_name_label.set_position.bind(skill_name_label_position))
-				
-				# 怪物攻击动画
-				tween.parallel().tween_property(animated_sprite3D, "material_overlay", standar_material3D, 0.1)
-				tween.tween_property(animated_sprite3D, "material_overlay", material_override, 0.1)
-				tween.parallel().tween_callback(audio_stream_player_3d._set_playing.bind(true))
-				
-				# 玩家受击动画
-				tween.tween_property(player_scene, "position", tween_position, 0.05).set_delay(0.5)
-				tween.tween_property(player_scene, "position", player_position, 0.05)
-				tween.parallel().tween_callback(player_audio_stream_player_3d._set_playing.bind(true))
-				
-				# 伤害 数字动画 血量变化
+				# 受到伤害数值动画
 				var skill_hurt = (skill.skill_strength * fighting_unit.battle_LV) as int
-				var hurt_label: Label3D = player_scene.hurt_label
-				var hurt_label_position = hurt_label.position
-				hurt_label.text = str(skill_hurt)
-				var hurt_label_position_tween = Vector3(hurt_label_position)
-				hurt_label_position_tween.x += 0.5
-				hurt_label_position_tween.y += 0.5
-				tween.tween_property(hurt_label, "visible", true, 0.5)
-				tween.parallel().tween_property(hurt_label, "position", hurt_label_position_tween, 0.5)
-				tween.parallel().tween_property(hurt_label, "scale", Vector3(1.2, 1.2, 1.2), 0.1)
-				hurt_label_position_tween.x += 0.1
-				hurt_label_position_tween.y -= 0.3
-				tween.tween_property(hurt_label, "position", hurt_label_position_tween, 0.5)
-				tween.parallel().tween_property(hurt_label, "scale", Vector3.ONE, 0.1)
+				player_scene.under_fire_label(skill_hurt, tween)
 				
-				# 恢复伤害数字
-				tween.tween_callback(hurt_label.set_visible.bind(false))
-				tween.parallel().tween_callback(hurt_label.set_position.bind(hurt_label_position))
-				tween.parallel().tween_callback(health_bar.health_update.bind( - skill_hurt))
-				
+				# 玩家信息
 				var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
 				fighting_unit_palyer.current_health -= skill_hurt
+				if fighting_unit_palyer.current_health <= 0:
+					fighting_unit_palyer.current_health = 0
 				var current_health = str(fighting_unit_palyer.current_health)
 				var max_health = str(fighting_unit_palyer.max_health)
 				var health_info = player_info_container.find_child("HealthInfo")
 				var health_label = "HP: " + current_health + " / " + max_health
+				tween.parallel().tween_callback(health_bar.health_update.bind( - skill_hurt))
 				tween.parallel().tween_callback(health_info.set_text.bind(health_label))
+				tween.tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
+			
+				# 判断玩家是否存活
+				if check_player_survive():
+					tween.parallel().tween_callback(self.all_player_death)
+					return
 				
 				# 单位战斗结束
 				tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fight_id))
+		
+		
+## 玩家远程单体攻击
+## attack_pointer_index 敌人索引
+func player_remote_foe_one(attack_pointer_index):
+	#var fight = self
+	#var fighting_id = fight.fighting_id
+	#var fight_unit = fight.fighting_unit_map[fighting_id]
+	#var player_scene_map = fight.player_scene_map
+	#var enemy_scene_map = fight.enemy_scene_map
+
+	# 武器攻击动画
+	var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+	var enemy_scene = enemy_scene_map.values()[attack_pointer_index]
+	var enemy_fight_id = enemy_scene.fight_id
+	var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+	var weapons_tween = player_scene.create_tween()
+	player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+
+	# 造成伤害 = 武器白刃战LV + 人物白刃战LV - 目标强度
+	var fight_unit = fighting_unit_map[fighting_id]
+	enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
+		
+	# 单位战斗结束
+	#var fight_speed_path = get_node("FightSpeedPath")
+	weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
 				
-				
-				
+
+## 检测玩家存活			
+func check_player_survive():
+	var all_death = player_scene_map.values().all(func(value): 
+			return value.fight_player_data.current_health <= 0)
+	return all_death
+
+
+## 全部玩家死亡
+func all_player_death():
+	audio_stream_player.stream = load("res://music/background_music/defeat.ogg")
+	audio_stream_player.play()
