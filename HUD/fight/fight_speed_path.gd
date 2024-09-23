@@ -37,21 +37,17 @@ func fight_speed_list_timer(delta):
 		#var fight_unit = 0
 		var size = fight_speed_list.size()
 		for i in range(size):
-			var progress_ratio = fight_speed_list[i - 1].progress_ratio
+			var progress_ratio = fight_speed_list[i].progress_ratio
 			# 当前位置 = 原来的位置 + 时间 * 速度
 			progress_ratio += delta * fight_velocity			
-			fight_speed_list[i - 1].progress_ratio = progress_ratio
+			fight_speed_list[i].progress_ratio = progress_ratio
 	
 			# 单位开始战斗
 			if progress_ratio >= 0.99:
-				fight_speed_list[i - 1].progress_ratio = 1.0
+				fight_speed_list[i].progress_ratio = 1.0
 				set_process(false)
-				uint_fighting.emit(fight_speed_list[i - 1].fight_id)
-				#fighting = true
-				#fight_unit = i
-				#print(fight_speed_list[i])
-		
-			#if fighting:
+				uint_fighting.emit(fight_speed_list[i].fight_id)
+
 
 ## 本回合已经轮空
 func fight_speed_list_null():
@@ -125,20 +121,34 @@ func fight_speed_pre_sort():
 
 
 ## 单位战斗结束
+## current_fight_id 战斗id
 func unit_fight_end(current_fight_id):
-	if fight_speed_list.size() == 1:
-		if fight_speed_list[0].fight_id == current_fight_id:
-			fight_speed_list[0].queue_free()
-			fight_speed_list.resize(0)
-			set_process(true)
-			return
-		
-	for i in range(fight_speed_list.size()):
-		var fight_speed = fight_speed_list[i - 1]
-		if fight_speed.fight_id == current_fight_id:
-			fight_speed_list.remove_at(i - 1)
-			fight_speed.queue_free()
+	clear_fight_speed(fight_speed_list, current_fight_id)
 	set_process(true)
 	pass
-			
+
+
+## 单位战斗死亡
+## current_fight_id 战斗id
+func unit_fight_death(fight_id):
+	clear_fight_speed(fight_speed_list, fight_id)
+	clear_fight_speed(fight_speed_pre_list, fight_id)
+	set_process(true)
+	
+
+## 清除战斗进度取样器
+## path_arr 取样器列表
+## current_fight_id 战斗id
+func clear_fight_speed(path_arr, current_fight_id):
+	if path_arr.size() == 1:
+		if path_arr[0].fight_id == current_fight_id:
+			path_arr[0].queue_free()
+			path_arr.resize(0)
+			return
 		
+	for i in range(path_arr.size()):
+		var fight_speed = path_arr[i]
+		if fight_speed.fight_id == current_fight_id:
+			path_arr.remove_at(i)
+			fight_speed.queue_free()
+			break

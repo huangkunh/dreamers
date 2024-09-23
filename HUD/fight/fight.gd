@@ -25,7 +25,7 @@ enum Attack_Target {
 var weapons_slingshot: Dictionary = {
 	"attack_type": Attack_Type.REMOTE,
 	"attack_target": Attack_Target.FOE_ONE,
-	"battle_LV": 8, ## 关乎白刃战强度
+	"battle_LV": 80, ## 关乎白刃战强度
 }
 
 var normal_attack = {
@@ -122,8 +122,8 @@ var ray_ban_na = {
 	"fight_speed": 3, ## 速度,影响攻击顺序
 	"max_health": 100, ## 最大生命值
 	"min_health": 100, ## 最小生命值
-	"current_health": 20, ## 当前生命值
-	"battle_LV": 8, ## 关乎白刃战强度
+	"current_health": 99, ## 当前生命值
+	"battle_LV": 800, ## 关乎白刃战强度
 	"strength": 5, ## 影响防御	
 	"weapons": weapons_slingshot, ## 武器
 	"animated": ["ray_ban_na_default"],
@@ -188,6 +188,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+
 ## 战斗
 func _on_fight_speed_path_uint_fighting(fight_id) -> void:
 	fighting_id = fight_id
@@ -198,14 +199,9 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
 		fighting_player_marker.position.y = player_scene.position.y
 		var tween = player_scene.create_tween()
 		var player_name = fighting_unit.player_name
-		#var animation: AnimatedSprite3D = player_scene.find_child("Animation")
-		#animation.play(player_name + "_fight_run")
-		#var player_material_override = animation.get_material_override()
 		tween.tween_property(player_scene, "position", fighting_player_marker.position, 0.5)
 		tween.tween_callback(fight_menu.set_visible.bind(true))
 		tween.tween_callback(fight_hud.pointer.set_visible.bind(true))
-		#tween.tween_callback(animation.play.bind(player_name + "_default"))
-		#player_scene.position = fighting_player_marker.position
 		
 		pass
 	else: #是怪物
@@ -213,54 +209,55 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
 		var skill = fighting_unit.skills[skill_index]
 		if skill.attack_type == Attack_Type.MELEE:
 			if skill.attack_type == Attack_Target.FOE_ONE:
-				# 技能名字动画
-				fight_hud.action_name_animation(skill.skill_name)
-				
-				# 攻击玩家
-				var enemy_scene: CharacterBody3D = enemy_scene_map[fight_id]
-				var tween = enemy_scene.create_tween()
-				enemy_scene.attack_player(tween)				
-				
-				# 被攻击的玩家
-				var player_scene_index = randi_range(0, player_scene_map.size() - 1)
-				var player_scene: CharacterBody3D = player_scene_map.values()[player_scene_index]
-				player_scene.under_fire(tween)
-				
-				# 受到伤害数值动画
-				var skill_hurt = (skill.skill_strength * fighting_unit.battle_LV) as int
-				player_scene.under_fire_label(skill_hurt, tween)
-				
-				# 玩家信息
-				var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
-				fighting_unit_palyer.current_health -= skill_hurt
-				if fighting_unit_palyer.current_health <= 0:
-					fighting_unit_palyer.current_health = 0
-				var current_health = str(fighting_unit_palyer.current_health)
-				var max_health = str(fighting_unit_palyer.max_health)
-				var health_info = player_info_container.find_child("HealthInfo")
-				var health_label = "HP: " + current_health + " / " + max_health
-				tween.parallel().tween_callback(health_bar.health_update.bind( - skill_hurt))
-				tween.parallel().tween_callback(health_info.set_text.bind(health_label))
-				tween.tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
-			
-				# 判断玩家是否存活
-				if check_player_survive():
-					tween.parallel().tween_callback(self.all_player_death)
-					return
-				
-				# 单位战斗结束
-				tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fight_id))
-		
-		
+				enemy_melee_foe_one(skill)
+
+
+## 敌人近战单体攻击
+## skill 技能	
+func enemy_melee_foe_one(skill):
+	# 技能名字动画
+	fight_hud.action_name_animation(skill.skill_name)
+	
+	# 攻击玩家
+	var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
+	var tween = enemy_scene.create_tween()
+	enemy_scene.attack_player(tween)				
+	
+	# 被攻击的玩家
+	var player_scene_index = randi_range(0, player_scene_map.size() - 1)
+	var player_scene: CharacterBody3D = player_scene_map.values()[player_scene_index]
+	player_scene.under_fire(tween)
+	
+	# 受到伤害数值动画
+	var fighting_unit = fighting_unit_map[fighting_id]
+	var skill_hurt = (skill.skill_strength * fighting_unit.battle_LV) as int
+	player_scene.under_fire_label(skill_hurt, tween)
+	
+	# 玩家信息
+	var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
+	fighting_unit_palyer.current_health -= skill_hurt
+	if fighting_unit_palyer.current_health <= 0:
+		fighting_unit_palyer.current_health = 0
+	var current_health = str(fighting_unit_palyer.current_health)
+	var max_health = str(fighting_unit_palyer.max_health)
+	var health_info = player_info_container.find_child("HealthInfo")
+	var health_label = "HP: " + current_health + " / " + max_health
+	tween.parallel().tween_callback(health_bar.health_update.bind( - skill_hurt))
+	tween.parallel().tween_callback(health_info.set_text.bind(health_label))
+	tween.tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
+
+	# 判断玩家是否存活
+	if check_all_player_death():
+		tween.parallel().tween_callback(self.all_player_death)
+		return
+	
+	# 单位战斗结束
+	tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+	
+	
 ## 玩家远程单体攻击
 ## attack_pointer_index 敌人索引
 func player_remote_foe_one(attack_pointer_index):
-	#var fight = self
-	#var fighting_id = fight.fighting_id
-	#var fight_unit = fight.fighting_unit_map[fighting_id]
-	#var player_scene_map = fight.player_scene_map
-	#var enemy_scene_map = fight.enemy_scene_map
-
 	# 武器攻击动画
 	var player_scene: CharacterBody3D = player_scene_map[fighting_id]
 	var enemy_scene = enemy_scene_map.values()[attack_pointer_index]
@@ -271,15 +268,43 @@ func player_remote_foe_one(attack_pointer_index):
 
 	# 造成伤害 = 武器白刃战LV + 人物白刃战LV - 目标强度
 	var fight_unit = fighting_unit_map[fighting_id]
-	enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
+	var enemy_death = enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
+	
+	# 怪物死亡
+	if enemy_death:
+		enemy_scene.enemy_death(weapons_tween)
+		weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+		# 校验所有敌人死亡
+		if check_all_enemy_death():
+			weapons_tween.tween_callback(self.all_enemy_death)
+			return
 		
 	# 单位战斗结束
-	#var fight_speed_path = get_node("FightSpeedPath")
 	weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-				
 
-## 检测玩家存活			
-func check_player_survive():
+
+## 清除战斗数据
+func clear_fight_data(fight_id):
+	fighting_unit_map.erase(fight_id)
+	enemy_scene_map.erase(fight_id)
+	player_scene_map.erase(fight_id)
+	fight_speed_path.unit_fight_death(fight_id)
+
+		
+## 检测所有敌人死亡
+func check_all_enemy_death()-> bool:
+	return enemy_scene_map.values().all(func(value):
+			return value.fight_enemy_data.current_health <= 0)
+	
+	
+## 所有敌人死亡
+func all_enemy_death():
+	audio_stream_player.stream = load("res://music/sound_effect/battle_victory_normal.wav")
+	audio_stream_player.play()
+
+
+## 检测玩家死亡			
+func check_all_player_death()-> bool:
 	var all_death = player_scene_map.values().all(func(value): 
 			return value.fight_player_data.current_health <= 0)
 	return all_death

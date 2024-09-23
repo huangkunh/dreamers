@@ -1,17 +1,11 @@
 extends CharacterBody3D
 
-## 生命
-@export var current_health: int = 100
-## 速度: 关乎攻击顺序和闪避率
-@export var fight_speed: int = 10
-## 战斗LV: 关乎白刃战强度
-@export var battle_LV = 10
-## 强度: 关乎防御
-@export var strength: int = 10
 ## 重力
 @export var enemy_garvity: int = 1
 ## 战斗id
 @export var fight_id: String
+## 战斗的敌人数据
+@export var fight_enemy_data: Dictionary
 
 @onready var hurt_label: Label3D = $HurtLabel
 @onready var animated_sprite3D: AnimatedSprite3D = $AnimatedSprite3D
@@ -19,8 +13,6 @@ extends CharacterBody3D
 @onready var audio_stream_player_3d: AudioStreamPlayer3D = $AudioStreamPlayer3D
 
 var target_velocity: Vector3 = Vector3.ZERO
-var fight_data
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -37,18 +29,14 @@ func _process(delta: float) -> void:
 
 	velocity = target_velocity
 	move_and_slide()
-	#move_and_collide(target_velocity, false, 0.1, false, 1)
 	pass
 
 
 # 初始化怪物 位置, 纹理, 法线纹理, 默认动画
 func init_enemy(enemy_data):
 	position = enemy_data.enemy_position
+	fight_enemy_data = enemy_data
 	
-	fight_speed = enemy_data.fight_speed
-	current_health = enemy_data.current_health
-	battle_LV = enemy_data.fight_speed
-	strength = enemy_data.strength	
 	fight_id = enemy_data.fight_id
 	local_player_name.text = enemy_data.local_player_name
 	
@@ -58,11 +46,7 @@ func init_enemy(enemy_data):
 	standar_material3D.albedo_texture = load(enemy_data.albedo_texture_path)
 	standar_material3D.normal_texture = load(enemy_data.normal_map_texture_path)
 	animated_sprite3D.set_material_override(standar_material3D)
-	animated_sprite3D.play(enemy_data.animated[0])	
-	
-	pass
-	
-func enemy_attack():
+	animated_sprite3D.play(enemy_data.animated[0])		
 	pass
 
 
@@ -70,7 +54,8 @@ func enemy_attack():
 ## fight_unit 攻击单位数据
 ## enemy_fight_unit 受到攻击单位数据
 ## weapons_tween 补间动画数据
-func under_fire(fight_unit, enemy_fight_unit, weapons_tween):
+## bool 死亡状态
+func under_fire(fight_unit, enemy_fight_unit, weapons_tween)-> bool:
 	#var fight_unit = fighting_unit_map[fighting_id]
 	var weapons = fight_unit.weapons
 	var battle_LV = fight_unit.battle_LV
@@ -79,10 +64,11 @@ func under_fire(fight_unit, enemy_fight_unit, weapons_tween):
 	var harm = weapons_battle_LV + battle_LV - enemy_strength
 	if harm < 0:
 		harm = 1
-	enemy_fight_unit.current_health -= harm
-	var enemy_health = enemy_fight_unit.current_health
 	var enemy_scene = self
 	var enemy_global_position = enemy_scene.global_position
+	enemy_fight_unit.current_health -= harm
+	if enemy_fight_unit.current_health <= 0:
+		enemy_fight_unit.current_health = 0
 
 	var hurt_label: Label3D = enemy_scene.hurt_label
 	hurt_label.global_position = enemy_global_position
@@ -100,32 +86,55 @@ func under_fire(fight_unit, enemy_fight_unit, weapons_tween):
 	weapons_tween.parallel().tween_property(hurt_label, "scale", Vector3.ONE, 0.1)
 	weapons_tween.tween_callback(hurt_label.set_visible.bind(false))
 	
+	fight_enemy_data = enemy_fight_unit
+	return enemy_fight_unit.current_health <= 0
+	
 
 ## 攻击玩家
 ## tween 补间动画对象
 func attack_player(tween):
-	# 怪物
-	var enemy_scene: CharacterBody3D = self
-	var animated_sprite3D: AnimatedSprite3D = enemy_scene.animated_sprite3D
-	var material_override: StandardMaterial3D = animated_sprite3D.get_material_override()
+	# 敌人闪烁颜色动画
+	enemy_flashing_color(tween, Color(0.5, 0.5, 0.5), 1)
 	
+	# 音效
+	play_audio_se(tween, "res://music/sound_effect/normal_attack.wav")
+
+
+## 敌人闪烁颜色动画
+## target_color 目标颜色
+## flash_times 闪烁次数
+func enemy_flashing_color(tween, target_color, flash_times: int):
+	if flash_times <= 0:
+		return
+			
 	# 做插值动画的材质
+	var material_override: StandardMaterial3D = animated_sprite3D.get_material_override()
 	var standar_material3D: StandardMaterial3D = StandardMaterial3D.new()
 	standar_material3D.transparency = material_override.transparency
 	standar_material3D.normal_enabled = true
 	standar_material3D.albedo_texture = material_override.albedo_texture
 	standar_material3D.normal_texture = material_override.normal_texture
 	standar_material3D.emission_enabled = true
-	standar_material3D.emission = Color(1.0, 1.0, 1.0)
-	
-	# 怪物攻击动画 和音效
+	standar_material3D.emission = target_color
 	
 	tween.set_trans(Tween.TRANS_SINE)
-	var audio_stream_player_3d: AudioStreamPlayer3D = enemy_scene.audio_stream_player_3d
-	audio_stream_player_3d.stream = load("res://music/sound_effect/normal_attack.wav")
-	
-					# 怪物攻击动画
-	tween.parallel().tween_property(animated_sprite3D, "material_overlay", standar_material3D, 0.1)
-	tween.tween_property(animated_sprite3D, "material_overlay", material_override, 0.1)
+	for i in flash_times:
+		# 怪物攻击动画
+		tween.parallel().tween_property(animated_sprite3D, "material_overlay", standar_material3D, 0.1)
+		tween.tween_property(animated_sprite3D, "material_overlay", material_override, 0.1)
+			
+
+## 播放音效
+## tween 补间动画对象
+## stream_path 音效文件路径
+func play_audio_se(tween, stream_path):
+	audio_stream_player_3d.stream = load(stream_path)
 	tween.parallel().tween_callback(audio_stream_player_3d._set_playing.bind(true))
-	
+
+
+## 敌人死亡
+## tween 补间动画对象
+func enemy_death(tween: Tween):
+	enemy_flashing_color(tween, Color(1.0, 0.0, 0.0), 5)
+	play_audio_se(tween, "res://music/sound_effect/enemy_defeat.wav")
+	tween.tween_callback(self.queue_free)
