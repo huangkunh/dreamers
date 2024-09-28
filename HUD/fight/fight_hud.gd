@@ -1,76 +1,12 @@
 extends Control
 
+# 确定攻击目标信号
+signal determine_attack_target_signal
+
 @onready var fight_menu: VBoxContainer = $FightMenu
 @onready var button_audio: AudioStreamPlayer3D = $FightMenu/ButtonAudio
 @onready var fight_menu_next_lv: VBoxContainer = $FightMenuNextLv
 @onready var attack_pointer: Sprite3D = $"../AttackPointer" # 攻击光标
-
-var protection: Dictionary = {
-	"menu_name": "保护",
-}
-
-var defense: Dictionary = {
-	"menu_name": "防卫",
-}
-
-var status: Dictionary = {
-	"menu_name": "状态",
-}
-
-var flee: Dictionary = {
-	"menu_name": "逃跑",
-}
-
-var boarding_and_landing: Dictionary = {
-	"menu_name": "乘降",
-}
-
-var slingshot: Dictionary = {
-	"menu_name": "弹弓",
-}
-
-var golden_jade_clothes: Dictionary = {
-	"menu_name": "金缕玉衣",
-}
-
-var tea_eggs: Dictionary = {
-	"menu_name": "茶叶蛋",
-}
-
-var instant_noodles: Dictionary = {
-	"menu_name": "泡面",
-}
-
-var weapons_slingshot: Dictionary = {
-	"menu_name": "弹弓",
-}
-
-var fight_menu_attack: Dictionary = {
-		"menu_name": "攻击",
-		"next_lv_menu": [],		
-}
-
-var tool_menu_attack: Dictionary = {
-		"menu_name": "工具",
-		"next_lv_menu": [tea_eggs, instant_noodles],
-}
-
-var equip_menu_attack: Dictionary = {
-		"menu_name": "装备",
-		"next_lv_menu": [slingshot, golden_jade_clothes],
-}
-
-var aided_menu_attack: Dictionary = {
-		"menu_name": "辅助",
-		"next_lv_menu": [boarding_and_landing, flee, status, defense, protection],
-}
-
-var fight_menu_list: Array =[
-	fight_menu_attack,
-	tool_menu_attack,
-	equip_menu_attack,
-	aided_menu_attack,
-]
 
 var current_fight_menu_list: Array
 var button_list: Array
@@ -83,6 +19,7 @@ var attack_pointer_index: int # 攻击光标索引
 var pointer_texture = preload("res://sprite/buttons/pointer.png")
 var select_stream = preload("res://music/sound_effect/select.wav")
 var enter_stream = preload("res://music/sound_effect/enter.wav")
+var fight_menu_list = load("res://data/menu/fight_menu_data.gd").new().fight_menu_list
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -191,12 +128,12 @@ func confirm_menu():
 			var fight_unit = fight.fighting_unit_map[fighting_id]
 			var enemy_scene_map = fight.enemy_scene_map
 			
-			var battle_LV = fight_unit.battle_LV
+			var battle_lv = fight_unit.battle_lv
 			var weapons = fight_unit.weapons
 			if weapons != null:
 				var attack_type = weapons.attack_type
 				var attack_target = weapons.attack_target
-				var weapons_battle_LV = weapons.battle_LV
+				var weapons_battle_lv = weapons.battle_lv
 				#if attack_type == Attack_Type.MELEE:
 					#if attack_target == Attack_Target.FOE_ONE:
 				fight_menu.visible = false
@@ -240,15 +177,8 @@ func select_menu():
 ## 确定攻击目标
 func determine_attack_target():
 	if Input.is_action_pressed("ui_accept"):
-		var fight = get_parent()
-		var fighting_id = fight.fighting_id
-		var fight_unit = fight.fighting_unit_map[fighting_id]
-		var weapons = fight_unit.weapons
-		if fight.Attack_Type.REMOTE == weapons.attack_type:
-			if fight.Attack_Target.FOE_ONE == weapons.attack_target:
-				fight.player_remote_foe_one(attack_pointer_index)
-				attack_pointer.visible = false
-				pass
+		determine_attack_target_signal.emit(attack_pointer_index)
+		attack_pointer.visible = false
 				
 
 ## 选择攻击目标

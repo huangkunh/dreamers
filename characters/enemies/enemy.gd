@@ -58,10 +58,10 @@ func init_enemy(enemy_data):
 func under_fire(fight_unit, enemy_fight_unit, weapons_tween)-> bool:
 	#var fight_unit = fighting_unit_map[fighting_id]
 	var weapons = fight_unit.weapons
-	var battle_LV = fight_unit.battle_LV
+	var battle_lv = fight_unit.battle_lv
 	var enemy_strength = enemy_fight_unit.strength
-	var weapons_battle_LV = weapons.battle_LV
-	var harm = weapons_battle_LV + battle_LV - enemy_strength
+	var weapons_battle_lv = weapons.battle_lv
+	var harm = weapons_battle_lv + battle_lv - enemy_strength
 	if harm < 0:
 		harm = 1
 	var enemy_scene = self
@@ -94,7 +94,7 @@ func under_fire(fight_unit, enemy_fight_unit, weapons_tween)-> bool:
 ## tween 补间动画对象
 func attack_player(tween):
 	# 敌人闪烁颜色动画
-	enemy_flashing_color(tween, Color(0.5, 0.5, 0.5), 1)
+	enemy_flashing_color(tween, Color(0.5, 0.5, 0.5, 0.8), 1)
 	
 	# 音效
 	play_audio_se(tween, "res://music/sound_effect/normal_attack.wav")
@@ -120,8 +120,8 @@ func enemy_flashing_color(tween, target_color, flash_times: int):
 	tween.set_trans(Tween.TRANS_SINE)
 	for i in flash_times:
 		# 怪物攻击动画
-		tween.parallel().tween_property(animated_sprite3D, "material_overlay", standar_material3D, 0.1)
-		tween.tween_property(animated_sprite3D, "material_overlay", material_override, 0.1)
+		tween.tween_property(animated_sprite3D, "material_overlay", standar_material3D, 0.1)
+		tween.tween_property(animated_sprite3D, "material_overlay", material_override, 0.22)
 			
 
 ## 播放音效
@@ -135,6 +135,6 @@ func play_audio_se(tween, stream_path):
 ## 敌人死亡
 ## tween 补间动画对象
 func enemy_death(tween: Tween):
-	enemy_flashing_color(tween, Color(1.0, 0.0, 0.0), 5)
+	enemy_flashing_color(tween, Color(1.0, 0.0, 0.0), 1)
 	play_audio_se(tween, "res://music/sound_effect/enemy_defeat.wav")
 	tween.tween_callback(self.queue_free)

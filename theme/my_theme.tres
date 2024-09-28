@@ -1,13 +1,20 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://bp8jctroi0xhr"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://bp8jctroi0xhr"]
 
 [ext_resource type="FontFile" uid="uid://dhne8vem0j2uo" path="res://theme/font/fang_zheng_hei.ttf" id="1_gaey8"]
 [ext_resource type="Texture2D" uid="uid://bw4xny88bwf5g" path="res://sprite/buttons/panel-border-012.png" id="2_jjarp"]
+[ext_resource type="Texture2D" uid="uid://cdbsov57rkalb" path="res://sprite/line/divider_fade_002_l.png" id="3_lig1m"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_40175"]
 texture = ExtResource("2_jjarp")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fsl4b"]
+texture = ExtResource("3_lig1m")
+texture_margin_top = 5.0
+region_rect = Rect2(0, 0, 96, 10)
 
 [resource]
 default_font_size = 25
 /fonts/fang_zheng_hei = ExtResource("1_gaey8")
 Button/styles/hover = SubResource("StyleBoxTexture_40175")
 Button/styles/hover_pressed = null
+HSeparator/styles/separator = SubResource("StyleBoxTexture_fsl4b")

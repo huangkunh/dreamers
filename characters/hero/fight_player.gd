@@ -11,12 +11,12 @@ extends CharacterBody3D
 		
 		# 处理生命
 		var current_health = data.current_health
-		var max_health = data.max_health
+		var fight_max_health = data.max_health
 		if current_health <= 0:
 			current_health = 0
 			player_death()
-		if current_health > max_health:
-			current_health = max_health
+		if current_health > fight_max_health:
+			current_health = fight_max_health
 
 @onready var audio_stream_player_3d: AudioStreamPlayer3D = $AudioStreamPlayer3D
 @onready var hurt_label: Label3D = $HurtLabel
@@ -26,6 +26,8 @@ extends CharacterBody3D
 var target_velocity: Vector3 = Vector3.ZERO
 
 var max_health: int = 0
+
+var fight_originally_position: Vector3
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -117,7 +119,7 @@ func under_fire(tween):
 func under_fire_label(skill_hurt, tween):
 	# 伤害 数字动画 血量变化
 	var player_scene = self
-	#var skill_hurt = (skill.skill_strength * fighting_unit.battle_LV) as int
+	#var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
 	var hurt_label: Label3D = player_scene.hurt_label
 	var hurt_label_position = hurt_label.position
 	hurt_label.text = str(skill_hurt)

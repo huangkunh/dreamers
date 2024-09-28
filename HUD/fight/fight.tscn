@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c6ag5micepfpe"]
+[gd_scene load_steps=31 format=3 uid="uid://c6ag5micepfpe"]
 
 [ext_resource type="AudioStream" uid="uid://blcwx0es48qvb" path="res://music/background_music/battle.ogg" id="1_cp5d4"]
 [ext_resource type="Script" path="res://HUD/fight/fight.gd" id="1_wrn30"]
@@ -16,7 +16,11 @@
 [ext_resource type="PackedScene" uid="uid://bo57225uw37r" path="res://HUD/fight/fight_speed.tscn" id="9_xipko"]
 [ext_resource type="PackedScene" uid="uid://cep6lg538cur4" path="res://HUD/fight/health_bar.tscn" id="10_n8ub4"]
 [ext_resource type="Script" path="res://HUD/fight/player_info_container.gd" id="12_055ji"]
+[ext_resource type="Script" path="res://HUD/fight/fight_settlement.gd" id="17_86546"]
 [ext_resource type="AudioStream" uid="uid://dq7s4bnwi678s" path="res://music/sound_effect/select.wav" id="17_up6kn"]
+[ext_resource type="PackedScene" uid="uid://cg0qxecyug802" path="res://HUD/fight/player_earn_experience.tscn" id="18_6k7o2"]
+[ext_resource type="Shader" path="res://shader/gradient_l.gdshader" id="19_6d87o"]
+[ext_resource type="Shader" path="res://shader/gradient_r.gdshader" id="19_ri345"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tr55t"]
 sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
@@ -79,9 +83,17 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ahxf"]
+shader = ExtResource("19_ri345")
+shader_parameter/vignette_rgb = Vector4(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_754nb"]
+shader = ExtResource("19_6d87o")
+shader_parameter/vignette_rgb = Vector4(0, 0, 0, 0)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4pwpo"]
 shader = ExtResource("4_hwtqj")
-shader_parameter/vignette_intensity = 0.785
+shader_parameter/vignette_intensity = 1.065
 shader_parameter/vignette_opacity = 1.0
 shader_parameter/vignette_rgb = Vector4(0, 0, 0, 1)
 
@@ -259,17 +271,6 @@ offset_bottom = 159.0
 grow_horizontal = 2
 text = "普通一击"
 
-[node name="ColorRect" type="ColorRect" parent="FightHUD"]
-material = SubResource("ShaderMaterial_4pwpo")
-layout_mode = 0
-offset_left = 937.0
-offset_top = 115.0
-offset_right = 1137.0
-offset_bottom = 115.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
 [node name="FightMenu" type="VBoxContainer" parent="FightHUD"]
 visible = false
 layout_mode = 1
@@ -300,6 +301,167 @@ grow_vertical = 2
 
 [node name="ButtonAudio" type="AudioStreamPlayer3D" parent="FightHUD/FightMenuNextLv"]
 stream = ExtResource("17_up6kn")
+
+[node name="FightSettlement" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("17_86546")
+player_earn_experience_scene = ExtResource("18_6k7o2")
+
+[node name="FightResult" type="VBoxContainer" parent="FightSettlement"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = 34.0
+offset_right = 404.0
+offset_bottom = -28.0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FightSettlement/FightResult"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FightSettlement/FightResult/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 47
+text = "战斗结果"
+
+[node name="HSeparator" type="HSeparator" parent="FightSettlement/FightResult/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_l5pgd")
+
+[node name="EarnCoins" type="HBoxContainer" parent="FightSettlement/FightResult"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="FightSettlement/FightResult/EarnCoins"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 30
+text = "金币"
+
+[node name="CoinsLabel" type="Label" parent="FightSettlement/FightResult/EarnCoins"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 30
+text = "135"
+
+[node name="EarnExperience" type="HBoxContainer" parent="FightSettlement/FightResult"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="FightSettlement/FightResult/EarnExperience"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 30
+text = "经验"
+
+[node name="ExperienceLabel" type="Label" parent="FightSettlement/FightResult/EarnExperience"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 30
+text = "163"
+
+[node name="HSeparator2" type="HSeparator" parent="FightSettlement/FightResult"]
+layout_mode = 2
+theme = ExtResource("9_l5pgd")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="FightSettlement"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 831.0
+offset_top = 50.0
+offset_right = 1123.0
+offset_bottom = -28.0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FightSettlement/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FightSettlement/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 25
+text = "获得道具"
+
+[node name="HSeparator" type="HSeparator" parent="FightSettlement/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_l5pgd")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="FightSettlement/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="FightSettlement/VBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 20
+text = "茶叶蛋"
+
+[node name="Label3" type="Label" parent="FightSettlement/VBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 20
+text = "X3"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="FightSettlement/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="FightSettlement/VBoxContainer2/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 20
+text = "泡面"
+
+[node name="Label3" type="Label" parent="FightSettlement/VBoxContainer2/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("9_l5pgd")
+theme_override_font_sizes/font_size = 20
+text = "X4"
+
+[node name="ColorRect" type="ColorRect" parent="FightSettlement"]
+material = SubResource("ShaderMaterial_5ahxf")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -660.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.152941, 0.152941, 0.152941, 0.392157)
+
+[node name="ColorRect2" type="ColorRect" parent="FightSettlement"]
+material = SubResource("ShaderMaterial_754nb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 800.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.152941, 0.152941, 0.152941, 0.392157)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_4pwpo")
+offset_left = 937.0
+offset_top = 115.0
+offset_right = 1137.0
+offset_bottom = 115.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [connection signal="uint_fighting" from="FightHUD/FightSpeedPath" to="." method="_on_fight_speed_path_uint_fighting"]
 

@@ -152,3 +152,13 @@ func clear_fight_speed(path_arr, current_fight_id):
 			path_arr.remove_at(i)
 			fight_speed.queue_free()
 			break
+
+
+## 战斗进度暂停
+func fight_stop():
+	set_process(false)
+
+
+## 战斗进度恢复
+func fight_restore():
+	set_process(true)

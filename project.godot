@@ -17,6 +17,11 @@ run/main_scene="res://base.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
 
+[autoload]
+
+AttackData="*res://data/attack_data.gd"
+PlayerData="*res://data/player_data.gd"
+
 [editor]
 
 version_control/plugin_name="GitPlugin"
