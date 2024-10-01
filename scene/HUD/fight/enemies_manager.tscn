@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://dp57x3o4oj7c2"]
+
+[ext_resource type="Script" path="res://scene/HUD/fight/enemies_manager.gd" id="1_p24b4"]
+[ext_resource type="PackedScene" uid="uid://wcbdibb1ugdx" path="res://scene/characters/enemies/enemy.tscn" id="2_l8xhc"]
+
+[node name="EnemiesManager" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.09614, 0.0231524, -1.51385)
+script = ExtResource("1_p24b4")
+enemy_scene = ExtResource("2_l8xhc")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0.499716, 1, -0.146484)
+light_color = Color(0.972549, 0.560784, 0.321569, 1)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, -1.735, 1, 0.360018)
+light_color = Color(0.972549, 0.560784, 0.321569, 1)
+
+[node name="EnemiesMarker4" type="Node3D" parent="."]
+visible = false
+
+[node name="Marker3D" type="Marker3D" parent="EnemiesMarker4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.106442, 0.839271, 2.57322)
+
+[node name="Marker3D2" type="Marker3D" parent="EnemiesMarker4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.16655, 0.982829, 1.54698)
+
+[node name="Marker3D3" type="Marker3D" parent="EnemiesMarker4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0592, 0.89515, 2.02352)
+
+[node name="Marker3D4" type="Marker3D" parent="EnemiesMarker4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.635193, 0.898301, 1.17954)
+
+[node name="EnemiesMarker3" type="Node3D" parent="."]
+visible = false
+
+[node name="Marker3D" type="Marker3D" parent="EnemiesMarker3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.105553, 0.839271, 2.57322)
+
+[node name="Marker3D2" type="Marker3D" parent="EnemiesMarker3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9918, 0.982829, 1.54698)
+
+[node name="Marker3D3" type="Marker3D" parent="EnemiesMarker3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.71602, 0.89515, 2.02352)
+
+[node name="EnemiesMarker2" type="Node3D" parent="."]
+
+[node name="Marker3D" type="Marker3D" parent="EnemiesMarker2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45739, 0.839271, 2.12626)
+
+[node name="Marker3D2" type="Marker3D" parent="EnemiesMarker2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.60711, 0.982829, 1.37229)
+
+[node name="EnemiesMarker1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46747, 0, 0)
+visible = false
+
+[node name="Marker3D" type="Marker3D" parent="EnemiesMarker1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.361657, 0.839271, 1.51741)

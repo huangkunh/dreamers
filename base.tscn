@@ -1,11 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfvtakknajnao"]
+[gd_scene load_steps=18 format=3 uid="uid://dfvtakknajnao"]
 
-[ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://city/aoduo_city.tscn" id="1_ekfak"]
+[ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://scene/city/aoduo_city.tscn" id="1_ekfak"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="2_2dl5q"]
-[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://characters/hero/player.tscn" id="3_5ckbh"]
-[ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://particles/luminous_particles.tscn" id="4_tacn8"]
-[ext_resource type="Shader" path="res://shader/vignette.gdshader" id="5_kbaj2"]
-[ext_resource type="PackedScene" uid="uid://dwyk8l3vogkja" path="res://particles/light.tscn" id="6_11jsn"]
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scene/characters/hero/player.tscn" id="3_5ckbh"]
+[ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="4_tacn8"]
+[ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="5_kbaj2"]
+[ext_resource type="PackedScene" uid="uid://dwyk8l3vogkja" path="res://resource/particles/light.tscn" id="6_11jsn"]
+[ext_resource type="Shader" path="res://script/shader/cloud_shadow.gdshader" id="6_b55fc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
 sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
@@ -18,12 +19,12 @@ ground_curve = 0.342969
 sun_angle_max = 1.48
 sun_curve = 0.15529
 
-[sub_resource type="Sky" id="Sky_qiksu"]
+[sub_resource type="Sky" id="Sky_mklkd"]
 sky_material = SubResource("ProceduralSkyMaterial_btvy4")
 
 [sub_resource type="Environment" id="Environment_yhmfj"]
 background_mode = 2
-sky = SubResource("Sky_qiksu")
+sky = SubResource("Sky_mklkd")
 sky_custom_fov = 13.7
 sky_rotation = Vector3(3.6425, 0.678933, 0)
 ambient_light_color = Color(0.855578, 0.81829, 0.670234, 1)
@@ -58,6 +59,28 @@ density = 0.4665
 albedo = Color(0.817454, 0.915451, 0.836101, 1)
 emission = Color(0.73468, 0.73468, 0.73468, 1)
 edge_fade = 0.292817
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wmuhw"]
+noise_type = 0
+seed = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5j5xi"]
+noise = SubResource("FastNoiseLite_wmuhw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_06n1c"]
+render_priority = 0
+shader = ExtResource("6_b55fc")
+shader_parameter/threshold = 0.5
+shader_parameter/speed = 0.03
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/turbulence_frequency = 8.0
+shader_parameter/turbulence_amplitude = 0.05
+shader_parameter/turbulence_speed = 0.5
+shader_parameter/noise = SubResource("NoiseTexture2D_5j5xi")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_wle1l"]
+material = SubResource("ShaderMaterial_06n1c")
+size = Vector2(20, 20)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_28j7m"]
 shader = ExtResource("5_kbaj2")
@@ -121,6 +144,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.20596, 1.2304, -10.271)
 size = Vector3(3, 2, 2)
 shape = 2
 material = SubResource("FogMaterial_4j1lr")
+
+[node name="Cloud" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.337922, 2.69073, -6.35437)
+mesh = SubResource("PlaneMesh_wle1l")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_28j7m")

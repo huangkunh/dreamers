@@ -15,12 +15,12 @@ config/description="测试游戏画面DEMO"
 config/version="v0.01"
 run/main_scene="res://base.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
+config/icon="res://resource/tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
 
 [autoload]
 
-AttackData="*res://data/attack_data.gd"
-PlayerData="*res://data/player_data.gd"
+AttackData="*res://resource/data/attack_data.gd"
+PlayerData="*res://resource/data/player_data.gd"
 
 [editor]
 

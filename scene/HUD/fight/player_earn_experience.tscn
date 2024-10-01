@@ -1,0 +1,45 @@
+[gd_scene load_steps=3 format=3 uid="uid://cg0qxecyug802"]
+
+[ext_resource type="Script" path="res://scene/HUD/fight/player_earn_experience.gd" id="1_fqqyt"]
+[ext_resource type="PackedScene" uid="uid://calkbdnix4nht" path="res://scene/HUD/fight/experience_bar.tscn" id="1_pjowk"]
+
+[node name="PlayerEarnExperience" type="VBoxContainer"]
+script = ExtResource("1_fqqyt")
+
+[node name="PlayerExpLv" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PlayerExpLv"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "雷班纳
+"
+
+[node name="ExpLvLabel" type="Label" parent="PlayerExpLv"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "lv1"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+text = "经验"
+
+[node name="ExperienceLabel" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/font_size = 13
+text = "13/55"
+
+[node name="ExperienceBar" parent="." instance=ExtResource("1_pjowk")]
+layout_mode = 2
+
+[node name="HealthBarCure" parent="ExperienceBar" index="0"]
+stretch_margin_right = 0
+stretch_margin_bottom = 0
+
+[editable path="ExperienceBar"]
