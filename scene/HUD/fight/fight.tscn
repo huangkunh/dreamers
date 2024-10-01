@@ -1,7 +1,8 @@
-[gd_scene load_steps=36 format=3 uid="uid://c6ag5micepfpe"]
+[gd_scene load_steps=37 format=3 uid="uid://c6ag5micepfpe"]
 
 [ext_resource type="AudioStream" uid="uid://blcwx0es48qvb" path="res://music/background_music/battle.ogg" id="1_cp5d4"]
 [ext_resource type="Script" path="res://scene/HUD/fight/fight.gd" id="1_wrn30"]
+[ext_resource type="Script" path="res://scene/HUD/fight/fight_camera_3d.gd" id="3_17byo"]
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="3_u1roc"]
 [ext_resource type="PackedScene" uid="uid://dm280m52rs1ib" path="res://scene/characters/hero/fight_player.tscn" id="4_7qahb"]
 [ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="4_hwtqj"]
@@ -136,9 +137,10 @@ environment = SubResource("Environment_o36s7")
 stream = ExtResource("1_cp5d4")
 autoplay = true
 
-[node name="Camera3D2" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999681, -0.0252526, 0, 0.0252526, 0.999681, 0, 2.055, 3.963)
+[node name="fight_camera_3d" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.999695, -0.0247113, 0, 0.0247113, 0.999695, -0.0498824, 1.79347, 4.22456)
 attributes = SubResource("CameraAttributesPractical_72nv0")
+script = ExtResource("3_17byo")
 
 [node name="Light" parent="." instance=ExtResource("5_m4ro1")]
 transform = Transform3D(0.83708, 0.547081, 0, -0.547081, 0.83708, 0.00120428, 0.000658837, -0.00100808, 0.999999, -5.82057, 3.82425, -2.37595)

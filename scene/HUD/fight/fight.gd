@@ -11,6 +11,7 @@ extends Node3D
 @onready var fight_hud: Control = $FightHUD
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var fight_settlement: Control = $FightSettlement
+@onready var fight_camera_3d: Camera3D = $fight_camera_3d
 
 var enemy_data = load("res://resource/data/enemy_data.gd")
 var enemies_init_data = enemy_data.new().enemies_init_data
@@ -66,6 +67,9 @@ func _ready() -> void:
 	
 	# 生成战斗进度
 	fight_speed_path.init_fight_speed_Path(fighting_unit_map.values())
+	
+	# 移动摄像头
+	fight_camera_3d.move_horizontally(0.2, 2.0)
 	pass # Replace with function body.
 
 
@@ -118,6 +122,9 @@ func enemy_melee_foe_one(skill):
 	var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
 	player_scene.under_fire_label(skill_hurt, tween)
 	
+	# 摄像机运动
+	fight_camera_3d.look_at_target(player_scene.global_position, 0.1)
+	
 	# 玩家信息
 	var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
 	fighting_unit_palyer.current_health -= skill_hurt
@@ -138,6 +145,7 @@ func enemy_melee_foe_one(skill):
 	
 	# 单位战斗结束
 	tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+	tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
 	
 	
 ## 玩家攻击
@@ -156,14 +164,18 @@ func player_attck(attack_pointer_index):
 ## 玩家远程单体攻击
 ## attack_pointer_index 敌人索引
 func player_remote_foe_one(attack_pointer_index):
+	
 	# 武器攻击动画
 	var player_scene: CharacterBody3D = player_scene_map[fighting_id]
-	var enemy_scene = enemy_scene_map.values()[attack_pointer_index]
+	var enemy_scene:CharacterBody3D = enemy_scene_map.values()[attack_pointer_index]
 	var enemy_fight_id = enemy_scene.fight_id
 	var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
 	var weapons_tween = player_scene.create_tween()
 	player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
-
+	
+	# 摄像机运动
+	fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
+	
 	# 造成伤害 = 武器白刃战LV + 人物白刃战LV - 目标强度
 	var fight_unit = fighting_unit_map[fighting_id]
 	var enemy_death = enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
@@ -180,6 +192,7 @@ func player_remote_foe_one(attack_pointer_index):
 	# 单位战斗结束
 	weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
 	weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+	weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
 
 
 ## 清除战斗数据
@@ -222,6 +235,8 @@ func all_enemy_death():
 	fight_settlement.init_fight_settlement(settlement_data)
 	
 	fight_settlement.visible = true
+	fight_camera_3d.fight_end()
+
 
 ## 检测玩家死亡			
 func check_all_player_death()-> bool:
