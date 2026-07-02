@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bpe8dmd56ucgy"]
+
+[ext_resource type="Shader" path="res://script/shader/TreeWavingShader.gdshader" id="1_fk5cl"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_fk5cl")
+shader_parameter/sway_strength = 0.01
+shader_parameter/sway_speed = 2.0
+shader_parameter/sway_frequency = 5.0
+shader_parameter/sway_threshold = 0.5

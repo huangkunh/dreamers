@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://coh28r076xvyi"]
+
+[ext_resource type="Material" uid="uid://bpe8dmd56ucgy" path="res://resource/material/new_shader_material.tres" id="1_7gt5c"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_3pla7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_385mr"]
+sky_top_color = Color(0.347513, 0.768617, 0.884816, 1)
+sky_horizon_color = Color(0.636878, 0.734404, 0.754454, 1)
+ground_horizon_color = Color(0.636878, 0.734404, 0.754454, 1)
+
+[sub_resource type="Sky" id="Sky_ihdco"]
+sky_material = SubResource("ProceduralSkyMaterial_385mr")
+
+[sub_resource type="Environment" id="Environment_ppskg"]
+background_mode = 2
+sky = SubResource("Sky_ihdco")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Node3D" type="MeshInstance3D"]
+material_override = ExtResource("1_7gt5c")
+mesh = SubResource("QuadMesh_3pla7")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ppskg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.264221, 0.424489, 0, 0.848972, 0.528438, -0.500003, 0.45764, -0.735229, 0, 0, 0)
+light_color = Color(0.962185, 0.766538, 0.384759, 1)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)

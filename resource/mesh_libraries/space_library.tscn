@@ -1,10 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://cnvdm51qwp3xi"]
+[gd_scene load_steps=17 format=3 uid="uid://cnvdm51qwp3xi"]
 
 [ext_resource type="Texture2D" uid="uid://c42nkag0pxhcl" path="res://resource/tilesets/floor.png" id="1_8ka54"]
 [ext_resource type="Texture2D" uid="uid://bx146eilv7nmp" path="res://resource/tilesets/floor_n.png" id="2_23bjj"]
 [ext_resource type="Texture2D" uid="uid://bar6llu1vwgrh" path="res://resource/tilesets/tree.png" id="2_ffr2l"]
-[ext_resource type="Shader" path="res://script/shader/tree_swing.gdshader" id="3_kk23y"]
 [ext_resource type="Texture2D" uid="uid://b33xiyrljqqya" path="res://resource/tilesets/tree_n.png" id="3_u4d5n"]
+[ext_resource type="Material" uid="uid://bpe8dmd56ucgy" path="res://resource/material/new_shader_material.tres" id="5_aivwq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p5ng1"]
 transparency = 2
@@ -21,21 +21,24 @@ material = SubResource("StandardMaterial3D_p5ng1")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_nwmm5"]
 data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_gm75w"]
-render_priority = 0
-shader = ExtResource("3_kk23y")
-shader_parameter/transmission = Color(0.823529, 0.513726, 0.513726, 1)
-shader_parameter/sway_speed = 1.0
-shader_parameter/sway_strength = 0.05
-shader_parameter/sway_phase_len = 8.0
-shader_parameter/texture_albedo = ExtResource("2_ffr2l")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t1d7k"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("2_ffr2l")
+normal_enabled = true
+normal_texture = ExtResource("3_u4d5n")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_nsf38"]
-material = SubResource("ShaderMaterial_gm75w")
+material = SubResource("StandardMaterial3D_t1d7k")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_61r8x"]
 radius = 0.845612
 height = 1.90827
+
+[sub_resource type="QuadMesh" id="QuadMesh_vnbli"]
+material = ExtResource("5_aivwq")
+size = Vector2(2, 2)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0vbj"]
 transparency = 2
@@ -86,8 +89,9 @@ transform = Transform3D(1, 0, 0, 0, -0.18877, 0.982022, 0, -0.982022, -0.18877, 
 shape = SubResource("CapsuleShape3D_61r8x")
 
 [node name="Tree4" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.9, 0)
-mesh = SubResource("PlaneMesh_nsf38")
+transform = Transform3D(1, 0, 0, 0, 0.995266, -0.0971835, 0, 0.0971835, 0.995266, 0, 0.9, 0)
+material_override = ExtResource("5_aivwq")
+mesh = SubResource("QuadMesh_vnbli")
 
 [node name="StaticBody3D2" type="StaticBody3D" parent="Tree4"]
 

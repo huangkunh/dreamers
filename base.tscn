@@ -60,26 +60,24 @@ albedo = Color(0.817454, 0.915451, 0.836101, 1)
 emission = Color(0.73468, 0.73468, 0.73468, 1)
 edge_fade = 0.292817
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wmuhw"]
-noise_type = 0
-seed = 1
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wwdkp"]
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5j5xi"]
-noise = SubResource("FastNoiseLite_wmuhw")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qgre1"]
+noise = SubResource("FastNoiseLite_wwdkp")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_06n1c"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0h5rh"]
 render_priority = 0
 shader = ExtResource("6_b55fc")
 shader_parameter/threshold = 0.5
-shader_parameter/speed = 0.03
+shader_parameter/speed = 0.01
 shader_parameter/uv_scale = Vector2(1, 1)
 shader_parameter/turbulence_frequency = 8.0
 shader_parameter/turbulence_amplitude = 0.05
-shader_parameter/turbulence_speed = 0.5
-shader_parameter/noise = SubResource("NoiseTexture2D_5j5xi")
+shader_parameter/turbulence_speed = 0.01
+shader_parameter/noise = SubResource("NoiseTexture2D_qgre1")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wle1l"]
-material = SubResource("ShaderMaterial_06n1c")
+material = SubResource("ShaderMaterial_0h5rh")
 size = Vector2(20, 20)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_28j7m"]
