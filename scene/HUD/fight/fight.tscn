@@ -248,6 +248,24 @@ grow_vertical = 2
 script = ExtResource("17_86546")
 player_earn_experience_scene = ExtResource("18_6k7o2")
 
+[node name="ConfirmLabel" type="Label" parent="FightSettlement"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -60.0
+offset_right = 150.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 20
+text = "按 Enter 返回"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="ColorRect" type="ColorRect" parent="FightSettlement"]
 material = SubResource("ShaderMaterial_5ahxf")
 layout_mode = 1
