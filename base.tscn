@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dfvtakknajnao"]
+[gd_scene load_steps=19 format=3 uid="uid://dfvtakknajnao"]
 
 [ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://scene/city/aoduo_city.tscn" id="1_ekfak"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="2_2dl5q"]
@@ -7,6 +7,7 @@
 [ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="5_kbaj2"]
 [ext_resource type="PackedScene" uid="uid://dwyk8l3vogkja" path="res://resource/particles/light.tscn" id="6_11jsn"]
 [ext_resource type="Shader" path="res://script/shader/cloud_shadow.gdshader" id="6_b55fc"]
+[ext_resource type="Script" path="res://script/system/city_explorer.gd" id="8_city"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
 sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
@@ -87,6 +88,7 @@ shader_parameter/vignette_opacity = 0.5
 shader_parameter/vignette_rgb = Vector4(0, 0, 0, 1)
 
 [node name="Base" type="Node3D"]
+script = ExtResource("8_city")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.90633, 0.223303, -0.358751, 1.93551e-08, 0.848972, 0.528438, 0.422571, -0.478939, 0.769449, 0.0971565, 4.969, -1.5083)
