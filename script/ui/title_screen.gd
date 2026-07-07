@@ -19,10 +19,16 @@ var _menu_buttons: Array[Button] = []
 
 func _ready() -> void:
         # 设置版本号
-        version_label.text = "v0.02 - HD-2D Demo"
+        version_label.text = "v0.05 - Phase 5"
 
         # 收集菜单按钮
         _menu_buttons = [new_game_btn, continue_btn, options_btn, exit_btn]
+
+        # 检查存档
+        if SaveSystem and SaveSystem.has_save_data():
+                continue_btn.disabled = false
+        else:
+                continue_btn.disabled = true
 
         # 连接按钮信号
         new_game_btn.pressed.connect(_on_new_game)
@@ -97,8 +103,13 @@ func _on_new_game() -> void:
         GameFlow.start_new_game()
 
 func _on_continue() -> void:
-        print("[TitleScreen] 继续游戏（暂未实现存档功能）")
-        # TODO: 加载存档
+        if SaveSystem and SaveSystem.has_save_data():
+                print("[TitleScreen] 加载存档")
+                SaveSystem.load_game()
+                GameFlow.current_state = GameFlow.GameState.WORLD_MAP
+                GameFlow.change_scene("world_map")
+        else:
+                print("[TitleScreen] 无存档可加载")
 
 func _on_options() -> void:
         print("[TitleScreen] 选项（暂未实现）")

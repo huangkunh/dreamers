@@ -1,0 +1,102 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://script/ui/shop_system.gd" id="1_shop"]
+
+[node name="ShopSystem" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shop")
+
+[node name="ShopPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ShopPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShopPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleBar" type="HBoxContainer" parent="ShopPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ShopPanel/MarginContainer/VBoxContainer/TitleBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 24
+text = "商店"
+
+[node name="CoinsLabel" type="Label" parent="ShopPanel/MarginContainer/VBoxContainer/TitleBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 20
+text = "💰 0"
+horizontal_alignment = 2
+
+[node name="HSeparator" type="HSeparator" parent="ShopPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ShopPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemList" type="ItemList" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(350, 0)
+
+[node name="InfoPanel" type="VBoxContainer" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ModeLabel" type="Label" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "购买模式"
+
+[node name="InfoLabel" type="RichTextLabel" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "选择物品查看详情"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="BuyButton" type="Button" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 36)
+text = "购买"
+
+[node name="SellButton" type="Button" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 36)
+text = "出售"
+
+[node name="CloseButton" type="Button" parent="ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 36)
+text = "离开"
