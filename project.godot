@@ -22,6 +22,7 @@ config/icon="res://resource/tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071
 AttackData="*res://resource/data/attack_data.gd"
 PlayerData="*res://resource/data/player_data.gd"
 GameFlow="*res://script/autoload/game_flow.gd"
+GameData="*res://script/autoload/game_data.gd"
 
 [editor]
 

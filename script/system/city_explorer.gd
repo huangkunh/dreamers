@@ -1,12 +1,16 @@
 extends Node3D
 ## 城市探索管理器 (CityExplorer)
-## 管理城市探索模式，处理随机遇敌、返回世界地图等
+## 管理城市探索模式，处理随机遇敌、暂停菜单、返回世界地图等
+
+const PAUSE_MENU_SCENE := preload("res://scene/ui/pause_menu.tscn")
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var player: CharacterBody3D = $Player
 
 ## 随机遇敌系统
 var _encounter_system: Node
+## 暂停菜单
+var _pause_menu: Control
 
 func _ready() -> void:
 	# 确保背景音乐播放
@@ -24,15 +28,21 @@ func _ready() -> void:
 		_encounter_system.encounter_triggered.connect(_on_encounter)
 		player.add_child(_encounter_system)
 
+	# 实例化暂停菜单（初始隐藏）
+	_pause_menu = PAUSE_MENU_SCENE.instantiate()
+	add_child(_pause_menu)
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
 			KEY_ESCAPE:
-				# 返回世界地图
-				GameFlow.return_to_world_map()
+				if _pause_menu and _pause_menu.visible:
+					_pause_menu.close()
+				else:
+					GameFlow.return_to_world_map()
 			KEY_M:
-				# 打开菜单 (TODO)
-				print("[CityExplorer] 菜单键按下")
+				if _pause_menu:
+					_pause_menu.toggle()
 
 ## 遇敌回调
 func _on_encounter() -> void:
