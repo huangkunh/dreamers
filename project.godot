@@ -23,6 +23,7 @@ AttackData="*res://resource/data/attack_data.gd"
 PlayerData="*res://resource/data/player_data.gd"
 GameFlow="*res://script/autoload/game_flow.gd"
 GameData="*res://script/autoload/game_data.gd"
+TankSystem="*res://script/autoload/tank_system.gd"
 
 [editor]
 

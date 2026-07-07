@@ -127,11 +127,11 @@ func _refresh_inventory() -> void:
 	for item in GameData.inventory:
 		var prefix := ""
 		match item.type:
-			Item.ItemType.CONSUMABLE: prefix = "🧪 "
-			Item.ItemType.WEAPON: prefix = "⚔ "
-			Item.ItemType.ARMOR: prefix = "🛡 "
-			Item.ItemType.ACCESSORY: prefix = "💍 "
-			Item.ItemType.KEY_ITEM: prefix = "🔑 "
+			GameData.Item.ItemType.CONSUMABLE: prefix = "🧪 "
+			GameData.Item.ItemType.WEAPON: prefix = "⚔ "
+			GameData.Item.ItemType.ARMOR: prefix = "🛡 "
+			GameData.Item.ItemType.ACCESSORY: prefix = "💍 "
+			GameData.Item.ItemType.KEY_ITEM: prefix = "🔑 "
 		var count_str := " x%d" % item.count if item.count > 1 else ""
 		_inventory_list.add_item(prefix + item.name + count_str)
 
@@ -144,7 +144,7 @@ func _on_item_activated(index: int) -> void:
 	desc_label.text = item.name + " - " + item.description
 
 	# 如果是消耗品，使用
-	if item.type == Item.ItemType.CONSUMABLE:
+	if item.type == GameData.Item.ItemType.CONSUMABLE:
 		var target = GameData.get_active_party()[0] if GameData.get_active_party().size() > 0 else null
 		if target:
 			GameData.use_consumable(item.id, target)
