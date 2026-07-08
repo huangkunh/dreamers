@@ -6,6 +6,7 @@ const PAUSE_MENU_SCENE := preload("res://scene/ui/pause_menu.tscn")
 const TANK_HUD_SCENE := preload("res://scene/ui/tank_hud.tscn")
 const DIALOG_SCENE := preload("res://scene/ui/dialog_system.tscn")
 const SHOP_SCENE := preload("res://scene/ui/shop_system.tscn")
+const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var player: CharacterBody3D = $Player
@@ -15,6 +16,8 @@ var _pause_menu: Control
 var _tank_hud: Control
 var _dialog_system: Control
 var _shop_system: Control
+## DialogueManager 对话框 (新系统)
+var _dialogue_box: Control
 var _in_tank: bool = false
 var _nearby_npc: Node3D = null
 var area_id: String = "aoduo"
@@ -30,10 +33,15 @@ func _ready() -> void:
 	# 设置区域ID
 	area_id = GameManager.get_current_area()
 
+	# 将玩家加入player组 (供NPC交互检测)
+	if player:
+		player.add_to_group("player")
+
 	# 添加随机遇敌系统到玩家
 	if player:
 		_encounter_system = load("res://script/system/random_encounter.gd").new()
 		_encounter_system.encounter_rate = 0.015
+		_encounter_system.min_steps_between_encounters = 8
 		_encounter_system.area_id = area_id
 		_encounter_system.encounter_triggered.connect(_on_encounter)
 		player.add_child(_encounter_system)
@@ -54,10 +62,14 @@ func _ready() -> void:
 	_shop_system = SHOP_SCENE.instantiate()
 	add_child(_shop_system)
 
+	# 实例化 DialogueManager 对话框 (新系统)
+	_dialogue_box = DIALOGUE_BOX_SCENE.instantiate()
+	add_child(_dialogue_box)
+	DialogueManager.set_dialogue_box(_dialogue_box)
+
 	# 初始化战车
 	var owned = TankSystem.get_owned_tanks()
 	if owned.size() > 0 and not _in_tank:
-		# 不自动上车，让玩家选择
 		pass
 
 	print("[CityExplorer] 区域: %s, 遇敌率: %.3f" % [area_id, _encounter_system.encounter_rate])
@@ -67,6 +79,12 @@ func _process(delta: float) -> void:
 	GameData.play_time += delta
 
 func _unhandled_input(event: InputEvent) -> void:
+	# DialogueManager 对话进行中时，按确认键推进对话
+	if DialogueManager.is_active():
+		if event.is_action_pressed("ui_accept"):
+			DialogueManager.advance()
+		return
+
 	if event.is_action_pressed("menu"):
 		if _pause_menu and not _dialog_system.visible and not _shop_system.visible:
 			_pause_menu.toggle()
@@ -79,7 +97,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _shop_system and _shop_system.visible:
 			_shop_system.close_shop()
 		elif _dialog_system and _dialog_system.visible:
-			# 对话系统自己处理
 			pass
 
 ## NPC交互

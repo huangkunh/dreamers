@@ -1,235 +1,181 @@
-# Metal Max Returns HD-2D 复刻 — 项目规划
+# Metal Max Returns HD-2D 复刻 - 项目计划
 
-> **项目名称**: DREAMERS  
-> **仓库**: https://github.com/huangkunh/dreamers  
-> **引擎**: Godot 4.3 (Forward+ 渲染)  
-> **语言**: GDScript 2.0  
-> **最后更新**: 2026-07-08  
+## 项目状态总结 (2026-07-08)
 
----
+### 已完成功能
 
-## 1. 当前项目状态总结
-
-### 已完成功能 (Phase 1-5)
-
-| 模块 | 状态 | 关键文件 |
-|------|------|----------|
-| 标题画面 | ✅ | `scene/ui/title_screen.tscn`, `script/ui/title_screen.gd` |
-| 世界地图 | ✅ | `scene/ui/world_map.tscn`, `script/ui/world_map.gd` (5个区域) |
-| 城市探索 | ✅ | `base.tscn`, `script/system/city_explorer.gd` |
-| 荒野场景 | ⚠️ 半成品 | `scene/city/wasteland.tscn` (缺环境资源) |
-| 回合制战斗 | ✅ | `scene/HUD/fight/fight.tscn`, `fight.gd` |
-| 战斗HUD | ✅ | 血条/速度条/技能名/结算画面 |
-| 随机遇敌 | ✅ | `script/system/random_encounter.gd` |
-| 暂停菜单 | ✅ | `scene/ui/pause_menu.tscn` (队伍/背包/存档) |
-| 存档系统 | ✅ | `script/autoload/save_system.gd` |
-| 对话系统 | ✅ | `script/ui/dialog_system.gd` + `.tscn` |
-| 商店系统 | ✅ | `script/ui/shop_system.gd` + `.tscn` |
-| 赏金首系统 | ✅ | `script/autoload/bounty_system.gd` (5个赏金首) |
-| 战车系统 | ✅ | `script/autoload/tank_system.gd` |
-| NPC交互 | ✅ | `scene/characters/npc/npc.gd` + `.tscn` |
-| HD-2D 着色器 | ✅ | 10个gdshader (景深/晕影/云影/树摇等) |
-
-### 已有素材
-
-| 类型 | 数量 | 说明 |
+| 系统 | 状态 | 说明 |
 |------|------|------|
-| 玩家精灵 | 2 | `hero.png` + `hero_normal.png` (法线贴图) |
-| 战斗玩家 | 4 | `fight_player.png`, `figth_animated.png`, `weapons.png`, `player_death.png` |
-| 敌人精灵 | 5 | 火焰枪/炮台/巨型蚂蚁/酸液蚂蚁/变形虫 (各有法线贴图) |
-| VFX | 3 | 石头/远程命中/武器样本 |
-| UI素材 | 3 | 指针/面板边框/分割线 |
-| BGM | 3 | 战斗/探索/失败 |
-| SFX | 7 | 攻击/命中/胜利/失败/选择/确认/武器石 |
-| 字体 | 1 | `fang_zheng_hei.ttf` |
+| 游戏流程管理 | ✅ 完成 | GameFlow autoload，场景切换+淡入淡出过渡 |
+| 标题画面 | ✅ 完成 | HD-2D风格，沙尘粒子，菜单导航 |
+| 世界地图 | ✅ 完成 | 区域选择列表（奥多市/荒野/遗迹/赏金首） |
+| 城市探索 | ✅ 完成 | 3D场景+GridMap，ESC返回，M键菜单 |
+| 战斗系统 | ✅ 基础完成 | 回合制，速度条，攻击动画，结算画面 |
+| 随机遇敌 | ✅ 完成 | 基于移动距离触发 |
+| 战斗过渡 | ✅ 完成 | 白闪→合拢→战斗文字动画 |
+| 伤害数字 | ✅ 完成 | 3D Label弹出，4种类型 |
+| 队伍/背包 | ✅ 基础完成 | GameData autoload，Item/PartyMember类 |
+| 暂停菜单 | ✅ 基础完成 | 队伍状态/背包分页 |
+| 战车系统 | ✅ 基础完成 | TankSystem autoload，HUD，上下车切换 |
+| HD-2D着色器 | ✅ 完成 | 景深、暗角、云影等10个着色器 |
 
-### 架构分析
+### 当前代码规模
+- GD脚本: 30 个
+- 场景文件: 21 个
+- 着色器: 10 个
+- Autoload单例: 5 个 (AttackData, PlayerData, GameFlow, GameData, TankSystem)
+- 项目体积: ~49MB
 
-**Autoload 单例 (7个)**:
-```
-AttackData  → 武器/技能数据定义
-PlayerData  → 玩家角色数据
-GameFlow    → 场景切换/游戏状态
-GameData    → 队伍/背包/金钱/时间全局状态
-TankSystem  → 战车数据/装备/上下车
-SaveSystem  → JSON存档/读档
-BountySystem → 赏金首状态管理
-BattleEffects → 战斗视觉特效
-ShopData    → 商店物品库存
-NPCData     → NPC对话脚本
-```
+### 存在的问题与不足
 
-**目录结构问题**:
-- 目录命名不统一 (`scene/` vs `scenes/`, `script/` vs `scripts/`, `resource/` vs `assets/`)
-- 数据文件混放在 `resource/data/` 而非 `scripts/data/`
-- 缺少 `docs/`, `exports/` 目录
-- 缺少标准的 Godot 项目结构
-
-### 关键技术债
-
-1. **enemy_data.gd 与 attack_data.gd 枚举重复定义** — `Attack_Type` 和 `Attack_Target` 在两个文件各定义了一份
-2. **player_data.gd 使用硬编码 Dictionary** — 与 GameData.PartyMember 类不统一
-3. **fight.gd 里 enemy_data 用 `load().new()` 实例化** — Autoload 已注册但没使用
-4. **荒野敌人缺少精灵图** — `albedo_texture_path` 为空字符串
-5. **wasteland.tscn 引用 `default_env.tres`** — 文件不存在
-6. **BattleEffects 注册为 Autoload 但 extends Node** — 应为静态工具类或 Node 子类
-7. **city_explorer.gd 被重写后可能丢失原有功能** — 需验证暂停菜单/战车切换完整性
+1. **目录结构不规范** — 使用 `scene/` 而非 `scenes/`，`resource/` 而非 `assets/`
+2. **玩家移动仅4方向** — 需改为8方向移动
+3. **无对话系统** — 缺少RPG核心的对话框/NPC交互
+4. **无存档系统** — 无法保存进度
+5. **ROM素材未整合** — 已提取的素材未导入项目
+6. **战斗系统不完整** — 缺少技能系统、状态效果、战车战斗
+7. **无C装置系统** — Metal Max标志性的战车C装置未实现
+8. **无赏金首系统** — 核心玩法缺失
+9. **数值不平衡** — 敌人/玩家属性需要调整
 
 ---
 
-## 2. 技术选型说明
+## 技术选型说明
 
-### 渲染器
-- **Forward+** (已选定): 适合 HD-2D 风格，支持高级光照/阴影/体积雾
-- 目标分辨率: 1920×1080 (默认), 支持 1280×720 最小
-- 像素艺术使用 `Nearest` 纹理过滤
+### 引擎与渲染
+- **引擎**: Godot 4.3 稳定版
+- **渲染器**: Forward+ (桌面平台，支持高级光照和体积雾)
+- **色彩空间**: sRGB (默认)
 
 ### 碰撞层规划
 | 层 | 名称 | 用途 |
 |----|------|------|
 | 1 | Player | 玩家角色 |
-| 2 | Enemy | 敌人/怪物 |
+| 2 | Enemy | 敌人 |
 | 3 | NPC | 可交互NPC |
-| 4 | Environment | 建筑/障碍物 |
-| 5 | Trigger | 事件触发区域 |
-| 6 | Projectile | 射弹/飞行物 |
+| 4 | Terrain | 地形/墙壁 |
+| 5 | Trigger | 事件触发器 |
+| 6 | Tank | 战车 |
+| 7 | Projectile | 弹射物 |
 
-### 输入映射 (已配置)
-| 动作名 | 按键 | 用途 |
-|--------|------|------|
-| `ui_up/down/left/right` | 方向键/WASD | 移动/菜单 |
-| `ui_accept` | Enter/Space | 确认/对话 |
-| `ui_cancel` | ESC | 返回/取消 |
-| `menu` | M | 暂停菜单 |
-| `interact` | E | NPC交互 |
-| `tank_toggle` | T | 上下战车 |
-
-### HD-2D 风格技术栈
-- **3D场景 + 2D像素精灵**: `AnimatedSprite3D` + `StandardMaterial3D` (alpha_cut=2, shaded=true)
-- **景深效果**: `depth_of_field.gdshader` (已实现)
-- **晕影效果**: `vignette.gdshader` (已实现)
-- **体积雾**: `FogVolume` 节点 (已在 base.tscn 中使用)
-- **云影**: `simulating_cloud_shadows.gdshader` (已实现)
-- **法线贴图**: 像素精灵带法线贴图增强立体感 (已实现)
+### 输入映射
+| 动作 | 按键 | 用途 |
+|------|------|------|
+| move_up | W/↑ | 向上移动 |
+| move_down | S/↓ | 向下移动 |
+| move_left | A/← | 向左移动 |
+| move_right | D/→ | 向右移动 |
+| interact | E/Enter | 交互/确认 |
+| cancel | ESC | 取消/返回 |
+| menu | M | 打开菜单 |
+| tank_toggle | T | 上下战车 |
+| battle_attack | Space | 战斗中攻击 |
 
 ---
 
-## 3. 目录结构规范
+## 目录结构规范
 
-### 目标结构 (逐步迁移)
+当前项目使用非标准目录，将逐步迁移至以下规范结构：
+
 ```
 dreamers/
-├── docs/                   # 项目文档
-│   ├── project_plan.md     # 本文件
-│   ├── development.md      # 开发文档
-│   └── assets_credits.md   # 素材来源
-├── scenes/                 # 游戏场景 (从 scene/ 重命名)
-│   ├── main/               # 主场景/入口
-│   ├── ui/                 # UI场景
-│   ├── world/              # 世界地图与城镇
-│   └── battle/             # 战斗场景
-├── scripts/                # 脚本 (从 script/ 重命名)
-│   ├── autoload/           # 自动加载单例
-│   ├── components/         # 可复用组件
-│   ├── data/               # 数据定义
-│   └── utils/              # 工具函数
-├── resources/              # 导入后的资源 (从 resource/ 重命名)
-│   ├── sprites/            # 精灵图
-│   ├── tilesets/           # 瓦片集
-│   ├── shaders/            # 着色器
-│   ├── materials/          # 材质
-│   ├── themes/             # UI主题
-│   ├── particles/          # 粒子效果
-│   └── data/               # 数据文件
-├── audio/                  # 音频资源 (从 music/ 重命名)
-│   ├── bgm/                # 背景音乐
-│   └── sfx/                # 音效
-├── addons/                 # 插件
-├── exports/                # 导出预设
+├── docs/                 # 项目文档
+│   ├── project_plan.md   # 本文档
+│   ├── development.md    # 开发文档
+│   └── assets_credits.md # 素材来源
+├── scenes/               # 游戏场景 (迁移自 scene/)
+│   ├── main/             # 主场景
+│   ├── ui/               # UI场景
+│   ├── world/            # 世界地图与城镇
+│   └── battle/           # 战斗场景
+├── scripts/              # 脚本 (迁移自 script/)
+│   ├── autoload/         # 自动加载单例
+│   ├── components/       # 可复用组件
+│   ├── data/             # 数据定义
+│   └── utils/            # 工具函数
+├── assets/               # 资源 (迁移自 resource/ + music/)
+│   ├── sprites/          # 精灵图
+│   ├── tilesets/         # 图块集
+│   ├── audio/            # 音频
+│   ├── fonts/            # 字体
+│   └── data/             # 数据文件
+├── shaders/              # 着色器
 ├── project.godot
 └── export_presets.cfg
 ```
 
-> **注意**: 目录重命名涉及大量 import 路径更新，将在 Phase 3 统一处理。当前阶段保持现有结构。
+> 注：目录迁移将分阶段进行，避免破坏现有功能。
 
 ---
 
-## 4. 下一步工作计划
+## 阶段任务清单
 
-### 第一阶段：奠基与核心系统修复 (当前)
+### 第一阶段：奠基与核心系统 (当前进行中)
 
-#### 4.1.1 架构修复 (优先级: P0)
-- [ ] 修复 `default_env.tres` 缺失问题
-- [ ] 统一 `AttackData` 枚举，消除重复定义
-- [ ] 修复 `enemy_data.gd` 中荒野敌人缺少精灵图的问题 (生成占位图)
-- [ ] 修复 `fight.gd` 使用 Autoload 而非 `load().new()`
-- [ ] 验证 `city_explorer.gd` 完整性 (暂停菜单/战车/对话/商店)
+#### 1.1 核心系统补全
+- [ ] 8方向玩家移动
+- [ ] 对话系统 (DialogueManager + 对话框UI)
+- [ ] 存档系统 (SaveManager)
+- [ ] NPC交互系统
+- [ ] 事件触发器系统
 
-#### 4.1.2 像素素材生成
-- [ ] 为荒野敌人生成占位像素精灵 (沙漠鼠/沙虫/暴走族)
-- [ ] 为赏金首生成占位像素精灵 (巨蝶/失控坦克/蚁后)
-- [ ] 生成 NPC 占位精灵 (酒吧老板/机械师/公会会长等)
-- [ ] 生成战车精灵 (步行/驾驶状态)
+#### 1.2 ROM素材整合
+- [ ] 导入已提取的图块素材
+- [ ] 导入调色板数据
+- [ ] 创建素材预览场景
+- [ ] 整理音频素材命名
 
-#### 4.1.3 核心系统增强
-- [ ] 实现战车战斗模式 (主炮/机枪/SE脉冲)
-- [ ] 实现等级/经验值系统 (升级/属性增长)
-- [ ] 实现物品掉落系统
-- [ ] 实现装备效果实际生效 (装备的 attack/defense 实际参与伤害计算)
-
-#### 4.1.4 剧情框架
-- [ ] 创建 `story_data.gd` 存储主线剧情脚本
-- [ ] 实现序章: 雷班纳离开父亲的家 → 到达奥多市
-- [ ] 实现第一个任务: 酒吧老板引导 → 赏金公会注册 → 第一个赏金首
+#### 1.3 战斗系统完善
+- [ ] 技能系统 (多技能、MP消耗)
+- [ ] 状态效果 (中毒、麻痹等)
+- [ ] 战车战斗模式
+- [ ] 战斗AI增强
 
 ### 第二阶段：内容与玩法填充
 
-#### 4.2.1 关卡设计
-- [ ] 奥多市完整地图 (酒吧/机械店/赏金公会/旅馆/民宅)
-- [ ] 荒野地图 (连接奥多到废弃工厂)
-- [ ] 废弃工厂迷宫 (含BOSS: 失控坦克)
-- [ ] 蚂蚁巢穴迷宫 (含BOSS: 蚁后)
+#### 2.1 剧情与关卡
+- [ ] 对话脚本系统
+- [ ] 第一个迷宫关卡
+- [ ] 第一个BOSS战
+- [ ] 赏金首系统
 
-#### 4.2.2 战车系统完善
-- [ ] 战车装备界面 (主炮/副炮/引擎/装甲/C装置)
-- [ ] 战车改造系统 (升级装甲/引擎)
-- [ ] C装置技能 (迎击/援护/自动归返)
-- [ ] 战车战斗模式 (与白刃战切换)
+#### 2.2 战车系统深化
+- [ ] C装置系统 (迎击/援护/自动归返)
+- [ ] 战车装备改造界面
+- [ ] 战车战斗模式
 
-#### 4.2.3 HD-2D 视觉提升
-- [ ] 景深效果调优 (战斗场景)
-- [ ] 动态光照 (火光/爆炸/技能特效)
-- [ ] 粒子系统 (爆炸/烟雾/治疗)
-- [ ] 屏幕震动 (受击/炮击)
+#### 2.3 美术音效提升
+- [ ] HD-2D光影增强
+- [ ] 技能特效粒子系统
+- [ ] 音效空间化处理
 
 ### 第三阶段：完善与优化
-- [ ] UI/UX 打磨 (主菜单/HUD/对话框统一风格)
-- [ ] 数值平衡 (敌人/经验/金钱/装备)
-- [ ] Bug修复 (战斗逻辑/场景切换/存档)
-- [ ] 多平台导出 (Windows/macOS/Linux)
-- [ ] 文档完善 (README/development/assets_credits)
+
+#### 3.1 UI/UX打磨
+- [ ] 主菜单美化
+- [ ] HUD设计优化
+- [ ] 对话框动画
+
+#### 3.2 平衡与调试
+- [ ] 数值平衡调整
+- [ ] Bug修复
+- [ ] 性能优化
+
+#### 3.3 打包发布
+- [ ] 多平台导出
+- [ ] 文档完善
+- [ ] Release发布
 
 ---
 
-## 5. 每次提交的测试清单
+## 每日任务记录
 
-| 测试项 | 方法 |
-|--------|------|
-| 项目可加载 | Godot 编辑器无报错打开项目 |
-| 标题画面 | F5 运行 → 标题画面显示 |
-| 场景切换 | 标题 → 世界地图 → 城市 → 战斗 → 返回 |
-| 战斗流程 | 遇敌 → 攻击 → 击败 → 结算 → 返回 |
-| 存档/读档 | 暂停菜单存档 → 标题画面继续 |
-| 无控制台错误 | 运行时无 push_error 输出 |
+### 2026-07-08 (Day 1)
+**计划完成:**
+- 创建项目计划文档
+- 实现8方向玩家移动
+- 实现对话系统
+- 整合ROM素材
 
----
-
-## 6. 版本里程碑
-
-| 版本 | 目标 | 预计 |
-|------|------|------|
-| v0.1.0 | 核心系统修复 + 可运行原型 | Phase 1 完成 |
-| v0.2.0 | 第一个完整关卡 (奥多→荒野→BOSS) | Phase 2 完成 |
-| v0.3.0 | 战车系统完善 + HD-2D 视觉提升 | Phase 2 完成 |
-| v0.5.0 | UI打磨 + 数值平衡 | Phase 3 完成 |
-| v1.0.0-alpha | 可发布版本 | Phase 3 完成 |
+**实际完成:**
+- (待填写)
