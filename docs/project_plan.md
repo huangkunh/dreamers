@@ -178,4 +178,20 @@ dreamers/
 - 整合ROM素材
 
 **实际完成:**
-- (待填写)
+- ✅ 创建 docs/project_plan.md 项目计划文档
+- ✅ 实现 PlayerController 8方向移动组件 (对角线归一化)
+- ✅ 实现 DialogueManager 对话管理系统 (打字机效果/选项分支/事件触发)
+- ✅ 实现 DialogueBox 对话框UI (说话者/文本/选项/继续提示)
+- ✅ 实现 NPCInteractable NPC交互组件 (Area3D检测/JSON对话加载)
+- ✅ 创建示例对话数据 (酒馆老板NPC)
+- ✅ 实现 SkillData 技能系统 (15个技能/7种状态效果/伤害计算)
+- ✅ 实现 SaveLoadScreen 存档/读档界面 (3槽位)
+- ✅ 实现 EventTrigger 事件触发器 (6种事件类型)
+- ✅ 修复远程代码错误 (enemy_data类型推断/world_map const赋值)
+- ✅ 合并远程新增系统 (GameManager/SaveSystem/BountySystem/BattleEffects/ShopData/NPCData/TankEquipData)
+
+**明日计划:**
+- 创建第一个迷宫关卡场景
+- 实现BOSS战
+- 整合ROM提取的图块素材到TileMap
+- 完善战斗系统技能使用
