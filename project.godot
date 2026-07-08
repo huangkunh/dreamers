@@ -32,6 +32,7 @@ ShopData="*res://resource/data/shop_data.gd"
 NPCData="*res://resource/data/npc_data.gd"
 TankEquipData="*res://resource/data/tank_equipment_data.gd"
 DialogueManager="*res://scripts/autoload/dialogue_manager.gd"
+SkillData="*res://scripts/autoload/skill_data.gd"
 
 [editor]
 
