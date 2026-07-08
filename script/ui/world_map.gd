@@ -30,7 +30,7 @@ var AREAS := [
                 "id": "factory_ruins",
                 "name": "废弃工厂",
                 "description": "旧文明的工业遗迹。\n据说深处有台失控的自动战斗坦克...赏金1500G。\n[color=#ff4444]推荐等级: Lv.15+[/color]",
-                "scene": "city",
+                "scene": "factory",
                 "locked": true,
                 "area_id": "factory_ruins",
                 "unlock_condition": "wasteland_cleared",
@@ -133,7 +133,9 @@ func _on_area_pressed(area: Dictionary) -> void:
         print("[WorldMap] 进入区域: " + area.name)
         # 设置当前区域ID
         GameData.game_flags["current_area"] = area.id
-        GameFlow.enter_city()
+        # 根据区域场景切换
+        var scene_name: String = area.get("scene", "city")
+        GameFlow.change_scene(scene_name)
 
 func _on_back() -> void:
         GameFlow.return_to_title()

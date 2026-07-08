@@ -1,0 +1,124 @@
+[gd_scene load_steps=12 format=3 uid="uid://bfactory_scene_001"]
+
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scene/characters/hero/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/world/abandoned_factory.gd" id="2_factory"]
+[ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
+[ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="4_vignette"]
+[ext_resource type="Environment" path="res://default_env.tres" id="5_env"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_factory"]
+sky_top_color = Color(0.3, 0.25, 0.2, 1)
+sky_horizon_color = Color(0.5, 0.35, 0.25, 1)
+ground_bottom_color = Color(0.15, 0.12, 0.1, 1)
+ground_horizon_color = Color(0.3, 0.22, 0.18, 1)
+
+[sub_resource type="Sky" id="Sky_factory"]
+sky_material = SubResource("SkyMat_factory")
+
+[sub_resource type="Environment" id="Env_factory"]
+background_mode = 2
+sky = SubResource("Sky_factory")
+ambient_light_color = Color(0.4, 0.35, 0.3, 1)
+ambient_light_energy = 0.5
+fog_enabled = true
+fog_light_color = Color(0.3, 0.25, 0.2, 1)
+fog_density = 0.08
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.8
+volumetric_fog_albedo = Color(0.4, 0.3, 0.25, 1)
+tonemap_mode = 2
+
+[sub_resource type="ShaderMaterial" id="VignetteMat"]
+shader = ExtResource("4_vignette")
+shader_parameter/vignette_intensity = 0.7
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+size = Vector2(40, 40)
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.25, 0.22, 0.2, 1)
+roughness = 0.9
+
+[node name="AbandonedFactory" type="Node3D"]
+script = ExtResource("2_factory")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_factory")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8, 0.3, -0.5, 0, 0.8, 0.5, 0.6, -0.4, 0.7, 5, 10, 0)
+light_color = Color(0.8, 0.6, 0.4, 1)
+light_energy = 0.6
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 8, 10)
+fov = 45.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("GroundMesh")
+material_override = SubResource("GroundMat")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 8)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_bgm")
+volume_db = -6.0
+
+[node name="VignetteOverlay" type="ColorRect" parent="."]
+material = SubResource("VignetteMat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="WallNorth" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -20)
+size = Vector3(40, 2, 1)
+material = SubResource("GroundMat")
+
+[node name="WallSouth" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 20)
+size = Vector3(40, 2, 1)
+material = SubResource("GroundMat")
+
+[node name="WallEast" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, 0)
+size = Vector3(1, 2, 40)
+material = SubResource("GroundMat")
+
+[node name="WallWest" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1, 0)
+size = Vector3(1, 2, 40)
+material = SubResource("GroundMat")
+
+[node name="Obstacles" type="Node3D" parent="."]
+
+[node name="Crate1" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, 0)
+size = Vector3(2, 1, 2)
+material = SubResource("GroundMat")
+
+[node name="Crate2" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, -5)
+size = Vector3(2, 1, 2)
+material = SubResource("GroundMat")
+
+[node name="Crate3" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, -10)
+size = Vector3(3, 1.5, 2)
+material = SubResource("GroundMat")
+
+[node name="Machine1" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -12)
+size = Vector3(4, 2, 3)
+material = SubResource("GroundMat")
+
+[node name="Machine2" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.5, -15)
+size = Vector3(3, 3, 3)
+material = SubResource("GroundMat")

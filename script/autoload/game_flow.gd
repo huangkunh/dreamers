@@ -26,6 +26,7 @@ const SCENE_PATHS := {
         "world_map": "res://scene/ui/world_map.tscn",
         "city": "res://base.tscn",
         "wasteland": "res://scene/city/wasteland.tscn",
+        "factory": "res://scenes/world/abandoned_factory.tscn",
         "battle": "res://scene/HUD/fight/fight.tscn",
 }
 
