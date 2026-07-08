@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://script/ui/bounty_guild.gd" id="1_guild"]
+
+[node name="BountyGuild" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_guild")
+
+[node name="GuildPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -280.0
+offset_right = 400.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="GuildPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GuildPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleBar" type="HBoxContainer" parent="GuildPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="GuildPanel/MarginContainer/VBoxContainer/TitleBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 24
+text = "💰 赏金猎人公会"
+
+[node name="CoinsLabel" type="Label" parent="GuildPanel/MarginContainer/VBoxContainer/TitleBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "💰 0"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GuildPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BountyList" type="ItemList" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+
+[node name="InfoPanel" type="Panel" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InfoLabel" type="RichTextLabel" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "选择赏金首查看详情"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel"]
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_left = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+alignment = 1
+
+[node name="ClaimButton" type="Button" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 36)
+text = "领取赏金"
+
+[node name="CloseButton" type="Button" parent="GuildPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 36)
+text = "离开"
