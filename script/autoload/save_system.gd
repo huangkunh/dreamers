@@ -21,8 +21,7 @@ func save_game(slot: int = 0) -> bool:
 		"party": _serialize_party(),
 		"inventory": _serialize_inventory(),
 		"tanks": _serialize_tanks(),
-		"current_area": "aoduo",
-		"player_position": _serialize_player_position(),
+		"current_area": GameData.game_flags.get("current_area", "aoduo"),
 		"flags": GameData.game_flags,
 	}
 
@@ -39,8 +38,8 @@ func save_game(slot: int = 0) -> bool:
 	return true
 
 func load_game(slot: int = 0) -> bool:
-	if not has_save_data():
-		push_warning("[SaveSystem] 无存档文件")
+	if not FileAccess.file_exists(SAVE_PATH):
+		push_error("[SaveSystem] 存档文件不存在")
 		return false
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -48,62 +47,32 @@ func load_game(slot: int = 0) -> bool:
 		push_error("[SaveSystem] 无法读取存档")
 		return false
 
-	var text := file.get_as_text()
+	var json_text := file.get_as_text()
 	file.close()
 
 	var json := JSON.new()
-	var err := json.parse(text)
+	var err := json.parse(json_text)
 	if err != OK:
-		push_error("[SaveSystem] 存档解析失败: " + json.get_error_message())
+		push_error("[SaveSystem] JSON 解析失败: " + json.get_error_message())
 		return false
 
-	var data = json.data
-	if typeof(data) != TYPE_DICTIONARY:
-		push_error("[SaveSystem] 存档格式错误")
-		return false
+	var data: Dictionary = json.data
 
-	# 恢复游戏数据
+	# 恢复游戏状态
+	GameData.play_time = float(data.get("play_time", 0.0))
 	GameData.coins = int(data.get("coins", 0))
-	GameData.play_time = float(data.get("play_time", 0))
 	GameData.game_flags = data.get("flags", {})
 
-	# 恢复队伍
 	_deserialize_party(data.get("party", []))
-
-	# 恢复背包
 	_deserialize_inventory(data.get("inventory", []))
-
-	# 恢复战车
 	_deserialize_tanks(data.get("tanks", []))
 
 	print("[SaveSystem] 读档成功! coins=%d, play_time=%.0f" % [GameData.coins, GameData.play_time])
 	game_loaded.emit()
 	return true
 
-func delete_save() -> void:
-	if has_save_data():
-		DirAccess.remove_absolute(SAVE_PATH)
-		print("[SaveSystem] 存档已删除")
+## ---- 序列化 ----
 
-func get_save_info() -> Dictionary:
-	if not has_save_data():
-		return {}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	if file == null:
-		return {}
-	var text := file.get_as_text()
-	file.close()
-	var json := JSON.new()
-	json.parse(text)
-	var data = json.data
-	return {
-		"coins": int(data.get("coins", 0)),
-		"play_time": float(data.get("play_time", 0)),
-		"timestamp": float(data.get("timestamp", 0)),
-		"party_names": _get_party_names(data.get("party", [])),
-	}
-
-## 序列化队伍
 func _serialize_party() -> Array:
 	var result := []
 	for member in GameData.party:
@@ -114,17 +83,16 @@ func _serialize_party() -> Array:
 			"current_hp": member.current_hp,
 			"max_hp": member.max_hp,
 			"current_exp": member.current_exp,
+			"max_exp": member.max_exp,
 			"attack": member.attack,
 			"defense": member.defense,
 			"speed": member.speed,
-			"in_party": member.in_party,
 			"weapon_id": member.weapon.id if member.weapon else "",
 			"armor_id": member.armor.id if member.armor else "",
 			"accessory_id": member.accessory.id if member.accessory else "",
 		})
 	return result
 
-## 序列化背包
 func _serialize_inventory() -> Array:
 	var result := []
 	for item in GameData.inventory:
@@ -133,16 +101,15 @@ func _serialize_inventory() -> Array:
 			"name": item.name,
 			"description": item.description,
 			"type": item.type,
-			"count": item.count,
 			"price": item.price,
 			"attack": item.attack,
 			"defense": item.defense,
 			"speed": item.speed,
+			"count": item.count,
 			"stackable": item.stackable,
 		})
 	return result
 
-## 序列化战车
 func _serialize_tanks() -> Array:
 	var result := []
 	for tank in TankSystem.tanks.values():
@@ -163,11 +130,8 @@ func _serialize_tanks() -> Array:
 		})
 	return result
 
-## 序列化玩家位置 (简化版)
-func _serialize_player_position() -> Dictionary:
-	return {"x": 0.0, "y": 0.0, "z": 0.0}
+## ---- 反序列化 ----
 
-## 反序列化队伍
 func _deserialize_party(party_data: Array) -> void:
 	GameData.party.clear()
 	for pd in party_data:
@@ -175,33 +139,31 @@ func _deserialize_party(party_data: Array) -> void:
 		member.id = pd.get("id", "")
 		member.name = pd.get("name", "Unknown")
 		member.level = int(pd.get("level", 1))
-		member.max_hp = int(pd.get("max_hp", 100))
-		member.current_hp = int(pd.get("current_hp", member.max_hp))
+		member.current_hp = int(pd.get("current_hp", 100))
+		member.max_hp = int(pd.get("max_hp", 200))
 		member.current_exp = int(pd.get("current_exp", 0))
-		member.attack = int(pd.get("attack", 10))
+		member.max_exp = int(pd.get("max_exp", 55))
+		member.attack = int(pd.get("attack", 5))
 		member.defense = int(pd.get("defense", 5))
 		member.speed = int(pd.get("speed", 3))
-		member.in_party = bool(pd.get("in_party", true))
 		GameData.party.append(member)
 
-## 反序列化背包
-func _deserialize_inventory(inv_data: Array) -> void:
+func _deserialize_inventory(inventory_data: Array) -> void:
 	GameData.inventory.clear()
-	for id in inv_data:
+	for id in inventory_data:
 		var item := GameData.Item.new()
 		item.id = id.get("id", "")
 		item.name = id.get("name", "Unknown")
 		item.description = id.get("description", "")
 		item.type = int(id.get("type", 0))
-		item.count = int(id.get("count", 1))
 		item.price = int(id.get("price", 0))
 		item.attack = int(id.get("attack", 0))
 		item.defense = int(id.get("defense", 0))
 		item.speed = int(id.get("speed", 0))
+		item.count = int(id.get("count", 1))
 		item.stackable = bool(id.get("stackable", true))
 		GameData.inventory.append(item)
 
-## 反序列化战车
 func _deserialize_tanks(tank_data: Array) -> void:
 	TankSystem.tanks.clear()
 	for td in tank_data:
@@ -220,10 +182,3 @@ func _deserialize_tanks(tank_data: Array) -> void:
 		tank.is_owned = bool(td.get("is_owned", false))
 		tank.is_active = bool(td.get("is_active", false))
 		TankSystem.tanks[tank.id] = tank
-
-## 获取队伍名称列表 (用于存档信息显示)
-func _get_party_names(party_data: Array) -> Array:
-	var names := []
-	for pd in party_data:
-		names.append(pd.get("name", "?"))
-	return names

@@ -1,8 +1,9 @@
 extends Control
 ## 对话系统 (DialogSystem)
-## HD-2D 风格的对话框，支持逐字显示、选项分支
-## 使用方式: DialogSystem.show_dialog("NPC名", "对话文本")
-##            DialogSystem.show_choices("选择", ["选项A", "选项B"], callback)
+## HD-2D 风格的对话框，支持逐字显示、选项分支、对话队列
+## 使用方式:
+##   DialogSystem.show_dialog("NPC名", "对话文本")
+##   DialogSystem.show_dialog_queue([{"name":"A","text":"..."}, ...])
 
 signal dialog_finished()
 signal choice_made(index: int)
@@ -36,81 +37,73 @@ func _process(delta: float) -> void:
 			continue_indicator.visible = true
 		text_label.visible_characters = _displayed_chars
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
-	if event is InputEventKey and event.pressed:
-		if _is_showing_choices:
-			match event.keycode:
-				KEY_UP, KEY_W:
-					_current_choice_index = (_current_choice_index - 1 + _choice_buttons.size()) % _choice_buttons.size()
-					_update_choice_selection()
-				KEY_DOWN, KEY_S:
-					_current_choice_index = (_current_choice_index + 1) % _choice_buttons.size()
-					_update_choice_selection()
-				KEY_ENTER, KEY_SPACE:
-					choice_made.emit(_current_choice_index)
-					_close_dialog()
-		elif _is_typing:
-			if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
-				_displayed_chars = _full_text.length()
-				text_label.visible_characters = _displayed_chars
-				_is_typing = false
-				continue_indicator.visible = true
+
+	if event.is_action_pressed("ui_accept") or event.is_action_pressed("interact"):
+		if _is_typing:
+			# 跳过逐字显示
+			_displayed_chars = _full_text.length()
+			text_label.visible_characters = _displayed_chars
+			_is_typing = false
+			continue_indicator.visible = true
+		elif _is_showing_choices:
+			# 选项模式下不处理
+			pass
 		else:
-			if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
-				continue_indicator.visible = false
-				if _dialog_queue.size() > 0:
-					_show_next_in_queue()
-				else:
-					dialog_finished.emit()
-					_close_dialog()
+			# 显示下一段对话
+			_show_next_in_queue()
+		get_viewport().set_input_as_handled()
 
-## 显示对话
-func show_dialog(speaker_name: String, text: String) -> void:
-	_dialog_queue.append({"name": speaker_name, "text": text})
-	if not visible:
-		_show_next_in_queue()
+	elif _is_showing_choices:
+		if event.is_action_pressed("ui_up"):
+			_current_choice_index = wrapi(_current_choice_index - 1, 0, _choice_buttons.size())
+			_update_choice_selection()
+		elif event.is_action_pressed("ui_down"):
+			_current_choice_index = wrapi(_current_choice_index + 1, 0, _choice_buttons.size())
+			_update_choice_selection()
+		elif event.is_action_pressed("ui_accept"):
+			if _current_choice_index < _choice_buttons.size():
+				choice_made.emit(_current_choice_index)
+				_close_dialog()
 
-## 显示多段对话
-func show_dialog_chain(dialogs: Array) -> void:
-	for d in dialogs:
-		_dialog_queue.append(d)
-	if not visible:
-		_show_next_in_queue()
+## 显示单段对话
+func show_dialog(npc_name: String, text: String) -> void:
+	_dialog_queue = [{"name": npc_name, "text": text}]
+	_show_next_in_queue()
+
+## 显示对话队列
+func show_dialog_queue(dialogs: Array) -> void:
+	_dialog_queue = dialogs.duplicate()
+	_show_next_in_queue()
 
 ## 显示选项
-func show_choices(speaker_name: String, text: String, choices: Array[String]) -> void:
+func show_choices(prompt: String, choices: Array[String]) -> void:
 	visible = true
 	dialog_panel.visible = true
-	_is_showing_choices = false
-	name_label.text = speaker_name
-	_full_text = text
+	name_label.text = ""
+	_full_text = prompt
 	_displayed_chars = 0
 	text_label.visible_characters = 0
 	_is_typing = true
+	continue_indicator.visible = false
 
-	# 等待打字完成后显示选项
-	# 这里先存储选项, 打字完成后自动显示
-	_choice_buttons.clear()
+	# 清除旧选项
 	for child in choice_container.get_children():
 		child.queue_free()
+	_choice_buttons.clear()
 
-	# 延迟显示选项
-	await get_tree().create_timer(text.length() / _chars_per_second + 0.5).timeout
-
-	_is_showing_choices = true
-	_current_choice_index = 0
+	# 创建选项按钮
 	for i in range(choices.size()):
 		var btn := Button.new()
 		btn.text = choices[i]
 		btn.custom_minimum_size = Vector2(300, 36)
-		btn.add_theme_font_size_override("font_size", 18)
-		btn.add_theme_color_override("font_color", Color(0.85, 0.85, 0.8))
-		btn.add_theme_color_override("font_hover_color", Color(1, 0.85, 0.3))
 		choice_container.add_child(btn)
 		_choice_buttons.append(btn)
-	_update_choice_selection()
+
+	_current_choice_index = 0
+	_is_showing_choices = false  # 等文字打完再显示选项
 
 ## 关闭对话
 func _close_dialog() -> void:
@@ -121,6 +114,7 @@ func _close_dialog() -> void:
 	_dialog_queue.clear()
 	for child in choice_container.get_children():
 		child.queue_free()
+	dialog_finished.emit()
 
 ## 显示队列中的下一段对话
 func _show_next_in_queue() -> void:

@@ -25,43 +25,45 @@ const STEP_THRESHOLD: float = 1.0
 var _parent_node: Node
 
 func _ready() -> void:
-	_parent_node = get_parent()
-	if _parent_node is Node3D:
-		_last_pos = _parent_node.position
+        _parent_node = get_parent()
+        if _parent_node is Node3D:
+                _last_pos = _parent_node.position
 
 func _process(_delta: float) -> void:
-	if not _parent_node is Node3D:
-		return
+        if not _parent_node is Node3D:
+                return
 
-	# 计算移动距离
-	var current_pos: Vector3 = _parent_node.position
-	var distance = current_pos.distance_to(_last_pos)
-	if distance > 0.01:
-		_accumulated_distance += distance
-		_last_pos = current_pos
+        # 计算移动距离
+        var current_pos: Vector3 = _parent_node.position
+        var distance = current_pos.distance_to(_last_pos)
+        if distance > 0.01:
+                _accumulated_distance += distance
+                _last_pos = current_pos
 
-		# 每移动 STEP_THRESHOLD 距离算一步
-		while _accumulated_distance >= STEP_THRESHOLD:
-			_accumulated_distance -= STEP_THRESHOLD
-			_step_taken()
+                # 每移动 STEP_THRESHOLD 距离算一步
+                while _accumulated_distance >= STEP_THRESHOLD:
+                        _accumulated_distance -= STEP_THRESHOLD
+                        _step_taken()
 
 ## 每步检查是否遇敌
 func _step_taken() -> void:
-	_steps_since_encounter += 1
-	if _steps_since_encounter < min_steps_between_encounters:
-		return
+        _steps_since_encounter += 1
+        if _steps_since_encounter < min_steps_between_encounters:
+                return
 
-	if randf() < encounter_rate:
-		_trigger_encounter()
+        if randf() < encounter_rate:
+                _trigger_encounter()
 
 ## 触发遇敌
 func _trigger_encounter() -> void:
-	_steps_since_encounter = 0
-	encounter_triggered.emit()
-	print("[RandomEncounter] 触发随机战斗! 区域: " + area_id)
-	# 通过 GameFlow 进入战斗
-	GameFlow.enter_battle()
+        _steps_since_encounter = 0
+        encounter_triggered.emit()
+        print("[RandomEncounter] 触发随机战斗! 区域: " + area_id)
+        # 设置战斗区域
+        GameData.game_flags["battle_area"] = area_id
+        # 通过 GameFlow 进入战斗
+        GameFlow.enter_battle()
 
 ## 重置遇敌计数 (战斗结束后调用)
 func reset_encounter_counter() -> void:
-	_steps_since_encounter = 0
+        _steps_since_encounter = 0

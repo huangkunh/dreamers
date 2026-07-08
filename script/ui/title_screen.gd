@@ -100,7 +100,7 @@ func _update_menu_highlight() -> void:
 
 func _on_new_game() -> void:
         print("[TitleScreen] 开始新游戏")
-        GameFlow.start_new_game()
+        GameManager.start_new_game()
 
 func _on_continue() -> void:
         if SaveSystem and SaveSystem.has_save_data():
