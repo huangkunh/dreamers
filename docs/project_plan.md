@@ -190,8 +190,38 @@ dreamers/
 - ✅ 修复远程代码错误 (enemy_data类型推断/world_map const赋值)
 - ✅ 合并远程新增系统 (GameManager/SaveSystem/BountySystem/BattleEffects/ShopData/NPCData/TankEquipData)
 
+### 2026-07-08 (Day 1 - 第二批)
+**实际完成:**
+- ✅ 创建废弃工厂迷宫关卡 (abandoned_factory.tscn/gd)
+  - 3D工厂环境 (墙壁/障碍物/机械)
+  - 入口NPC (工厂守卫) 自动生成
+  - BOSS触发区域 (失控坦克)
+  - 随机遇敌系统 (2%概率, 工厂敌人池)
+- ✅ 创建工厂守卫NPC对话数据 (含3选项分支)
+- ✅ 修复世界地图场景切换 (根据area.scene切换, 原固定enter_city)
+- ✅ 扩展敌人数据 (factory_enemies编组)
+- ✅ 实现C装置战斗系统 (CDeviceSystem autoload)
+  - 迎击/援护/自动归返/目标锁定 4种技能
+- ✅ 增强战斗系统BOSS战处理
+  - 赏金首状态更新 (DEFEATED)
+  - 额外奖励 (经验+等级*20, 金币+赏金金额)
+  - 战斗次数和击败数统计
+- ✅ 实现状态效果系统 (StatusEffectSystem autoload)
+  - 7种状态: 中毒/麻痹/眩晕/防御提升/攻击提升/速度提升/流血
+  - 持续伤害/行动检查/属性修正
+- ✅ 创建HD-2D视觉增强着色器
+  - hd2d_enhance.gdshader (像素化/饱和度/对比度/色温/边缘高光)
+  - hd2d_lighting.gdshader (3D光照/法线贴图/边缘光/像素网格)
+- ✅ 创建开发文档 (docs/development.md)
+- ✅ 创建素材版权声明 (docs/assets_credits.md)
+
+**阻碍:**
+- GitHub Token (ghp_rOOS5...) 已失效，无法推送代码
+- 本地有5个提交待推送 (1308d16 ~ 4f05f9e)
+- 需要用户提供新的GitHub Token才能继续推送
+
 **明日计划:**
-- 创建第一个迷宫关卡场景
-- 实现BOSS战
+- 等待新Token后推送所有提交
+- 创建第一个迷宫关卡完整流程测试
 - 整合ROM提取的图块素材到TileMap
-- 完善战斗系统技能使用
+- 完善战斗系统技能使用和状态效果集成
