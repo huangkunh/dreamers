@@ -2,27 +2,26 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chlush0coxand"
-path.s3tc="res://.godot/imported/cloud_alpha_big.png-798f5cad9eb15d547936c858fc421058.s3tc.ctex"
+uid="uid://5y4o5oi1ctvi"
+path="res://.godot/imported/b03_ant_queen.png-0eb4914844b600bcab4d75faadfcfe49.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://resource/tilesets/cloud_alpha_big.png"
-dest_files=["res://.godot/imported/cloud_alpha_big.png-798f5cad9eb15d547936c858fc421058.s3tc.ctex"]
+source_file="res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen.png"
+dest_files=["res://.godot/imported/b03_ant_queen.png-0eb4914844b600bcab4d75faadfcfe49.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -32,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
