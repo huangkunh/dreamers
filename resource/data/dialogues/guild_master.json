@@ -1,0 +1,33 @@
+{
+	"start": {
+		"speaker": "公会会长",
+		"text": "这里是赏金猎人公会。消灭赏金首后来这里领赏。",
+		"next_id": "guild_2"
+	},
+	"guild_2": {
+		"speaker": "公会会长",
+		"text": "目前悬赏中的目标:\n- 巨蝶 (500G) - 奥多荒野\n- 失控坦克 (1500G) - 废弃工厂\n- 蚁后 (1000G) - 蚂蚁巢穴",
+		"choices": [
+			{"text": "查看赏金列表", "next_id": "open_bounty"},
+			{"text": "领取赏金", "next_id": "claim_bounty"},
+			{"text": "告别", "next_id": "end"}
+		]
+	},
+	"open_bounty": {
+		"speaker": "公会会长",
+		"text": "这是当前的赏金首列表。",
+		"event": "open_bounty_list",
+		"next_id": "end"
+	},
+	"claim_bounty": {
+		"speaker": "公会会长",
+		"text": "让我看看...你击败了哪些赏金首？",
+		"event": "open_bounty_claim",
+		"next_id": "end"
+	},
+	"end": {
+		"speaker": "公会会长",
+		"text": "祝你好运，猎人。",
+		"next_id": ""
+	}
+}

@@ -10,60 +10,60 @@ extends Control
 
 var _choice_buttons: Array[Button] = []
 var _choice_index: int = 0
+var _has_choices: bool = false
 
 func _ready() -> void:
 	visible = false
 	continue_hint.modulate.a = 0.0
 
 func _process(_delta: float) -> void:
+	if not visible:
+		return
 	# 处理选项导航
-	if visible and choices_container.visible and _choice_buttons.size() > 0:
-		if Input.is_action_just_pressed("move_up"):
+	if _has_choices and _choice_buttons.size() > 0:
+		if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("ui_up"):
 			_choice_index = (_choice_index - 1 + _choice_buttons.size()) % _choice_buttons.size()
 			_update_choice_highlight()
-		elif Input.is_action_just_pressed("move_down"):
+		elif Input.is_action_just_pressed("move_down") or Input.is_action_just_pressed("ui_down"):
 			_choice_index = (_choice_index + 1) % _choice_buttons.size()
 			_update_choice_highlight()
-		elif Input.is_action_just_pressed("ui_accept"):
-			DialogueManager.select_choice(_choice_index)
+	# 推进对话
+	if Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("interact"):
+		if not _has_choices:
+			DialogueManager.advance()
 
-## 设置说话者名字
-func set_speaker(name: String) -> void:
-	speaker_label.text = name
-	speaker_label.visible = name != ""
-
-## 设置对话文本
-func set_text(text: String) -> void:
-	text_label.text = text
-	if not DialogueManager._is_typing:
-		_show_continue_hint()
-
-## 设置选项
-func set_choices(choices: Array) -> void:
+## 显示选项
+func show_choices(choices: Array) -> void:
+	_choice_buttons.clear()
 	for child in choices_container.get_children():
 		child.queue_free()
-	_choice_buttons.clear()
-
-	if choices.is_empty():
-		choices_container.visible = false
-		return
-
-	choices_container.visible = true
-	_choice_index = 0
-
+	
 	for i in range(choices.size()):
 		var choice = choices[i]
-		var btn := Button.new()
-		btn.text = choice.get("text", "选项" + str(i + 1))
-		btn.custom_minimum_size = Vector2(400, 36)
-		btn.add_theme_font_size_override("font_size", 18)
-		btn.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
-		btn.add_theme_color_override("font_hover_color", Color(1, 0.85, 0.3))
-		btn.focus_mode = Control.FOCUS_NONE
+		var btn = Button.new()
+		btn.text = "  " + choice.get("text", "???")
+		btn.pressed.connect(_on_choice_selected.bind(i, choice))
 		choices_container.add_child(btn)
 		_choice_buttons.append(btn)
-
+	
+	_choice_index = 0
+	_has_choices = choices.size() > 0
+	choices_container.visible = _has_choices
 	_update_choice_highlight()
+
+## 选项被选择
+func _on_choice_selected(index: int, choice: Dictionary) -> void:
+	_has_choices = false
+	choices_container.visible = false
+	var next_id = choice.get("next_id", "")
+	var event = choice.get("event", "")
+	if not event.is_empty():
+		DialogueManager.event_triggered.emit(event)
+	if not next_id.is_empty():
+		DialogueManager._current_id = next_id
+		DialogueManager._show_current_line()
+	else:
+		DialogueManager._end_dialogue()
 
 ## 更新选项高亮
 func _update_choice_highlight() -> void:
@@ -75,7 +75,8 @@ func _update_choice_highlight() -> void:
 			btn.add_theme_color_override("font_color", Color(0.7, 0.7, 0.6))
 
 ## 显示继续提示
-func _show_continue_hint() -> void:
+func show_continue_hint() -> void:
+	continue_hint.visible = true
 	var tw := create_tween()
 	tw.tween_property(continue_hint, "modulate:a", 1.0, 0.3)
 	var tw2 := create_tween()

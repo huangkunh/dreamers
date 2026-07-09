@@ -195,3 +195,31 @@ dreamers/
 - 实现BOSS战
 - 整合ROM提取的图块素材到TileMap
 - 完善战斗系统技能使用
+
+### 2026-07-09 (Day 2)
+**计划完成:**
+- 集成新系统 (DialogueManager/SkillData) 到主游戏流程
+- 添加缺失的 move_* 输入映射
+- 升级玩家移动为8方向
+- 创建废弃工厂迷宫场景
+- 创建NPC对话数据文件 (JSON)
+- 编写开发文档和素材版权声明
+
+**实际完成:**
+- ✅ 添加 move_up/down/left/right 输入映射 (WASD+方向键)
+- ✅ 升级 player.gd 为8方向移动 (对角线归一化, 交互信号)
+- ✅ 注册 DialogueManager 和 SkillData autoload
+- ✅ 修复 DialogueManager (set_dialogue_box/start_dialogue_queue/load_from_file)
+- ✅ 修复 dialogue_box.gd (show_choices/输入处理)
+- ✅ 更新 city_explorer.gd (集成对话/商店/改造/公会)
+- ✅ 创建废弃工厂场景 (factory_ruins.tscn)
+- ✅ GameFlow 添加 factory 场景路由
+- ✅ 创建NPC对话JSON文件 (酒吧老板/机械师/公会会长)
+- ✅ 编写 docs/development.md 开发文档
+- ✅ 编写 docs/assets_credits.md 素材版权声明
+
+**明日计划:**
+- 在 base.tscn 中放置可交互NPC节点
+- 实现废弃工厂BOSS战触发
+- 将 SkillData 接入战斗系统
+- 创建荒野场景NPC和事件触发器

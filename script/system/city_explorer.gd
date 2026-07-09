@@ -1,12 +1,14 @@
 extends Node3D
 ## 城市探索管理器 (CityExplorer)
-## 管理城市探索模式：随机遇敌、暂停菜单、战车切换、NPC交互、商店、对话
+## 管理城市/迷宫探索：随机遇敌、暂停菜单、战车切换、NPC交互、对话、商店
+## 附加到城市场景的根节点下
 
 const PAUSE_MENU_SCENE := preload("res://scene/ui/pause_menu.tscn")
 const TANK_HUD_SCENE := preload("res://scene/ui/tank_hud.tscn")
-const DIALOG_SCENE := preload("res://scene/ui/dialog_system.tscn")
-const SHOP_SCENE := preload("res://scene/ui/shop_system.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
+const SHOP_SCENE := preload("res://scene/ui/shop_system.tscn")
+const TANK_GARAGE_SCENE := preload("res://scene/ui/tank_garage.tscn")
+const BOUNTY_GUILD_SCENE := preload("res://scene/ui/bounty_guild.tscn")
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var player: CharacterBody3D = $Player
@@ -14,12 +16,13 @@ const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 var _encounter_system: Node
 var _pause_menu: Control
 var _tank_hud: Control
-var _dialog_system: Control
-var _shop_system: Control
-## DialogueManager 对话框 (新系统)
 var _dialogue_box: Control
+var _shop_system: Control
+var _tank_garage: Control
+var _bounty_guild: Control
 var _in_tank: bool = false
-var _nearby_npc: Node3D = null
+var _nearby_npc: Node = null
+var _is_ui_open: bool = false
 var area_id: String = "aoduo"
 
 func _ready() -> void:
@@ -33,15 +36,11 @@ func _ready() -> void:
 	# 设置区域ID
 	area_id = GameManager.get_current_area()
 
-	# 将玩家加入player组 (供NPC交互检测)
-	if player:
-		player.add_to_group("player")
-
 	# 添加随机遇敌系统到玩家
 	if player:
-		_encounter_system = load("res://script/system/random_encounter.gd").new()
-		_encounter_system.encounter_rate = 0.015
-		_encounter_system.min_steps_between_encounters = 8
+		var encounter_script = load("res://script/system/random_encounter.gd")
+		_encounter_system = encounter_script.new()
+		_encounter_system.encounter_rate = 0.015 if area_id != "factory" else 0.025
 		_encounter_system.area_id = area_id
 		_encounter_system.encounter_triggered.connect(_on_encounter)
 		player.add_child(_encounter_system)
@@ -50,90 +49,132 @@ func _ready() -> void:
 	_pause_menu = PAUSE_MENU_SCENE.instantiate()
 	add_child(_pause_menu)
 
+	# 实例化对话框
+	_dialogue_box = DIALOGUE_BOX_SCENE.instantiate()
+	add_child(_dialogue_box)
+	DialogueManager.set_dialogue_box(_dialogue_box)
+	DialogueManager.dialogue_finished.connect(_on_dialogue_finished)
+	DialogueManager.event_triggered.connect(_on_dialogue_event)
+
 	# 实例化战车HUD
 	_tank_hud = TANK_HUD_SCENE.instantiate()
 	add_child(_tank_hud)
 
-	# 实例化对话系统
-	_dialog_system = DIALOG_SCENE.instantiate()
-	add_child(_dialog_system)
-
-	# 实例化商店系统
-	_shop_system = SHOP_SCENE.instantiate()
-	add_child(_shop_system)
-
-	# 实例化 DialogueManager 对话框 (新系统)
-	_dialogue_box = DIALOGUE_BOX_SCENE.instantiate()
-	add_child(_dialogue_box)
-	DialogueManager.set_dialogue_box(_dialogue_box)
-
-	# 初始化战车
-	var owned = TankSystem.get_owned_tanks()
-	if owned.size() > 0 and not _in_tank:
-		pass
-
-	print("[CityExplorer] 区域: %s, 遇敌率: %.3f" % [area_id, _encounter_system.encounter_rate])
-
 func _process(delta: float) -> void:
 	# 更新游戏时间
-	GameData.play_time += delta
+	if not get_tree().paused:
+		GameData.play_time += delta
 
 func _unhandled_input(event: InputEvent) -> void:
-	# DialogueManager 对话进行中时，按确认键推进对话
-	if DialogueManager.is_active():
-		if event.is_action_pressed("ui_accept"):
-			DialogueManager.advance()
+	if _is_ui_open:
 		return
 
+	# 暂停菜单
 	if event.is_action_pressed("menu"):
-		if _pause_menu and not _dialog_system.visible and not _shop_system.visible:
-			_pause_menu.toggle()
-	elif event.is_action_pressed("tank_toggle"):
+		if _pause_menu and not _pause_menu.visible:
+			_pause_menu.open()
+		get_viewport().set_input_as_handled()
+
+	# 战车切换
+	if event.is_action_pressed("tank_toggle"):
 		_toggle_tank()
-	elif event.is_action_pressed("interact"):
-		if _nearby_npc and not _pause_menu.visible and not _dialog_system.visible:
+
+	# NPC交互
+	if event.is_action_pressed("interact"):
+		if _nearby_npc:
 			_interact_with_npc(_nearby_npc)
-	elif event.is_action_pressed("ui_cancel"):
-		if _shop_system and _shop_system.visible:
-			_shop_system.close_shop()
-		elif _dialog_system and _dialog_system.visible:
-			pass
-
-## NPC交互
-func _interact_with_npc(npc: Node3D) -> void:
-	var npc_id: String = npc.get_meta("npc_id", "")
-	var npc_area: String = npc.get_meta("area_id", area_id)
-	var shop_id: String = npc.get_meta("shop_id", "")
-
-	if shop_id != "" and not shop_id.is_empty():
-		# 打开商店
-		var shop_items = ShopData.get_shop_items(shop_id)
-		_shop_system.open_shop(npc.get_meta("display_name", "商店"), shop_items)
-	else:
-		# 打开对话
-		var npc_data = NPCData.get_npc_dialog(npc_area, npc_id)
-		if npc_data.is_empty():
-			_dialog_system.show_dialog(npc.get_meta("display_name", "???"), "...")
-			return
-
-		var dialogs: Array = npc_data.get("dialogs", [])
-		if dialogs.is_empty():
-			_dialog_system.show_dialog(npc.get_meta("display_name", "???"), "...")
-			return
-
-		# 将对话加入队列
-		var dialog_queue: Array = []
-		for d in dialogs:
-			dialog_queue.append({"name": d.get("name", ""), "text": d.get("text", "")})
-		_dialog_system.show_dialog_queue(dialog_queue)
 
 ## 设置附近NPC
-func set_nearby_npc(npc: Node3D) -> void:
+func set_nearby_npc(npc: Node) -> void:
 	_nearby_npc = npc
 
 ## 清除附近NPC
 func clear_nearby_npc() -> void:
 	_nearby_npc = null
+
+## 与NPC交互
+func _interact_with_npc(npc: Node) -> void:
+	# 检查是否是 NPCInteractable 组件
+	if npc.has_method("interact"):
+		npc.interact()
+		return
+
+	# 旧版 NPC 节点 (通过 metadata 存储信息)
+	var npc_id = npc.get_meta("npc_id", "")
+	var npc_area = npc.get_meta("area_id", "aoduo")
+	var shop_id = npc.get_meta("shop_id", "")
+
+	if not shop_id.is_empty():
+		_open_shop(shop_id)
+		return
+
+	# 使用 NPCData 获取对话
+	var npc_data = NPCData.get_npc_dialog(npc_area, npc_id)
+	if npc_data.is_empty():
+		print("[CityExplorer] NPC对话数据为空: ", npc_id)
+		return
+
+	# 将对话加入 DialogueManager
+	var dialog_queue: Array = []
+	for d in npc_data.get("dialogs", []):
+		dialog_queue.append({
+			"speaker": d.get("name", ""),
+			"text": d.get("text", "")
+		})
+
+	if dialog_queue.size() > 0:
+		_is_ui_open = true
+		DialogueManager.start_dialogue_queue(dialog_queue)
+
+## 对话结束回调
+func _on_dialogue_finished() -> void:
+	_is_ui_open = false
+
+## 对话事件回调
+func _on_dialogue_event(event_name: String) -> void:
+	print("[CityExplorer] 对话事件: ", event_name)
+	match event_name:
+		"heal_player":
+			# 恢复玩家HP
+			for member in GameData.party:
+				member.current_hp = member.max_hp
+			print("[CityExplorer] 玩家已恢复HP")
+		"open_garage":
+			_open_garage()
+		"repair_tank":
+			for tank in TankSystem.get_owned_tanks():
+				TankSystem.repair_tank(tank.id)
+		"open_bounty_list":
+			_open_bounty_guild()
+		"open_bounty_claim":
+			_open_bounty_guild()
+
+## 打开商店
+func _open_shop(shop_id: String) -> void:
+	if _shop_system and _shop_system.visible:
+		return
+	_shop_system = SHOP_SCENE.instantiate()
+	add_child(_shop_system)
+	_shop_system.open_shop(shop_id, ShopData.get_shop_items(shop_id))
+	_is_ui_open = true
+
+## 打开战车改造
+func _open_garage() -> void:
+	if _tank_garage and _tank_garage.visible:
+		return
+	_tank_garage = TANK_GARAGE_SCENE.instantiate()
+	add_child(_tank_garage)
+	_tank_garage.open_garage()
+	_is_ui_open = true
+
+## 打开赏金公会
+func _open_bounty_guild() -> void:
+	if _bounty_guild and _bounty_guild.visible:
+		return
+	_bounty_guild = BOUNTY_GUILD_SCENE.instantiate()
+	add_child(_bounty_guild)
+	_bounty_guild.open_guild()
+	_is_ui_open = true
 
 ## 切换上下战车
 func _toggle_tank() -> void:
@@ -141,7 +182,7 @@ func _toggle_tank() -> void:
 		TankSystem.exit_tank()
 		_in_tank = false
 		if player:
-			player.movement_speed = 200
+			player.in_tank = false
 		print("[CityExplorer] 下车，步行模式")
 	else:
 		var owned = TankSystem.get_owned_tanks()
@@ -149,13 +190,15 @@ func _toggle_tank() -> void:
 			TankSystem.enter_tank(owned[0].id)
 			_in_tank = true
 			if player:
-				player.movement_speed = 400
+				player.in_tank = true
 			print("[CityExplorer] 上车，战车模式")
 		else:
 			print("[CityExplorer] 没有战车")
 
 ## 遇敌回调
 func _on_encounter() -> void:
+	if _is_ui_open:
+		return
 	print("[CityExplorer] 进入战斗! 区域: " + area_id)
 	if audio_stream_player:
 		audio_stream_player.stop()

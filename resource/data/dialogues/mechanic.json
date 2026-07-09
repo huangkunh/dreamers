@@ -1,0 +1,33 @@
+{
+	"start": {
+		"speaker": "机械师",
+		"text": "嘿！我是镇上的机械师。你的战车有问题就来找我。",
+		"next_id": "mechanic_2"
+	},
+	"mechanic_2": {
+		"speaker": "机械师",
+		"text": "战车的装甲、引擎、武器都可以升级。好零件可不便宜，多攒点钱吧。",
+		"choices": [
+			{"text": "改造战车", "next_id": "open_garage"},
+			{"text": "修复战车", "next_id": "repair_tank"},
+			{"text": "告别", "next_id": "end"}
+		]
+	},
+	"open_garage": {
+		"speaker": "机械师",
+		"text": "来吧，让我看看你的战车。",
+		"event": "open_garage",
+		"next_id": "end"
+	},
+	"repair_tank": {
+		"speaker": "机械师",
+		"text": "战车修复完成！不收你钱了，算我请的。",
+		"event": "repair_tank",
+		"next_id": "end"
+	},
+	"end": {
+		"speaker": "机械师",
+		"text": "有事再来找我。",
+		"next_id": ""
+	}
+}
