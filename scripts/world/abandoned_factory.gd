@@ -8,6 +8,7 @@ extends Node3D
 
 const NPC_SCENE := preload("res://scene/characters/npc/npc.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/ui/game_hud.tscn")
+const TREASURE_CHEST_SCRIPT := preload("res://scripts/components/treasure_chest.gd")
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var player: CharacterBody3D = $Player
@@ -50,6 +51,9 @@ func _ready() -> void:
 
         # 创建BOSS触发区域
         _create_boss_trigger()
+
+        # 创建宝箱
+        _create_chests()
 
         # 实例化游戏内HUD
         _game_hud = GAME_HUD_SCENE.instantiate()
@@ -106,6 +110,27 @@ func _create_boss_trigger() -> void:
 
         _boss_trigger.body_entered.connect(_on_boss_trigger_entered)
         add_child(_boss_trigger)
+
+## 创建宝箱
+func _create_chests() -> void:
+        # 宝箱1: 金币 (角落)
+        var chest1 := Area3D.new()
+        chest1.set_script(TREASURE_CHEST_SCRIPT)
+        chest1.chest_id = "factory_chest_1"
+        chest1.reward_type = 0  # COINS
+        chest1.reward_value = "300"
+        chest1.display_name = "工厂宝箱"
+        chest1.position = Vector3(-15, 0, -10)
+        add_child(chest1)
+
+        # 宝箱2: 全恢复 (BOSS房附近)
+        var chest2 := Area3D.new()
+        chest2.set_script(TREASURE_CHEST_SCRIPT)
+        chest2.chest_id = "factory_chest_2"
+        chest2.reward_type = 4  # HEAL
+        chest2.display_name = "补给箱"
+        chest2.position = Vector3(12, 0, -18)
+        add_child(chest2)
 
 ## BOSS触发
 func _on_boss_trigger_entered(body: Node) -> void:
