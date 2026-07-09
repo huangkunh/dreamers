@@ -48,7 +48,7 @@ var AREAS := [
                 "id": "ancient_ruins",
                 "name": "古代遗迹",
                 "description": "旧文明的地下研究所。\n据说保存着失落的科技和强大的武器蓝图。\n[color=#ff0000]推荐等级: Lv.20+[/color]",
-                "scene": "city",
+                "scene": "ancient_ruins",
                 "locked": true,
                 "area_id": "ancient_ruins",
                 "unlock_condition": "bounty_2_claimed",

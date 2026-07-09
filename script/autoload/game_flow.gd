@@ -28,6 +28,7 @@ const SCENE_PATHS := {
         "wasteland": "res://scene/city/wasteland.tscn",
         "factory": "res://scenes/world/abandoned_factory.tscn",
         "ant_nest": "res://scenes/world/ant_nest.tscn",
+        "ancient_ruins": "res://scenes/world/ancient_ruins.tscn",
         "battle": "res://scene/HUD/fight/fight.tscn",
 }
 

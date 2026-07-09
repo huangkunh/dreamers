@@ -89,6 +89,7 @@ func get_npc_dialog(area: String, npc_id: String) -> Dictionary:
                 "wasteland": area_data = wasteland_npcs
                 "factory": area_data = factory_npcs
                 "ant_nest": area_data = ant_nest_npcs
+                "ancient_ruins": area_data = ancient_ruins_npcs
                 _: return {}
 
         if area_data.has(npc_id):
@@ -117,6 +118,20 @@ var ant_nest_npcs: Dictionary = {
                         {"name": "受伤的探险者", "text": "蚁后在最深处，它周围的卫兵会保护它。你必须先解决卫兵才能攻击蚁后。"},
                         {"name": "受伤的探险者", "text": "蚁后的酸液攻击很可怕，中了会持续受伤。带上解毒药...咳咳..."},
                         {"name": "受伤的探险者", "text": "击败蚁后可以获得800金币赏金。祝你好运...我先撤了..."},
+                ],
+        },
+}
+
+## 古代遗迹 NPC
+var ancient_ruins_npcs: Dictionary = {
+        "ancient_ai": {
+                "name": "古代AI",
+                "dialogs": [
+                        {"name": "古代AI", "text": "...检测到生命体接近...启动应急协议..."},
+                        {"name": "古代AI", "text": "我是旧文明留下的研究设施管理AI。这里曾是研究'不定形生命体'的实验室。"},
+                        {"name": "古代AI", "text": "实验失控了...那个不定形生命体吞噬了所有研究员，现在盘踞在最深处的实验室。"},
+                        {"name": "古代AI", "text": "赏金1200金币悬赏它。但它能变形，物理攻击效果有限。建议使用火焰或能量武器。"},
+                        {"name": "古代AI", "text": "设施内有3个宝箱，包含旧文明的科技。小心守卫机器人...祝你好运。"},
                 ],
         },
 }
