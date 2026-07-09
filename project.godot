@@ -35,6 +35,7 @@ DialogueManager="*res://scripts/autoload/dialogue_manager.gd"
 SkillData="*res://scripts/autoload/skill_data.gd"
 CDeviceSystem="*res://scripts/autoload/c_device_system.gd"
 StatusEffectSystem="*res://scripts/autoload/status_effect_system.gd"
+LevelUpSystem="*res://scripts/autoload/level_up_system.gd"
 
 [editor]
 
