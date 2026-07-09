@@ -39,7 +39,7 @@ var AREAS := [
                 "id": "ant_nest",
                 "name": "蚂蚁巢穴",
                 "description": "巨大的地下蚁穴，蚁后盘踞其中。\n消灭蚁后可获得1000G赏金。\n[color=#ff4444]推荐等级: Lv.12+[/color]",
-                "scene": "city",
+                "scene": "ant_nest",
                 "locked": true,
                 "area_id": "ant_nest",
                 "unlock_condition": "defeat_5_enemies",

@@ -88,6 +88,7 @@ func get_npc_dialog(area: String, npc_id: String) -> Dictionary:
                 "aoduo": area_data = aoduo_npcs
                 "wasteland": area_data = wasteland_npcs
                 "factory": area_data = factory_npcs
+                "ant_nest": area_data = ant_nest_npcs
                 _: return {}
 
         if area_data.has(npc_id):
@@ -103,6 +104,19 @@ var factory_npcs: Dictionary = {
                         {"name": "工厂守卫", "text": "这里是旧文明的武器工厂遗址。最近里面有一台失控的自动坦克在巡逻，见人就攻击。"},
                         {"name": "工厂守卫", "text": "赏金猎人公会悬赏1500金币缉拿那台失控坦克。不过它的装甲很厚，普通武器很难造成伤害。"},
                         {"name": "工厂守卫", "text": "坦克在工厂深处巡逻。小心它的主炮，一炮就能把你送上天。祝你好运！"},
+                ],
+        },
+}
+
+## 蚂蚁巢穴 NPC
+var ant_nest_npcs: Dictionary = {
+        "injured_explorer": {
+                "name": "受伤的探险者",
+                "dialogs": [
+                        {"name": "受伤的探险者", "text": "咳咳...你也是来挑战蚁后的？小心...这里的蚂蚁比外面的强多了。"},
+                        {"name": "受伤的探险者", "text": "蚁后在最深处，它周围的卫兵会保护它。你必须先解决卫兵才能攻击蚁后。"},
+                        {"name": "受伤的探险者", "text": "蚁后的酸液攻击很可怕，中了会持续受伤。带上解毒药...咳咳..."},
+                        {"name": "受伤的探险者", "text": "击败蚁后可以获得800金币赏金。祝你好运...我先撤了..."},
                 ],
         },
 }

@@ -218,6 +218,7 @@ var b03_ant_queen: Dictionary = {
 var aoduo_enemies: Array = [l02_amoeba, e01_flame_guns, e02_cannon, l01_giant_ants, l01_sour_ants]
 var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker]
 var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly]
+var ant_nest_enemies: Array = [l01_giant_ants, l01_sour_ants, l02_amoeba]
 var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen]
 
 var enemies_init_data: Dictionary = {
@@ -241,6 +242,7 @@ func get_enemies_by_area(area: String) -> Array:
                 "wasteland": return wasteland_enemies
                 "factory": return factory_enemies
                 "factory_ruins": return factory_enemies
+                "ant_nest": return ant_nest_enemies
                 _: return aoduo_enemies
 
 ## 获取赏金首列表
