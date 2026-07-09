@@ -268,3 +268,11 @@ func check_all_player_death()-> bool:
 func all_player_death():
         audio_stream_player.stream = load("res://music/background_music/defeat.ogg")
         audio_stream_player.play()
+
+        # 显示游戏结束画面
+        var game_over_scene := load("res://scenes/ui/game_over_screen.tscn")
+        var game_over: Control = game_over_scene.instantiate()
+        add_child(game_over)
+        # 延迟显示，让失败音乐先播放
+        await get_tree().create_timer(2.0).timeout
+        game_over.show_game_over()
