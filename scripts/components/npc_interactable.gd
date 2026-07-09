@@ -22,57 +22,71 @@ var _dialogue_data: Dictionary = {}
 signal interacted
 
 func _ready() -> void:
-	# 设置碰撞区域
-	var collision := CollisionShape3D.new()
-	var sphere := SphereShape3D.new()
-	sphere.radius = interact_radius
-	collision.shape = sphere
-	add_child(collision)
+        # 设置碰撞区域
+        var collision := CollisionShape3D.new()
+        var sphere := SphereShape3D.new()
+        sphere.radius = interact_radius
+        collision.shape = sphere
+        add_child(collision)
 
-	# 连接Area3D信号
-	body_entered.connect(_on_body_entered)
-	body_exited.connect(_on_body_exited)
+        # 连接Area3D信号
+        body_entered.connect(_on_body_entered)
+        body_exited.connect(_on_body_exited)
 
-	# 加载对话数据
-	if dialogue_file != "":
-		_load_dialogue_file()
+        # 加载对话数据
+        if dialogue_file != "":
+                _load_dialogue_file()
 
 ## 加载对话文件
 func _load_dialogue_file() -> void:
-	if not FileAccess.file_exists(dialogue_file):
-		push_warning("NPC: 对话文件不存在: " + dialogue_file)
-		return
-	var file := FileAccess.open(dialogue_file, FileAccess.READ)
-	if not file:
-		return
-	var json_string := file.get_as_text()
-	file.close()
-	var json := JSON.new()
-	if json.parse(json_string) == OK:
-		_dialogue_data = DialogueManager.load_dialogue_from_dict(json.data)
-	else:
-		push_error("NPC: 对话文件解析失败: " + dialogue_file)
+        if not FileAccess.file_exists(dialogue_file):
+                push_warning("NPC: 对话文件不存在: " + dialogue_file)
+                return
+        var file := FileAccess.open(dialogue_file, FileAccess.READ)
+        if not file:
+                return
+        var json_string := file.get_as_text()
+        file.close()
+        var json := JSON.new()
+        if json.parse(json_string) == OK:
+                _dialogue_data = DialogueManager.load_dialogue_from_dict(json.data)
+        else:
+                push_error("NPC: 对话文件解析失败: " + dialogue_file)
 
 ## 玩家进入交互范围
 func _on_body_entered(body: Node) -> void:
-	if body.is_in_group("player"):
-		# 显示交互提示
-		print("[NPC] ", npc_name, " 进入交互范围")
-		# TODO: 显示"按E交互"提示UI
+        if body.is_in_group("player"):
+                print("[NPC] ", npc_name, " 进入交互范围")
+                # 通知 CityExplorer 设置附近NPC
+                var explorer = _find_city_explorer()
+                if explorer and explorer.has_method("set_nearby_npc"):
+                        explorer.set_nearby_npc(self)
 
 ## 玩家离开交互范围
 func _on_body_exited(body: Node) -> void:
-	if body.is_in_group("player"):
-		print("[NPC] ", npc_name, " 离开交互范围")
+        if body.is_in_group("player"):
+                print("[NPC] ", npc_name, " 离开交互范围")
+                var explorer = _find_city_explorer()
+                if explorer and explorer.has_method("clear_nearby_npc"):
+                        explorer.clear_nearby_npc()
+
+## 查找 CityExplorer 父节点
+func _find_city_explorer() -> Node:
+        var parent = get_parent()
+        while parent:
+                if parent.has_method("set_nearby_npc"):
+                        return parent
+                parent = parent.get_parent()
+        return null
 
 ## 触发交互
 func interact() -> void:
-	if one_shot and _interacted:
-		return
-	_interacted = true
-	interacted.emit()
+        if one_shot and _interacted:
+                return
+        _interacted = true
+        interacted.emit()
 
-	if _dialogue_data.size() > 0:
-		DialogueManager.start_dialogue(_dialogue_data, dialogue_id)
-	else:
-		print("[NPC] ", npc_name, " 没有对话数据")
+        if _dialogue_data.size() > 0:
+                DialogueManager.start_dialogue(_dialogue_data, dialogue_id)
+        else:
+                print("[NPC] ", npc_name, " 没有对话数据")
