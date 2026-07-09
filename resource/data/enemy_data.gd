@@ -214,12 +214,71 @@ var b03_ant_queen: Dictionary = {
         "enemy_position": Vector3.ZERO,
 }
 
+## ---- 新增敌人 (扩展种类) ----
+
+## 变异蝙蝠 (荒野)
+var w04_mutant_bat: Dictionary = {
+        "player_name": "w04_mutant_bat",
+        "local_player_name": "变异蝙蝠",
+        "skills": [AttackData.normal_attack],
+        "confirm_player": false,
+        "fight_speed": 25,
+        "current_health": 60,
+        "max_health": 60,
+        "battle_lv": 12,
+        "strength": 8,
+        "exp_reward": 15,
+        "coin_reward": 8,
+        "animated": ["w04_mutant_bat_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 机械蜘蛛 (工厂)
+var f01_spider_bot: Dictionary = {
+        "player_name": "f01_spider_bot",
+        "local_player_name": "机械蜘蛛",
+        "skills": [AttackData.normal_attack],
+        "confirm_player": false,
+        "fight_speed": 15,
+        "current_health": 120,
+        "max_health": 120,
+        "battle_lv": 18,
+        "strength": 14,
+        "exp_reward": 25,
+        "coin_reward": 15,
+        "animated": ["f01_spider_bot_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 古代守卫 (遗迹)
+var r01_ancient_guard: Dictionary = {
+        "player_name": "r01_ancient_guard",
+        "local_player_name": "古代守卫",
+        "skills": [AttackData.normal_attack],
+        "confirm_player": false,
+        "fight_speed": 8,
+        "current_health": 200,
+        "max_health": 200,
+        "battle_lv": 25,
+        "strength": 20,
+        "exp_reward": 40,
+        "coin_reward": 25,
+        "animated": ["r01_ancient_guard_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
 ## ---- 敌人编组 ----
 var aoduo_enemies: Array = [l02_amoeba, e01_flame_guns, e02_cannon, l01_giant_ants, l01_sour_ants]
-var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker]
-var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly]
+var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker, w04_mutant_bat]
+var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly, f01_spider_bot]
 var ant_nest_enemies: Array = [l01_giant_ants, l01_sour_ants, l02_amoeba]
-var ancient_ruins_enemies: Array = [e02_cannon, b01_rock_butterfly, l02_amoeba, e01_flame_guns]
+var ancient_ruins_enemies: Array = [e02_cannon, b01_rock_butterfly, l02_amoeba, e01_flame_guns, r01_ancient_guard]
 var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen]
 
 var enemies_init_data: Dictionary = {
