@@ -112,8 +112,11 @@ func _on_continue() -> void:
                 print("[TitleScreen] 无存档可加载")
 
 func _on_options() -> void:
-        print("[TitleScreen] 选项（暂未实现）")
-        # TODO: 选项菜单
+        print("[TitleScreen] 打开选项设置")
+        var options_scene := load("res://scenes/ui/options_screen.tscn")
+        var options: Control = options_scene.instantiate()
+        add_child(options)
+        options.open()
 
 func _on_exit() -> void:
         get_tree().quit()
