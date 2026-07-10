@@ -40,6 +40,7 @@ QuestSystem="*res://scripts/autoload/quest_system.gd"
 ItemDropSystem="*res://scripts/autoload/item_drop_system.gd"
 PartyManager="*res://scripts/autoload/party_manager.gd"
 GameTimeSystem="*res://scripts/autoload/game_time_system.gd"
+AchievementSystem="*res://scripts/autoload/achievement_system.gd"
 
 [editor]
 
