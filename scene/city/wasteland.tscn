@@ -40,6 +40,9 @@ roughness = 0.9
 material = SubResource("GroundMat_waste")
 size = Vector2(60, 60)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_waste"]
+size = Vector2(60, 60)
+
 [sub_resource type="ShaderMaterial" id="CloudShadow_waste"]
 shader = ExtResource("6_cloud")
 shader_parameter/noise_strength = 1.0
