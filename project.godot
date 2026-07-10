@@ -39,6 +39,7 @@ LevelUpSystem="*res://scripts/autoload/level_up_system.gd"
 QuestSystem="*res://scripts/autoload/quest_system.gd"
 ItemDropSystem="*res://scripts/autoload/item_drop_system.gd"
 PartyManager="*res://scripts/autoload/party_manager.gd"
+GameTimeSystem="*res://scripts/autoload/game_time_system.gd"
 
 [editor]
 
