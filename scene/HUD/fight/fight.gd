@@ -274,6 +274,11 @@ func all_enemy_death():
         for member in GameData.party:
                 LevelUpSystem.add_exp(member, earn_exp)
 
+        # 更新任务进度
+        QuestSystem.update_objective("defeat_enemies", "any", enemy_count)
+        if not boss_id.is_empty():
+                QuestSystem.update_objective("defeat_bounty", boss_id, 1)
+
         # 记录战斗胜利
         GameData.encounter_count += 1
         GameData.defeat_count += fighting_unit_map.values().filter(func(u): return not u.confirm_player).size()
