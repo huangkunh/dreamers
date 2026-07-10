@@ -1,0 +1,133 @@
+[gd_scene load_steps=12 format=3 uid="uid://bant_nest_001"]
+
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scene/characters/hero/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/world/ant_nest.gd" id="2_antnest"]
+[ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
+[ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="4_vignette"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_ant"]
+sky_top_color = Color(0.15, 0.1, 0.08, 1)
+sky_horizon_color = Color(0.25, 0.15, 0.1, 1)
+ground_bottom_color = Color(0.1, 0.08, 0.05, 1)
+ground_horizon_color = Color(0.2, 0.12, 0.08, 1)
+
+[sub_resource type="Sky" id="Sky_ant"]
+sky_material = SubResource("SkyMat_ant")
+
+[sub_resource type="Environment" id="Env_ant"]
+background_mode = 2
+sky = SubResource("Sky_ant")
+ambient_light_color = Color(0.3, 0.2, 0.15, 1)
+ambient_light_energy = 0.4
+fog_enabled = true
+fog_light_color = Color(0.2, 0.15, 0.1, 1)
+fog_density = 0.12
+volumetric_fog_enabled = true
+volumetric_fog_density = 1.2
+volumetric_fog_albedo = Color(0.3, 0.2, 0.15, 1)
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.25, 0.18, 0.12, 1)
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+size = Vector2(50, 50)
+material = SubResource("GroundMat")
+
+[sub_resource type="ShaderMaterial" id="VignetteMat"]
+shader = ExtResource("4_vignette")
+shader_parameter/vignette_intensity = 0.8
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[node name="AntNest" type="Node3D"]
+script = ExtResource("2_antnest")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_ant")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.7, 0.3, -0.6, 0, 0.8, 0.5, 0.7, -0.5, 0.5, 5, 8, 5)
+light_color = Color(0.6, 0.4, 0.3, 1)
+light_energy = 0.4
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 6, 8)
+fov = 55.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("GroundMesh")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_bgm")
+volume_db = -6.0
+
+[node name="VignetteOverlay" type="ColorRect" parent="."]
+material = SubResource("VignetteMat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="WallNorth" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -25)
+size = Vector3(50, 2, 1)
+material = SubResource("GroundMat")
+
+[node name="WallSouth" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 25)
+size = Vector3(50, 2, 1)
+material = SubResource("GroundMat")
+
+[node name="WallEast" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 0)
+size = Vector3(1, 2, 50)
+material = SubResource("GroundMat")
+
+[node name="WallWest" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 1, 0)
+size = Vector3(1, 2, 50)
+material = SubResource("GroundMat")
+
+[node name="Tunnels" type="Node3D" parent="."]
+
+[node name="Tunnel1" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -5)
+size = Vector3(2, 2, 8)
+material = SubResource("GroundMat")
+
+[node name="Tunnel2" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -10)
+size = Vector3(2, 2, 10)
+material = SubResource("GroundMat")
+
+[node name="Tunnel3" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -15)
+size = Vector3(6, 2, 4)
+material = SubResource("GroundMat")
+
+[node name="EggSacks" type="Node3D" parent="."]
+
+[node name="EggSack1" type="CSGSphere3D" parent="EggSacks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, -8)
+radius = 0.8
+material = SubResource("GroundMat")
+
+[node name="EggSack2" type="CSGSphere3D" parent="EggSacks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, -12)
+radius = 1.0
+material = SubResource("GroundMat")
+
+[node name="EggSack3" type="CSGSphere3D" parent="EggSacks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -18)
+radius = 0.9
+material = SubResource("GroundMat")
+
+[node name="EggSack4" type="CSGSphere3D" parent="EggSacks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -20)
+radius = 1.2
+material = SubResource("GroundMat")

@@ -8,6 +8,7 @@ extends Control
 @onready var new_game_btn: Button = $VBoxContainer/MenuContainer/NewGameButton
 @onready var continue_btn: Button = $VBoxContainer/MenuContainer/ContinueButton
 @onready var options_btn: Button = $VBoxContainer/MenuContainer/OptionsButton
+@onready var help_btn: Button = $VBoxContainer/MenuContainer/HelpButton
 @onready var exit_btn: Button = $VBoxContainer/MenuContainer/ExitButton
 @onready var version_label: Label = $VersionLabel
 @onready var bg_color_rect: ColorRect = $BackgroundColorRect
@@ -22,7 +23,7 @@ func _ready() -> void:
         version_label.text = "v0.05 - Phase 5"
 
         # 收集菜单按钮
-        _menu_buttons = [new_game_btn, continue_btn, options_btn, exit_btn]
+        _menu_buttons = [new_game_btn, continue_btn, options_btn, help_btn, exit_btn]
 
         # 检查存档
         if SaveSystem and SaveSystem.has_save_data():
@@ -34,6 +35,7 @@ func _ready() -> void:
         new_game_btn.pressed.connect(_on_new_game)
         continue_btn.pressed.connect(_on_continue)
         options_btn.pressed.connect(_on_options)
+        help_btn.pressed.connect(_on_help)
         exit_btn.pressed.connect(_on_exit)
 
         # 初始高亮第一个按钮
@@ -112,8 +114,18 @@ func _on_continue() -> void:
                 print("[TitleScreen] 无存档可加载")
 
 func _on_options() -> void:
-        print("[TitleScreen] 选项（暂未实现）")
-        # TODO: 选项菜单
+        print("[TitleScreen] 打开选项设置")
+        var options_scene := load("res://scenes/ui/options_screen.tscn")
+        var options: Control = options_scene.instantiate()
+        add_child(options)
+        options.open()
+
+func _on_help() -> void:
+        print("[TitleScreen] 打开帮助说明")
+        var help_scene := load("res://scenes/ui/help_screen.tscn")
+        var help: Control = help_scene.instantiate()
+        add_child(help)
+        help.open()
 
 func _on_exit() -> void:
         get_tree().quit()

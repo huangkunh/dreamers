@@ -30,7 +30,7 @@ var AREAS := [
                 "id": "factory_ruins",
                 "name": "废弃工厂",
                 "description": "旧文明的工业遗迹。\n据说深处有台失控的自动战斗坦克...赏金1500G。\n[color=#ff4444]推荐等级: Lv.15+[/color]",
-                "scene": "city",
+                "scene": "factory",
                 "locked": true,
                 "area_id": "factory_ruins",
                 "unlock_condition": "wasteland_cleared",
@@ -39,7 +39,7 @@ var AREAS := [
                 "id": "ant_nest",
                 "name": "蚂蚁巢穴",
                 "description": "巨大的地下蚁穴，蚁后盘踞其中。\n消灭蚁后可获得1000G赏金。\n[color=#ff4444]推荐等级: Lv.12+[/color]",
-                "scene": "city",
+                "scene": "ant_nest",
                 "locked": true,
                 "area_id": "ant_nest",
                 "unlock_condition": "defeat_5_enemies",
@@ -48,7 +48,7 @@ var AREAS := [
                 "id": "ancient_ruins",
                 "name": "古代遗迹",
                 "description": "旧文明的地下研究所。\n据说保存着失落的科技和强大的武器蓝图。\n[color=#ff0000]推荐等级: Lv.20+[/color]",
-                "scene": "city",
+                "scene": "ancient_ruins",
                 "locked": true,
                 "area_id": "ancient_ruins",
                 "unlock_condition": "bounty_2_claimed",
@@ -133,7 +133,9 @@ func _on_area_pressed(area: Dictionary) -> void:
         print("[WorldMap] 进入区域: " + area.name)
         # 设置当前区域ID
         GameData.game_flags["current_area"] = area.id
-        GameFlow.enter_city()
+        # 根据区域场景切换
+        var scene_name: String = area.get("scene", "city")
+        GameFlow.change_scene(scene_name)
 
 func _on_back() -> void:
         GameFlow.return_to_title()

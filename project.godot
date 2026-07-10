@@ -33,6 +33,10 @@ NPCData="*res://resource/data/npc_data.gd"
 TankEquipData="*res://resource/data/tank_equipment_data.gd"
 DialogueManager="*res://scripts/autoload/dialogue_manager.gd"
 SkillData="*res://scripts/autoload/skill_data.gd"
+CDeviceSystem="*res://scripts/autoload/c_device_system.gd"
+StatusEffectSystem="*res://scripts/autoload/status_effect_system.gd"
+LevelUpSystem="*res://scripts/autoload/level_up_system.gd"
+QuestSystem="*res://scripts/autoload/quest_system.gd"
 
 [editor]
 
