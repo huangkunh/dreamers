@@ -37,6 +37,7 @@ CDeviceSystem="*res://scripts/autoload/c_device_system.gd"
 StatusEffectSystem="*res://scripts/autoload/status_effect_system.gd"
 LevelUpSystem="*res://scripts/autoload/level_up_system.gd"
 QuestSystem="*res://scripts/autoload/quest_system.gd"
+ItemDropSystem="*res://scripts/autoload/item_drop_system.gd"
 
 [editor]
 
