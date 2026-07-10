@@ -223,3 +223,28 @@ dreamers/
 - 实现废弃工厂BOSS战触发
 - 将 SkillData 接入战斗系统
 - 创建荒野场景NPC和事件触发器
+
+### 2026-07-10 (Day 3)
+**计划完成:**
+- 合并远程27个commit的新代码
+- 集成新系统到主游戏流程
+- 创建蚂蚁巢穴和古代遗迹场景
+
+**实际完成:**
+- ✅ 合并远程分支 (27 commits), 解决6个冲突文件
+- ✅ 集成 GameHUD 到城市探索 (HP/金币/区域/时间显示)
+- ✅ 战斗系统改进: 按区域生成敌人, BOSS战检测
+- ✅ 战斗系统: LevelUpSystem 计算经验金币, 自动升级
+- ✅ 战斗系统: QuestSystem 任务进度更新 (击败敌人/赏金首)
+- ✅ 废弃工厂场景使用专用 abandoned_factory.gd 脚本
+- ✅ 创建蚂蚁巢穴场景 (ant_nest.tscn)
+- ✅ 创建古代遗迹场景 (ancient_ruins.tscn)
+- ✅ GameFlow: 添加 ant_nest/ancient_ruins 场景路由
+- ✅ 新增 b04_amorphous 赏金首 (800HP/Lv35/3000G)
+- ✅ 修正 BountySystem b04 enemy_id
+
+**明日计划:**
+- 将 SkillData 接入战斗菜单 (技能选择UI)
+- 集成 StatusEffectSystem 到战斗逻辑
+- 完善 world_map.gd 区域解锁逻辑
+- 创建 export_presets.cfg 导出预设
