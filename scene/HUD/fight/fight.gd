@@ -34,17 +34,35 @@ var fighting_id
 func _ready() -> void:
         fight_hud.determine_attack_target_signal.connect(player_attck)
         
-        # 生成怪物
-        var generration_enemy_num = randi_range(1, 4)
-        var enemies_size = enemies_init_data.size()
+        # 生成怪物 — 根据当前区域筛选
+        var battle_area = GameData.game_flags.get("battle_area", "aoduo")
+        var area_enemies = enemy_data.new().get_enemies_by_area(battle_area)
+        var boss_id = GameData.game_flags.get("boss_battle", "")
+        
         var enemies_data_list = []
-        for i in generration_enemy_num:
-                var index = randi_range(1, enemies_size - 1)
-                var enemy = enemies_init_data[index].duplicate(true)
-                var fight_id = enemy.player_name + "_" + str(i)
-                enemy.fight_id = fight_id
-                fighting_unit_map[fight_id] = enemy
-                enemies_data_list.append(enemy) 
+        if not boss_id.is_empty():
+                # BOSS战 — 只生成赏金首
+                var boss_data = enemy_data.new().get_enemy_by_id(boss_id)
+                if not boss_data.is_empty():
+                        var enemy = boss_data.duplicate(true)
+                        enemy.fight_id = boss_id + "_0"
+                        fighting_unit_map[enemy.fight_id] = enemy
+                        enemies_data_list.append(enemy)
+                        print("[Fight] BOSS战: " + str(boss_data.get("local_player_name", boss_id)))
+        else:
+                # 普通遇敌 — 从区域敌人池随机生成1-4只
+                var generation_num = randi_range(1, 4)
+                for i in generation_num:
+                        if area_enemies.is_empty():
+                                break
+                        var index = randi() % area_enemies.size()
+                        var enemy = area_enemies[index].duplicate(true)
+                        # 重置HP
+                        enemy["current_health"] = enemy.get("max_health", 100)
+                        var fight_id = enemy.player_name + "_" + str(i)
+                        enemy.fight_id = fight_id
+                        fighting_unit_map[fight_id] = enemy
+                        enemies_data_list.append(enemy)
         
         var enemy_scene: Array = enenies_manager.generation_enemy(enemies_data_list)
         for enemy in enemy_scene:
@@ -219,14 +237,27 @@ func all_enemy_death():
         fight_hud.visible = false
         fight_speed_path.fight_stop()
 
-        # 获得经验 金钱 道具
-        var earn_exp = 10 + randi_range(0, 4)
-        var earn_coins = 10 + randi_range(0, 4)
+        # 获得经验 金钱 — 使用 LevelUpSystem 计算
+        var enemy_level_sum = 0
+        var enemy_count = 0
+        for unit in fighting_unit_map.values():
+                if not unit.confirm_player:
+                        enemy_level_sum += int(unit.get("battle_lv", 5))
+                        enemy_count += 1
+        
+        var earn_exp: int
+        var earn_coins: int
+        if enemy_count > 0:
+                earn_exp = LevelUpSystem.calculate_battle_exp(enemy_level_sum / enemy_count, enemy_count)
+                earn_coins = LevelUpSystem.calculate_battle_coins(enemy_level_sum / enemy_count, enemy_count)
+        else:
+                earn_exp = 10
+                earn_coins = 10
 
         # 检查是否是BOSS战 (赏金首)
         var boss_id = GameData.game_flags.get("boss_battle", "")
         if not boss_id.is_empty():
-                # BOSS战胜利 - 更新赏金首状态
+                # BOSS战胜利 — 更新赏金首状态
                 if BountySystem.bounties.has(boss_id):
                         var bounty = BountySystem.bounties[boss_id]
                         bounty.status = BountySystem.BountyStatus.DEFEATED
@@ -237,6 +268,11 @@ func all_enemy_death():
                         BountySystem.bounty_defeated.emit(boss_id)
                 # 清除BOSS战标记
                 GameData.game_flags.erase("boss_battle")
+
+        # 给玩家队伍添加金币和经验
+        GameData.coins += earn_coins
+        for member in GameData.party:
+                LevelUpSystem.add_exp(member, earn_exp)
 
         # 记录战斗胜利
         GameData.encounter_count += 1
