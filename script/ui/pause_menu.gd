@@ -1,7 +1,12 @@
 extends Control
 ## 暂停菜单 (PauseMenu)
 ## 游戏中按 M 键打开的菜单系统
-## 包含: 队伍状态、背包、装备、设置
+## 包含: 队伍状态、背包、装备、任务、快速旅行、设置
+
+const QUEST_LOG_SCENE := preload("res://scenes/ui/quest_log_screen.tscn")
+const FAST_TRAVEL_SCENE := preload("res://scenes/ui/fast_travel_screen.tscn")
+const SAVE_LOAD_SCENE := preload("res://scenes/ui/save_load_screen.tscn")
+const OPTIONS_SCENE := preload("res://scenes/ui/options_screen.tscn")
 
 @onready var tab_container: TabContainer = $Panel/TabContainer
 @onready var party_tab: VBoxContainer = $Panel/TabContainer/PartyTab
@@ -10,6 +15,7 @@ extends Control
 @onready var coins_label: Label = $Panel/TopBar/CoinsLabel
 @onready var time_label: Label = $Panel/TopBar/TimeLabel
 @onready var close_button: Button = $Panel/TopBar/CloseButton
+@onready var action_buttons: HBoxContainer = $Panel/ActionButtons
 
 var _inventory_list: ItemList
 var _party_info: VBoxContainer
@@ -19,6 +25,7 @@ func _ready() -> void:
         close_button.pressed.connect(close)
         _build_party_tab()
         _build_inventory_tab()
+        _build_action_buttons()
 
 func _process(_delta: float) -> void:
         if visible:
@@ -187,3 +194,67 @@ func toggle() -> void:
                 close()
         else:
                 open()
+
+## 构建操作按钮
+func _build_action_buttons() -> void:
+        if not action_buttons:
+                return
+        # 清除现有按钮
+        for child in action_buttons.get_children():
+                child.queue_free()
+
+        # 任务日志按钮
+        var quest_btn := Button.new()
+        quest_btn.text = "📋 任务"
+        quest_btn.custom_minimum_size = Vector2(100, 36)
+        quest_btn.add_theme_font_size_override("font_size", 16)
+        quest_btn.pressed.connect(_open_quest_log)
+        action_buttons.add_child(quest_btn)
+
+        # 快速旅行按钮
+        var travel_btn := Button.new()
+        travel_btn.text = "🗺 旅行"
+        travel_btn.custom_minimum_size = Vector2(100, 36)
+        travel_btn.add_theme_font_size_override("font_size", 16)
+        travel_btn.pressed.connect(_open_fast_travel)
+        action_buttons.add_child(travel_btn)
+
+        # 存档按钮
+        var save_btn := Button.new()
+        save_btn.text = "💾 存档"
+        save_btn.custom_minimum_size = Vector2(100, 36)
+        save_btn.add_theme_font_size_override("font_size", 16)
+        save_btn.pressed.connect(_open_save)
+        action_buttons.add_child(save_btn)
+
+        # 设置按钮
+        var options_btn := Button.new()
+        options_btn.text = "⚙ 设置"
+        options_btn.custom_minimum_size = Vector2(100, 36)
+        options_btn.add_theme_font_size_override("font_size", 16)
+        options_btn.pressed.connect(_open_options)
+        action_buttons.add_child(options_btn)
+
+## 打开任务日志
+func _open_quest_log() -> void:
+        var quest_log: Control = QUEST_LOG_SCENE.instantiate()
+        add_child(quest_log)
+        quest_log.open()
+
+## 打开快速旅行
+func _open_fast_travel() -> void:
+        var travel: Control = FAST_TRAVEL_SCENE.instantiate()
+        add_child(travel)
+        travel.open()
+
+## 打开存档
+func _open_save() -> void:
+        var save_screen: Control = SAVE_LOAD_SCENE.instantiate()
+        add_child(save_screen)
+        save_screen.open_save()
+
+## 打开设置
+func _open_options() -> void:
+        var options: Control = OPTIONS_SCENE.instantiate()
+        add_child(options)
+        options.open()
