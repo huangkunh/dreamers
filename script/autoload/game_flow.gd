@@ -27,6 +27,8 @@ const SCENE_PATHS := {
         "city": "res://base.tscn",
         "wasteland": "res://scene/city/wasteland.tscn",
         "factory": "res://scene/city/factory/factory_ruins.tscn",
+        "ant_nest": "res://scene/city/ant_nest/ant_nest.tscn",
+        "ancient_ruins": "res://scene/city/ancient_ruins/ancient_ruins.tscn",
         "battle": "res://scene/HUD/fight/fight.tscn",
 }
 
@@ -94,6 +96,10 @@ func enter_city() -> void:
                         change_scene("wasteland")
                 "factory":
                         change_scene("factory")
+                "ant_nest":
+                        change_scene("ant_nest")
+                "ancient_ruins":
+                        change_scene("ancient_ruins")
                 _:
                         change_scene("city")
 

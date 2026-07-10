@@ -279,7 +279,29 @@ var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker, w0
 var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly, f01_spider_bot]
 var ant_nest_enemies: Array = [l01_giant_ants, l01_sour_ants, l02_amoeba]
 var ancient_ruins_enemies: Array = [e02_cannon, b01_rock_butterfly, l02_amoeba, e01_flame_guns, r01_ancient_guard]
-var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen]
+var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen, b04_amorphous]
+
+## 不定形 (古代遗迹BOSS - 赏金首b04)
+var b04_amorphous: Dictionary = {
+        "player_name": "b04_amorphous",
+        "local_player_name": "不定形",
+        "skills": [AttackData.normal_attack, AttackData.acid_spit, AttackData.group_bite],
+        "confirm_player": false,
+        "fight_speed": 12,
+        "current_health": 800,
+        "max_health": 800,
+        "battle_lv": 35,
+        "strength": 30,
+        "exp_reward": 200,
+        "coin_reward": 0,
+        "animated": ["b04_amorphous_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen_n.png",
+        "enemy_position": Vector3.ZERO,
+        "is_bounty": true,
+        "bounty_id": "b04_amorphous",
+        "bounty_reward": 3000,
+}
 
 var enemies_init_data: Dictionary = {
         0: l02_amoeba,
@@ -293,6 +315,7 @@ var enemies_init_data: Dictionary = {
         8: b01_rock_butterfly,
         9: b02_mad_tank,
         10: b03_ant_queen,
+        11: b04_amorphous,
 }
 
 ## 根据区域获取敌人列表
