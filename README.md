@@ -26,37 +26,35 @@
 
 ```
 dreamers/
-├── project.godot                 # Godot 项目配置
-├── base.tscn                     # 城市探索主场景 (奥多市)
-├── scene/
-│   ├── ui/                       # UI 场景
-│   │   ├── title_screen.tscn     # 标题画面
-│   │   └── world_map.tscn        # 世界地图/区域选择
-│   ├── city/
-│   │   └── aoduo_city.tscn       # 奥多市 3D 场景
-│   ├── characters/
-│   │   ├── hero/                 # 玩家角色
-│   │   └── enemies/              # 敌人
-│   └── HUD/
-│       └── fight/                # 战斗系统 HUD
-├── script/
-│   ├── autoload/
-│   │   └── game_flow.gd          # 游戏流程管理器 (场景切换/状态)
-│   ├── ui/                       # UI 脚本
-│   ├── system/                   # 系统脚本
-│   └── shader/                   # 着色器
-│       ├── depth_of_field.gdshader  # HD-2D 景深效果
-│       ├── vignette.gdshader        # 暗角效果
-│       ├── cloud_shadow.gdshader    # 云影效果
-│       └── ...
-├── resource/
-│   ├── data/                     # 游戏数据 (玩家/敌人/技能)
-│   ├── sprite/                   # 精灵图
-│   ├── tilesets/                 # 图块集
-│   └── particles/                # 粒子效果
-└── music/                        # 音乐和音效
-    ├── background_music/
-    └── sound_effect/
+├── project.godot                 # Godot 项目配置 (v0.10)
+├── export_presets.cfg            # 多平台导出预设
+├── assets/                       # 原始数据文件
+│   └── data/dialogues/           # NPC对话JSON
+├── fonts/                        # 字体 (方正黑)
+├── music/                        # 音频 (BGM .ogg + SFX .wav)
+├── resource/                     # 美术资源
+│   ├── sprite/                   # 像素精灵 (hero/enemies/tanks/tileset)
+│   ├── particles/                # 粒子场景
+│   ├── material/                 # 材质
+│   ├── mesh_libraries/           # GridMap网格库
+│   ├── theme/                    # 主题
+│   └── tilesets/                 # TileSet
+├── scenes/                       # 所有场景
+│   ├── HUD/fight/                # 战斗场景 + HUD
+│   ├── characters/               # 角色 (hero/enemies/npc)
+│   ├── city/                     # 城市场景 (aoduo_base/wasteland)
+│   ├── ui/                       # UI场景 (20个: title/menu/hud/dialog/shop...)
+│   └── world/                    # 迷宫 (factory/ant_nest/ancient_ruins)
+├── scripts/                      # 所有脚本
+│   ├── autoload/                 # 自动加载单例 (17个)
+│   ├── components/               # 可复用组件 (player/npc/chest/trigger)
+│   ├── data/                     # 数据定义 (attack/enemy/player/shop/tank)
+│   ├── shader/                   # 着色器 (12个: vignette/dof/cloud/hd2d...)
+│   ├── system/                   # 系统 (city_explorer/encounter/effects)
+│   ├── ui/                       # UI脚本 (18个)
+│   └── world/                    # 迷宫脚本
+├── docs/                         # 项目文档
+└── exports/                      # 导出目录
 ```
 
 ## 开发进度
@@ -153,7 +151,19 @@ dreamers/
 - [x] 合成界面 (配方列表/材料详情/合成按钮)
 - [x] 30/30场景全部加载成功，无错误
 
-### Phase 12 - 后续扩展 (计划中)
+### Phase 12 - 目录结构规范化 ✅
+- [x] 合并 `script/` → `scripts/` (31个gd + 12个shader)
+- [x] 合并 `scene/` → `scenes/` (16个tscn)
+- [x] 移动 `resource/data/*.gd` → `scripts/data/` (6个数据脚本)
+- [x] 移动 `resource/data/dialogues/` → `assets/data/dialogues/`
+- [x] 移动 `resource/theme/font/` → `fonts/`
+- [x] 移动 `base.tscn` → `scenes/city/aoduo_base.tscn`
+- [x] 删除3个重复迷宫场景 (保留 scenes/world/ 版本)
+- [x] 批量更新所有 res:// 路径引用 (97个文件)
+- [x] GameFlow 场景路径修正
+- [x] 版本号 v0.10
+
+### Phase 13 - 后续扩展 (计划中)
 - [ ] 集成技能面板到战斗系统
 - [ ] 添加更多队友角色
 - [ ] BGM扩展 (不同区域不同音乐)
