@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://07m4ps6ib62k"
-path="res://.godot/imported/mm1_gnd_world - 副本.png-0769af16c19bdaee6910f7681ef9872e.ctex"
+path="res://.godot/imported/mm1_gnd_world.png-8544b84df626742b5a5434f20c10ddb4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resource/tilesets/mm1_gnd_world - 副本.png"
-dest_files=["res://.godot/imported/mm1_gnd_world - 副本.png-0769af16c19bdaee6910f7681ef9872e.ctex"]
+source_file="res://resource/tilesets/mm1_gnd_world.png"
+dest_files=["res://.godot/imported/mm1_gnd_world.png-8544b84df626742b5a5434f20c10ddb4.ctex"]
 
 [params]
 

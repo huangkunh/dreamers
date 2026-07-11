@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dhne8vem0j2uo"
-path="res://.godot/imported/fang_zheng_hei.ttf-a6ae21011d6ed7f86cc1a26128a29d24.fontdata"
+path="res://.godot/imported/fang_zheng_hei.ttf-ec7e57797c6a029547712555df560975.fontdata"
 
 [deps]
 
-source_file="res://resource/theme/font/fang_zheng_hei.ttf"
-dest_files=["res://.godot/imported/fang_zheng_hei.ttf-a6ae21011d6ed7f86cc1a26128a29d24.fontdata"]
+source_file="res://fonts/fang_zheng_hei.ttf"
+dest_files=["res://.godot/imported/fang_zheng_hei.ttf-ec7e57797c6a029547712555df560975.fontdata"]
 
 [params]
 
