@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://wasteland_scene_001"]
+[gd_scene load_steps=16 format=3 uid="uid://wasteland_scene_001"]
 
 [ext_resource type="Environment" path="res://default_env.tres" id="1_env"]
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="2_player"]
@@ -7,6 +7,7 @@
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="5_vignette"]
 [ext_resource type="Shader" path="res://scripts/shader/simulating_cloud_shadows.gdshader" id="6_cloud"]
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="7_particles"]
+[ext_resource type="Script" path="res://scripts/components/area_entrance_trigger.gd" id="8_entrance"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_waste"]
 sky_top_color = Color(0.75, 0.6, 0.4, 1)
@@ -124,3 +125,12 @@ material = SubResource("GroundMat_waste")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, 2)
 size = Vector3(1.5, 1.0, 1.5)
 material = SubResource("GroundMat_waste")
+
+[node name="AoduoEntrance" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+script = ExtResource("8_entrance")
+target_scene = "city"
+entrance_name = "奥多市"
+trigger_size = Vector3(4, 3, 2)
+require_confirm = true
+show_hint = true
