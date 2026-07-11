@@ -83,6 +83,14 @@ func _unhandled_input(event: InputEvent) -> void:
                         _pause_menu.open()
                 get_viewport().set_input_as_handled()
 
+        # ESC返回世界地图
+        if event.is_action_pressed("ui_cancel"):
+                if _pause_menu and _pause_menu.visible:
+                        _pause_menu.close()
+                else:
+                        GameFlow.return_to_world_map()
+                get_viewport().set_input_as_handled()
+
         # 战车切换
         if event.is_action_pressed("tank_toggle"):
                 _toggle_tank()

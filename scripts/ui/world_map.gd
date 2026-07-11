@@ -22,7 +22,7 @@ var AREAS := [
                 "id": "wasteland",
                 "name": "荒野",
                 "description": "充满变异生物的危险地带。\n适合新手猎人练级，但小心流浪暴走族。\n[color=#ffaa44]推荐等级: Lv.5-10[/color]",
-                "scene": "city",
+                "scene": "wasteland",
                 "locked": false,
                 "area_id": "wasteland",
         },
