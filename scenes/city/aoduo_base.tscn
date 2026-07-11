@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dfvtakknajnao"]
+[gd_scene load_steps=23 format=3 uid="uid://dfvtakknajnao"]
 
 [ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://scenes/city/aoduo_city.tscn" id="1_ekfak"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="2_2dl5q"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dwyk8l3vogkja" path="res://resource/particles/light.tscn" id="6_11jsn"]
 [ext_resource type="Shader" path="res://scripts/shader/cloud_shadow.gdshader" id="6_b55fc"]
 [ext_resource type="Script" path="res://scripts/system/city_explorer.gd" id="8_city"]
+[ext_resource type="Script" path="res://scripts/components/area_entrance_trigger.gd" id="10_entrance"]
 [ext_resource type="Script" path="res://scripts/components/npc_interactable.gd" id="9_npc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
@@ -215,3 +216,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="WastelandEntrance" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
+script = ExtResource("10_entrance")
+target_scene = "wasteland"
+entrance_name = "荒野"
+trigger_size = Vector3(4, 3, 2)
+require_confirm = true
+show_hint = true
