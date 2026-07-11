@@ -49,18 +49,5 @@ func init_fight_settlement(data):
 func _return_to_city() -> void:
         _settlement_shown = false
         print("[FightSettlement] 战斗结束，返回之前区域")
-        # 根据当前区域返回对应场景
-        var area = GameData.game_flags.get("current_area", "aoduo")
-        match area:
-                "aoduo":
-                        GameFlow.change_scene("city")
-                "wasteland":
-                        GameFlow.change_scene("wasteland")
-                "factory", "factory_ruins":
-                        GameFlow.change_scene("factory")
-                "ant_nest":
-                        GameFlow.change_scene("ant_nest")
-                "ancient_ruins":
-                        GameFlow.change_scene("ancient_ruins")
-                _:
-                        GameFlow.change_scene("city")
+        # 使用SceneTransitionManager返回
+        SceneTransitionManager.return_from_battle()
