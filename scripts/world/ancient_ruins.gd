@@ -7,7 +7,7 @@ extends Node3D
 ## - 宝箱奖励 (高级装备)
 ## - 隐藏房间
 
-const NPC_SCENE := preload("res://scene/characters/npc/npc.tscn")
+const NPC_SCENE := preload("res://scenes/characters/npc/npc.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/ui/game_hud.tscn")
 const TREASURE_CHEST_SCRIPT := preload("res://scripts/components/treasure_chest.gd")
 
@@ -42,7 +42,7 @@ func _ready() -> void:
 
 	# 添加随机遇敌系统 (遗迹遇敌率最高，敌人最强)
 	if player:
-		_encounter_system = load("res://script/system/random_encounter.gd").new()
+		_encounter_system = load("res://scripts/system/random_encounter.gd").new()
 		_encounter_system.encounter_rate = 0.03  # 3% 每步
 		_encounter_system.min_steps_between_encounters = 4
 		_encounter_system.area_id = "ancient_ruins"

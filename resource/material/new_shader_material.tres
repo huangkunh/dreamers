@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bpe8dmd56ucgy"]
 
-[ext_resource type="Shader" path="res://script/shader/TreeWavingShader.gdshader" id="1_fk5cl"]
+[ext_resource type="Shader" path="res://scripts/shader/TreeWavingShader.gdshader" id="1_fk5cl"]
 
 [resource]
 render_priority = 0

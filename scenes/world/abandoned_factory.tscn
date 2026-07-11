@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://bfactory_scene_001"]
 
-[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scene/characters/hero/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/abandoned_factory.gd" id="2_factory"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
-[ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="4_vignette"]
+[ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
 [ext_resource type="Environment" path="res://default_env.tres" id="5_env"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_factory"]

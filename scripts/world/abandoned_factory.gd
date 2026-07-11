@@ -6,7 +6,7 @@ extends Node3D
 ## - BOSS战 (失控坦克 - 赏金首b02)
 ## - 战斗后奖励
 
-const NPC_SCENE := preload("res://scene/characters/npc/npc.tscn")
+const NPC_SCENE := preload("res://scenes/characters/npc/npc.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/ui/game_hud.tscn")
 const TREASURE_CHEST_SCRIPT := preload("res://scripts/components/treasure_chest.gd")
 
@@ -39,7 +39,7 @@ func _ready() -> void:
 
         # 添加随机遇敌系统
         if player:
-                _encounter_system = load("res://script/system/random_encounter.gd").new()
+                _encounter_system = load("res://scripts/system/random_encounter.gd").new()
                 _encounter_system.encounter_rate = 0.02
                 _encounter_system.min_steps_between_encounters = 5
                 _encounter_system.area_id = "factory"

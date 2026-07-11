@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=6 format=3 uid="uid://bp8jctroi0xhr"]
 
-[ext_resource type="FontFile" uid="uid://dhne8vem0j2uo" path="res://resource/theme/font/fang_zheng_hei.ttf" id="1_gaey8"]
+[ext_resource type="FontFile" uid="uid://dhne8vem0j2uo" path="res://fonts/fang_zheng_hei.ttf" id="1_gaey8"]
 [ext_resource type="Texture2D" uid="uid://bw4xny88bwf5g" path="res://resource/sprite/buttons/panel-border-012.png" id="2_jjarp"]
 [ext_resource type="Texture2D" uid="uid://cdbsov57rkalb" path="res://resource/sprite/line/divider_fade_002_l.png" id="3_lig1m"]
 

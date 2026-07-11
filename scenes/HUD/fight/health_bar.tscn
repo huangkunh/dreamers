@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://cep6lg538cur4"]
+
+[ext_resource type="Texture2D" uid="uid://6nwy54itj13m" path="res://resource/tilesets/health_back.png" id="1_8vxjj"]
+[ext_resource type="Script" path="res://scenes/HUD/fight/health_bar.gd" id="1_ye8cp"]
+[ext_resource type="Texture2D" uid="uid://cdxbjqywo4s0t" path="res://resource/tilesets/health.png" id="2_pknph"]
+[ext_resource type="Texture2D" uid="uid://cay073n82rcm8" path="res://resource/tilesets/health_cure.png" id="3_hifvy"]
+[ext_resource type="Texture2D" uid="uid://dgrfuvf8tweib" path="res://resource/tilesets/health_decrease.png" id="4_st15n"]
+
+[node name="HealthBar" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ye8cp")
+
+[node name="HealthBarCure" type="TextureProgressBar" parent="."]
+layout_mode = 2
+value = 95.0
+nine_patch_stretch = true
+stretch_margin_right = 200
+stretch_margin_bottom = 16
+texture_under = ExtResource("1_8vxjj")
+texture_progress = ExtResource("3_hifvy")
+
+[node name="HealthBarDecrease" type="TextureProgressBar" parent="."]
+layout_mode = 2
+value = 90.0
+nine_patch_stretch = true
+stretch_margin_right = 200
+stretch_margin_bottom = 16
+texture_progress = ExtResource("4_st15n")
+
+[node name="HealthBarBase" type="TextureProgressBar" parent="."]
+layout_mode = 2
+value = 80.0
+nine_patch_stretch = true
+stretch_margin_right = 200
+stretch_margin_bottom = 16
+texture_progress = ExtResource("2_pknph")

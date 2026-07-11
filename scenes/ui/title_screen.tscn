@@ -1,0 +1,165 @@
+[gd_scene load_steps=4 format=3 uid="uid://btitle_screen_001"]
+
+[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1_title"]
+[ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="2_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("2_vignette")
+shader_parameter/vignette_intensity = 0.8
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_title")
+
+[node name="BackgroundColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.06, 0.04, 1)
+
+[node name="GradientRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.1, 0.05, 0.5)
+
+[node name="VignetteRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_vignette")
+mouse_filter = 2
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(-50, 360)
+amount = 60
+lifetime = 4.0
+local_coords = false
+emission_shape = 3
+emission_rect_extents = Vector2(50, 360)
+direction = Vector2(1, 0.2)
+spread = 15.0
+initial_velocity_min = 20.0
+initial_velocity_max = 60.0
+gravity = Vector2(0, 5)
+scale_min = 1.0
+scale_max = 3.0
+color = Color(0.7, 0.6, 0.4, 0.3)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="SpacerTop" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 100)
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0.4, 0.2, 0, 0.8)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_outline_size = 8
+theme_override_font_sizes/font_size = 72
+text = "METAL MAX"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.65, 0.5, 1)
+theme_override_font_sizes/font_size = 24
+text = "～ DREAMERS ～  重装机兵：造梦者"
+horizontal_alignment = 1
+
+[node name="SpacerMid" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="MenuContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="NewGameButton" type="Button" parent="VBoxContainer/MenuContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "▶ 新的游戏"
+
+[node name="ContinueButton" type="Button" parent="VBoxContainer/MenuContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "  继续游戏"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer/MenuContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "  选项设置"
+
+[node name="HelpButton" type="Button" parent="VBoxContainer/MenuContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "  帮助说明"
+
+[node name="ExitButton" type="Button" parent="VBoxContainer/MenuContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "  退出游戏"
+
+[node name="SpacerBot" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="VersionLabel" type="Label" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -30.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.5, 0.45, 0.35, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "v0.01"
+horizontal_alignment = 2
+vertical_alignment = 2

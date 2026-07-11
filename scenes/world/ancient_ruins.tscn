@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://bancient_ruins_001"]
 
-[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scene/characters/hero/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/ancient_ruins.gd" id="2_ruins"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
-[ext_resource type="Shader" path="res://script/shader/vignette.gdshader" id="4_vignette"]
+[ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_ruins"]
 sky_top_color = Color(0.05, 0.08, 0.15, 1)
