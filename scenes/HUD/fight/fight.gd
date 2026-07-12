@@ -151,6 +151,16 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _on_fight_speed_path_uint_fighting(fight_id) -> void:
         fighting_id = fight_id
         var fighting_unit = fighting_unit_map[fight_id]
+        
+        # 检查是否可以行动 (麻痹/眩晕)
+        if not StatusEffectSystem.can_act(fighting_unit):
+                var unit_name = fighting_unit.get("local_player_name", fighting_unit.get("player_name", fight_id))
+                fight_hud.action_name_animation(unit_name + " 无法行动！")
+                var skip_tween = create_tween()
+                skip_tween.tween_interval(1.0)
+                skip_tween.tween_callback(_process_unit_turn_end.bind(fight_id))
+                return
+        
         # 是玩家
         if fighting_unit.confirm_player:
                 # 清除该单位的防御状态 (新一轮行动开始)
@@ -207,8 +217,7 @@ func enemy_melee_foe_one(skill):
                 var intercept_tween = create_tween()
                 fight_hud.action_name_animation("C装置迎击!")
                 intercept_tween.tween_interval(1.0)
-                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                intercept_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         var tween = enemy_scene.create_tween()
@@ -246,9 +255,8 @@ func enemy_melee_foe_one(skill):
                 tween.parallel().tween_callback(self.all_player_death)
                 return
         
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        # 单位战斗结束 (处理状态效果)
+        tween.parallel().tween_callback(_process_unit_turn_end.bind(fighting_id))
         
         
 ## 敌人远程单体攻击
@@ -269,8 +277,7 @@ func enemy_remote_foe_one(skill):
                 var intercept_tween = create_tween()
                 fight_hud.action_name_animation("C装置迎击!")
                 intercept_tween.tween_interval(1.0)
-                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                intercept_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 远程攻击动画 (敌人闪烁, 与近战时序略有差异)
@@ -309,9 +316,8 @@ func enemy_remote_foe_one(skill):
                 tween.parallel().tween_callback(self.all_player_death)
                 return
         
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        # 单位战斗结束 (处理状态效果)
+        tween.parallel().tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 敌人近战全体攻击
@@ -362,9 +368,8 @@ func enemy_melee_foe_all(skill):
                 tween.parallel().tween_callback(self.all_player_death)
                 return
         
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        # 单位战斗结束 (处理状态效果)
+        tween.parallel().tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 敌人远程全体攻击
@@ -381,8 +386,7 @@ func enemy_remote_foe_all(skill):
                 var intercept_tween = create_tween()
                 fight_hud.action_name_animation("C装置迎击!")
                 intercept_tween.tween_interval(1.0)
-                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                intercept_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         var tween = enemy_scene.create_tween()
@@ -425,9 +429,8 @@ func enemy_remote_foe_all(skill):
                 tween.parallel().tween_callback(self.all_player_death)
                 return
         
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        # 单位战斗结束 (处理状态效果)
+        tween.parallel().tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 敌人自我治疗
@@ -451,9 +454,8 @@ func enemy_self_heal(skill):
         # 摄像机运动
         fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
         
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        # 单位战斗结束 (处理状态效果)
+        tween.parallel().tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## C装置迎击检查
@@ -534,21 +536,74 @@ func _on_tank_destroyed() -> void:
         # TODO: 战斗中切换为步行模式 (目前仅通知)
 
 
-## 施加技能状态效果
-## skill 技能
+## 施加技能/武器状态效果
+## source 技能或武器数据
 ## target_unit 目标单位数据
-func _apply_skill_status(skill, target_unit: Dictionary) -> void:
-        if not skill.has("status_effect"):
+func _apply_skill_status(source, target_unit: Dictionary) -> void:
+        if not source.has("status_effect"):
                 return
-        var status_name = skill.get("status_effect", "")
+        var status_name = source.get("status_effect", "")
         if status_name == null or status_name.is_empty():
                 return
-        var chance = float(skill.get("status_chance", 1.0))
+        var chance = float(source.get("status_chance", 1.0))
         if randf() > chance:
                 return
         var effect_type = _get_status_effect_type(status_name)
-        var duration = int(skill.get("status_duration", 1))
+        var duration = int(source.get("status_duration", 1))
         StatusEffectSystem.apply_status(target_unit, effect_type, duration, 1.0, fighting_id)
+
+
+## 处理单位回合结束 (状态效果结算)
+## fight_id 单位ID
+func _process_unit_turn_end(fight_id: String) -> void:
+        var unit = fighting_unit_map.get(fight_id)
+        if unit == null:
+                fight_speed_path.unit_fight_end(fight_id)
+                fight_camera_3d.reset_camera_status()
+                return
+        
+        var prev_health = unit.current_health
+        StatusEffectSystem.process_turn_end(unit)
+        var damage = prev_health - unit.current_health
+        
+        # 更新UI和检查死亡
+        if unit.confirm_player:
+                _update_player_health_ui(unit, -damage)
+                var player_scene = player_scene_map.get(fight_id)
+                if player_scene != null:
+                        player_scene.set_fight_player_data(unit)
+                        if damage > 0:
+                                player_scene.under_fire_label(damage, create_tween())
+                # 战车战模式 — 同步战车HP
+                if _in_tank_battle:
+                        var tank = TankSystem.get_active_tank()
+                        if tank != null:
+                                tank.current_hp = unit.current_health
+                if check_all_player_death():
+                        all_player_death()
+                        return
+        else:
+                var enemy_scene = enemy_scene_map.get(fight_id)
+                if enemy_scene != null:
+                        enemy_scene.fight_enemy_data = unit
+                        if damage > 0:
+                                var hurt_label: Label3D = enemy_scene.hurt_label
+                                hurt_label.text = str(damage)
+                                var hurt_tween = create_tween()
+                                hurt_tween.tween_property(hurt_label, "visible", true, 0.3)
+                                hurt_tween.parallel().tween_property(hurt_label, "scale", Vector3(1.5, 1.5, 1.5), 0.1)
+                                hurt_tween.tween_property(hurt_label, "scale", Vector3.ONE, 0.1)
+                                hurt_tween.tween_callback(hurt_label.set_visible.bind(false))
+                if unit.current_health <= 0:
+                        if enemy_scene != null:
+                                enemy_scene.enemy_death(create_tween())
+                        clear_fight_data(fight_id)
+                        if check_all_enemy_death():
+                                all_enemy_death()
+                                return
+        
+        fight_speed_path.unit_fight_end(fight_id)
+        fight_camera_3d.reset_camera_status()
 
 
 ## 状态效果名称转枚举值 (与StatusEffectSystem内部编号一致)
@@ -615,6 +670,10 @@ func player_remote_foe_one(attack_pointer_index):
         var fight_unit = fighting_unit_map[fighting_id]
         var enemy_death = enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
 
+        # 施加武器状态效果
+        if not enemy_death:
+                _apply_skill_status(weapons, enemy_fight_unit)
+
         # 怪物死亡
         if enemy_death:
                 enemy_scene.enemy_death(weapons_tween)
@@ -624,10 +683,9 @@ func player_remote_foe_one(attack_pointer_index):
                         weapons_tween.tween_callback(self.all_enemy_death)
                         return
                 
-        # 单位战斗结束
-        weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        # 玩家归位后处理回合结束 (状态效果结算)
         weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-        weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 战车主炮攻击 (战车战模式, 消耗弹药)
@@ -645,9 +703,8 @@ func _player_tank_main_cannon_attack(attack_pointer_index: int, player_scene: Ch
                 fight_hud.action_name_animation("弹药耗尽!")
                 var ammo_tween = create_tween()
                 ammo_tween.tween_interval(1.0)
-                ammo_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
                 ammo_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                ammo_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                ammo_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         # 消耗弹药
         tank.current_ammo -= 1
@@ -666,6 +723,10 @@ func _player_tank_main_cannon_attack(attack_pointer_index: int, player_scene: Ch
         var damage = max(1, tank.attack + weapon_battle_lv - enemy_defense)
         var enemy_death = _damage_enemy(enemy_scene, enemy_fight_unit, damage, weapons_tween)
 
+        # 施加武器状态效果
+        if not enemy_death:
+                _apply_skill_status(fight_unit.weapons, enemy_fight_unit)
+
         # 怪物死亡
         if enemy_death:
                 enemy_scene.enemy_death(weapons_tween)
@@ -674,10 +735,9 @@ func _player_tank_main_cannon_attack(attack_pointer_index: int, player_scene: Ch
                         weapons_tween.tween_callback(self.all_enemy_death)
                         return
 
-        # 单位战斗结束
-        weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        # 玩家归位后处理回合结束 (状态效果结算)
         weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-        weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 进入技能选择模式 (循环切换技能, 跳过普通攻击)
@@ -788,10 +848,9 @@ func player_use_skill(skill_index: int, target_index: int) -> void:
                 var heal_tween = create_tween()
                 heal_tween.tween_callback(player_scene.set_fight_player_data.bind(fight_unit))
                 heal_tween.tween_interval(0.5)
-                # 单位战斗结束
-                heal_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 heal_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                heal_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                heal_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 攻击单体敌人
@@ -832,10 +891,9 @@ func player_use_skill(skill_index: int, target_index: int) -> void:
                                 weapons_tween.tween_callback(self.all_enemy_death)
                                 return
                 
-                # 单位战斗结束
-                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 攻击全体敌人
@@ -861,10 +919,9 @@ func player_use_skill(skill_index: int, target_index: int) -> void:
                 if check_all_enemy_death():
                         weapons_tween.tween_callback(self.all_enemy_death)
                         return
-                # 单位战斗结束
-                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 其他目标类型 (队友单体/全体) — 简化为结束回合
@@ -918,10 +975,9 @@ func player_use_item(item_index: int, target_index: int) -> void:
                 heal_tween.tween_interval(0.5)
                 # 消耗道具
                 _consume_item(item)
-                # 单位战斗结束
-                heal_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 heal_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                heal_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                heal_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 攻击类道具 - 单体 (有 damage 属性且 target 为 FOE_ONE)
@@ -952,10 +1008,9 @@ func player_use_item(item_index: int, target_index: int) -> void:
                 
                 # 消耗道具
                 _consume_item(item)
-                # 单位战斗结束
-                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 攻击类道具 - 全体 (有 damage 属性且 target 为 FOE_ALL)
@@ -981,10 +1036,9 @@ func player_use_item(item_index: int, target_index: int) -> void:
                         return
                 # 消耗道具
                 _consume_item(item)
-                # 单位战斗结束
-                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                # 玩家归位后处理回合结束 (状态效果结算)
                 weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                weapons_tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
                 return
         
         # 其他类型道具 — 简化为结束回合
@@ -1050,9 +1104,8 @@ func _update_player_health_ui(fight_unit: Dictionary, delta: int) -> void:
 ## player_scene 玩家场景
 func _end_player_turn(player_scene: CharacterBody3D) -> void:
         var tween = create_tween()
-        tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
         tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 玩家防御 (减半下回合受到的伤害)
@@ -1067,10 +1120,9 @@ func player_defend() -> void:
         var player_scene: CharacterBody3D = player_scene_map[fighting_id]
         var tween = create_tween()
         tween.tween_interval(0.5)
-        # 单位战斗结束
-        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        # 玩家归位后处理回合结束 (状态效果结算)
         tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+        tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 玩家逃跑 (70%成功率)
@@ -1089,9 +1141,8 @@ func player_flee() -> void:
         else:
                 # 逃跑失败
                 fight_hud.action_name_animation("逃跑失败!")
-                tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
                 tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
-                tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                tween.tween_callback(_process_unit_turn_end.bind(fighting_id))
 
 
 ## 逃离战斗 (返回之前的区域)
@@ -1121,6 +1172,10 @@ func check_all_enemy_death()-> bool:
         
 ## 所有敌人死亡
 func all_enemy_death():
+        # 清除所有单位的状态效果
+        for unit in fighting_unit_map.values():
+                StatusEffectSystem.clear_all_statuses(unit)
+        
         # 播放战斗胜利音效
         BgmManager.play_victory_bgm()
 
@@ -1131,10 +1186,22 @@ func all_enemy_death():
         # 获得经验 金钱 — 使用 LevelUpSystem 计算
         var enemy_level_sum = 0
         var enemy_count = 0
+        var has_bounty = false
+        var defeated_bounty_id = ""
+        var defeated_bounty_name = ""
+        var bounty_reward = 0
+        
         for unit in fighting_unit_map.values():
                 if not unit.confirm_player:
                         enemy_level_sum += int(unit.get("battle_lv", 5))
                         enemy_count += 1
+                        # 检查敌人是否是赏金首
+                        if unit.get("is_bounty", false):
+                                has_bounty = true
+                                defeated_bounty_id = unit.get("bounty_id", "")
+                                bounty_reward = unit.get("bounty_reward", 0)
+                                if BountySystem.bounties.has(defeated_bounty_id):
+                                        defeated_bounty_name = BountySystem.bounties[defeated_bounty_id].name
         
         var earn_exp: int
         var earn_coins: int
@@ -1147,17 +1214,34 @@ func all_enemy_death():
 
         # 检查是否是BOSS战 (赏金首)
         var boss_id = GameData.game_flags.get("boss_battle", "")
-        if not boss_id.is_empty():
-                # BOSS战胜利 — 更新赏金首状态
+        
+        # 处理赏金首击败
+        if has_bounty and not defeated_bounty_id.is_empty():
+                # 调用 BountySystem.defeat_bounty 更新状态
+                BountySystem.defeat_bounty(defeated_bounty_id)
+                # 额外发放赏金奖励金币
+                var bounty = BountySystem.bounties.get(defeated_bounty_id, null)
+                if bounty != null:
+                        earn_exp += bounty.min_level * 20
+                        earn_coins += bounty.reward
+                        print("[Fight] 击败赏金首: " + bounty.name + " 获得赏金: " + str(bounty.reward) + "G")
+                else:
+                        earn_coins += bounty_reward
+                        print("[Fight] 击败赏金首，获得赏金: " + str(bounty_reward) + "G")
+        elif not boss_id.is_empty():
+                # 兼容旧的 BOSS战标记方式
                 if BountySystem.bounties.has(boss_id):
+                        BountySystem.defeat_bounty(boss_id)
                         var bounty = BountySystem.bounties[boss_id]
-                        bounty.status = BountySystem.BountyStatus.DEFEATED
-                        # 额外奖励
                         earn_exp += bounty.min_level * 20
                         earn_coins += bounty.reward
                         print("[Fight] 击败赏金首: " + bounty.name + " 获得赏金: " + str(bounty.reward))
-                        BountySystem.bounty_defeated.emit(boss_id)
-                # 清除BOSS战标记
+                        defeated_bounty_id = boss_id
+                        defeated_bounty_name = bounty.name
+                        has_bounty = true
+        
+        # 清除BOSS战标记
+        if GameData.game_flags.has("boss_battle"):
                 GameData.game_flags.erase("boss_battle")
 
         # 给玩家队伍添加金币和经验
@@ -1167,8 +1251,8 @@ func all_enemy_death():
 
         # 更新任务进度
         QuestSystem.update_objective("defeat_enemies", "any", enemy_count)
-        if not boss_id.is_empty():
-                QuestSystem.update_objective("defeat_bounty", boss_id, 1)
+        if has_bounty and not defeated_bounty_id.is_empty():
+                QuestSystem.update_objective("defeat_bounty", defeated_bounty_id, 1)
 
         # 记录战斗胜利
         GameData.encounter_count += 1
@@ -1184,6 +1268,8 @@ func all_enemy_death():
         settlement_data["earn_exp"] = earn_exp
         settlement_data["earn_coins"] = earn_coins
         settlement_data["players_data"] = fighting_unit_map.values()
+        settlement_data["is_bounty_battle"] = has_bounty
+        settlement_data["bounty_name"] = defeated_bounty_name
         for fighting_unit in fighting_unit_map.values():
                 fighting_unit["earn_exp"] = earn_exp
         fight_settlement.init_fight_settlement(settlement_data)
@@ -1201,6 +1287,10 @@ func check_all_player_death()-> bool:
 
 ## 全部玩家死亡
 func all_player_death():
+        # 清除所有单位的状态效果
+        for unit in fighting_unit_map.values():
+                StatusEffectSystem.clear_all_statuses(unit)
+        
         BgmManager.stop_bgm()
         BgmManager.play_defeat_bgm()
 

@@ -39,10 +39,11 @@ class PartyMember:
         var defense: int = 5
         var speed: int = 3
         var weapon: Item = null
-        var armor: Item = null
-        var accessory: Item = null
-        var skills: Array = []
-        var in_party: bool = false
+	var armor: Item = null
+	var accessory: Item = null
+	var skills: Array = []
+	var in_party: bool = false
+	var status_effects: Array = []
 
 ## ---- 全局状态 ----
 var coins: int = 500  ## 金钱

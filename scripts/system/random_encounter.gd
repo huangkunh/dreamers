@@ -64,8 +64,35 @@ func _trigger_encounter() -> void:
         # 保存战斗模式 (战车或步行)
         var active_tank = TankSystem.get_active_tank()
         GameData.game_flags["battle_in_tank"] = active_tank != null
+        
+        # 检查是否遇到赏金首
+        var bounty_id = BountySystem.try_trigger_bounty_encounter(area_id)
+        if not bounty_id.is_empty():
+                GameData.game_flags["boss_battle"] = bounty_id
+                var bounty_name = BountySystem.bounties[bounty_id].name
+                print("[RandomEncounter] 遭遇赏金首! " + bounty_name)
+                # 播放特殊提示音和提示文字
+                _show_bounty_encounter_notification(bounty_name)
+        else:
+                # 清除可能存在的旧BOSS战标记
+                if GameData.game_flags.has("boss_battle"):
+                        GameData.game_flags.erase("boss_battle")
+        
         # 通过 GameFlow 进入战斗
         GameFlow.enter_battle()
+
+## 显示赏金首遭遇通知
+func _show_bounty_encounter_notification(bounty_name: String) -> void:
+        # 播放特殊提示音
+        var sfx_path = "res://music/sound_effect/enter.wav"
+        var sfx = load(sfx_path)
+        if sfx != null:
+                var player = AudioStreamPlayer.new()
+                player.stream = sfx
+                get_tree().root.add_child(player)
+                player.play()
+                player.finished.connect(player.queue_free)
+        print("[RandomEncounter] ⚠ 遭遇赏金首: " + bounty_name + "!")
 
 ## 重置遇敌计数 (战斗结束后调用)
 func reset_encounter_counter() -> void:

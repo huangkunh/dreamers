@@ -30,6 +30,18 @@ class BountyTarget:
 ## 所有赏金首
 var bounties: Dictionary = {}
 
+## 区域-赏金首映射
+## key: 区域ID, value: 该区域出现的赏金首ID数组
+var area_bounty_map: Dictionary = {
+        "factory": ["b01_rock_butterfly"],
+        "wasteland": ["b02_mad_tank", "b05_desert_wolf"],
+        "ant_nest": ["b03_ant_queen"],
+        "ancient_ruins": ["b04_amorphous", "b07_noah_avatar"],
+}
+
+## 赏金首遭遇概率 (5%)
+const BOUNTY_ENCOUNTER_RATE: float = 0.05
+
 func _ready() -> void:
         _init_bounties()
 
@@ -119,3 +131,33 @@ func check_bounty_defeat(enemy_ids: Array) -> void:
                         continue
                 if enemy_ids.has(bounty.enemy_id):
                         defeat_bounty(bounty.id)
+
+## 检查赏金首是否可以遭遇
+## 检查状态是否为可接取，且在正确的区域
+func can_encounter_bounty(bounty_id: String) -> bool:
+        if not bounties.has(bounty_id):
+                return false
+        var bounty = bounties[bounty_id]
+        return bounty.status == BountyStatus.AVAILABLE
+
+## 获取指定区域内可遭遇的赏金首列表
+func get_available_bounties_in_area(area_id: String) -> Array:
+        var result: Array = []
+        if not area_bounty_map.has(area_id):
+                return result
+        var bounty_ids = area_bounty_map[area_id]
+        for bounty_id in bounty_ids:
+                if can_encounter_bounty(bounty_id):
+                        result.append(bounty_id)
+        return result
+
+## 尝试在指定区域触发赏金首遭遇
+## 返回值: 成功触发返回赏金首ID，否则返回空字符串
+func try_trigger_bounty_encounter(area_id: String) -> String:
+        var available_bounties = get_available_bounties_in_area(area_id)
+        if available_bounties.is_empty():
+                return ""
+        if randf() >= BOUNTY_ENCOUNTER_RATE:
+                return ""
+        var idx = randi() % available_bounties.size()
+        return available_bounties[idx]

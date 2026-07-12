@@ -79,6 +79,10 @@ func _ready() -> void:
                 GameData.game_flags.erase("play_opening")
                 _play_opening_dialogue()
 
+func _exit_tree() -> void:
+        if _game_hud:
+                _game_hud.hide_hud()
+
 func _process(delta: float) -> void:
         # 更新游戏时间
         if not get_tree().paused:

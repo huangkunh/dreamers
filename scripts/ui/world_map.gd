@@ -4,6 +4,7 @@ extends Control
 ## 玩家可以在此选择要前往的地点
 
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
+const GAME_HUD_SCENE := preload("res://scenes/ui/game_hud.tscn")
 
 @onready var area_container: VBoxContainer = $MarginContainer/VBoxContainer/ContentRow/AreaContainer
 @onready var area_info_label: RichTextLabel = $MarginContainer/VBoxContainer/ContentRow/AreaInfoLabel
@@ -11,6 +12,7 @@ const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 @onready var title_label: Label = $MarginContainer/VBoxContainer/TitleLabel
 
 var _dialogue_box: Control = null
+var _game_hud: Control = null
 
 ## 区域数据
 var AREAS := [
@@ -75,6 +77,12 @@ func _ready() -> void:
         add_child(_dialogue_box)
         DialogueManager.set_dialogue_box(_dialogue_box)
         DialogueManager.dialogue_finished.connect(_on_opening_dialogue_finished)
+
+        # 实例化游戏HUD
+        _game_hud = GAME_HUD_SCENE.instantiate()
+        add_child(_game_hud)
+        _game_hud.set_area_name("世界地图")
+        _game_hud.show_hud()
 
         # 检查是否需要播放开场剧情
         if GameData.game_flags.get("play_opening", false):
@@ -161,3 +169,7 @@ func _play_opening_dialogue() -> void:
 
 func _on_opening_dialogue_finished() -> void:
         get_tree().paused = false
+
+func _exit_tree() -> void:
+        if _game_hud:
+                _game_hud.hide_hud()

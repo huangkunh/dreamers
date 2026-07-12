@@ -66,9 +66,27 @@ func _on_claim() -> void:
         var bounty = all_bounties[_current_index]
         if bounty.status == BountySystem.BountyStatus.DEFEATED:
                 var reward = BountySystem.claim_bounty(bounty.id)
-                coins_label.text = "💰 " + str(GameData.coins)
-                info_label.text = "[color=#44ff44]领取成功！+%dG[/color]" % reward
+                if reward > 0:
+                        coins_label.text = "💰 " + str(GameData.coins)
+                        info_label.text = "[b][color=#44ff44]🎉 领取成功！[/color][/b]\n\n"
+                        info_label.text += "[color=#ffcc44]赏金首: %s[/color]\n" % bounty.name
+                        info_label.text += "[color=#ffcc44]获得赏金: +%dG[/color]\n" % reward
+                        # 播放领取音效
+                        _play_claim_sound()
+                else:
+                        info_label.text = "[color=#ff4444]领取失败！[/color]"
                 _refresh_bounty_list()
+
+## 播放领赏音效
+func _play_claim_sound() -> void:
+        var sfx_path = "res://music/sound_effect/select.wav"
+        var sfx = load(sfx_path)
+        if sfx != null:
+                var player = AudioStreamPlayer.new()
+                player.stream = sfx
+                add_child(player)
+                player.play()
+                player.finished.connect(player.queue_free)
 
 func _get_status_text(status: int) -> String:
         match status:
