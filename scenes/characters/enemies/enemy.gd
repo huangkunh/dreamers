@@ -38,13 +38,21 @@ func init_enemy(enemy_data):
 	fight_enemy_data = enemy_data
 	
 	fight_id = enemy_data.fight_id
-	local_player_name.text = enemy_data.local_player_name
+	if local_player_name == null:
+		local_player_name = get_node_or_null("LocalPlayerName")
+	if local_player_name != null:
+		local_player_name.text = enemy_data.local_player_name
 	
 	var standar_material3D: StandardMaterial3D = StandardMaterial3D.new()
 	standar_material3D.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	standar_material3D.normal_enabled = true
 	standar_material3D.albedo_texture = load(enemy_data.albedo_texture_path)
 	standar_material3D.normal_texture = load(enemy_data.normal_map_texture_path)
+	if animated_sprite3D == null:
+		animated_sprite3D = get_node_or_null("AnimatedSprite3D")
+	if animated_sprite3D == null:
+		push_error("[Enemy] 缺少 AnimatedSprite3D 节点，无法初始化敌人贴图")
+		return
 	animated_sprite3D.set_material_override(standar_material3D)
 	animated_sprite3D.play(enemy_data.animated[0])		
 	pass

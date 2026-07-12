@@ -79,6 +79,11 @@
 - 修复: 添加处理状态标志、修复键盘导航逻辑、改进按钮点击处理
 - 2026-07-12 追加验证：覆盖 `scenes/ui/` 下27个UI场景和32个静态按钮类控件，修复标题、设置、商店、世界地图4处按钮/控件初始化问题，详见 `docs/ui_button_test_report.md`
 
+**Bug 6: Godot 4.3 实机流程运行阻塞**
+- 文件: `scripts/ui/save_load_screen.gd`, `scenes/characters/enemies/enemy.gd`
+- 修复: 修正存读档确认框类型错误；修复敌人初始化早于 `@onready` 时访问空节点导致战斗场景报错的问题
+- 2026-07-12 追加验证：在 Godot 4.3 官方 Linux 版中完成 headless 导入和 `xvfb-run` 场景截图流程，19 张截图全部生成，失败数为 0，详见 `docs/godot_flow_test_report.md`
+
 **Bug 6: 输入映射冲突或缺失**
 - 文件: `project.godot`
 - 修复: 分离UI导航(方向键)和角色移动(WASD)的输入映射，添加战斗快捷键

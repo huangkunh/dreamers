@@ -18,7 +18,7 @@ var _is_processing: bool = false
 ## 当前选中的槽位
 var _selected_slot: int = 0
 ## 确认对话框
-var _confirm_dialog: Control = null
+var _confirm_dialog: ConfirmationDialog = null
 
 func _ready() -> void:
 	visible = false
@@ -188,7 +188,7 @@ func _do_load(slot_num: int) -> void:
 ## 显示确认对话框
 func _show_confirm_dialog(title: String, message: String, on_confirm: Callable, on_cancel: Callable) -> void:
 	# 创建简单的确认对话框
-	var dialog := AcceptDialog.new()
+	var dialog := ConfirmationDialog.new()
 	dialog.title = title
 	dialog.dialog_text = message
 	dialog.ok_button_text = "确定"
