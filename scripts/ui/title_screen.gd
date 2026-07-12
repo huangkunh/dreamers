@@ -145,6 +145,7 @@ func _on_new_game() -> void:
 	_is_processing = true
 	print("[TitleScreen] 开始新游戏")
 	GameManager.start_new_game()
+	GameData.game_flags["play_opening"] = true
 
 func _on_continue() -> void:
 	if _is_processing:

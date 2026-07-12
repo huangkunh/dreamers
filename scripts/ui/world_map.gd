@@ -3,10 +3,14 @@ extends Control
 ## HD-2D 风格的区域选择画面
 ## 玩家可以在此选择要前往的地点
 
+const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
+
 @onready var area_container: VBoxContainer = $MarginContainer/VBoxContainer/ContentRow/AreaContainer
 @onready var area_info_label: RichTextLabel = $MarginContainer/VBoxContainer/ContentRow/AreaInfoLabel
 @onready var back_button: Button = $MarginContainer/VBoxContainer/BottomBar/BackButton
 @onready var title_label: Label = $MarginContainer/VBoxContainer/TitleLabel
+
+var _dialogue_box: Control = null
 
 ## 区域数据
 var AREAS := [
@@ -65,6 +69,17 @@ func _ready() -> void:
         # 连接返回按钮
         if back_button:
                 back_button.pressed.connect(_on_back)
+
+        # 实例化对话框
+        _dialogue_box = DIALOGUE_BOX_SCENE.instantiate()
+        add_child(_dialogue_box)
+        DialogueManager.set_dialogue_box(_dialogue_box)
+        DialogueManager.dialogue_finished.connect(_on_opening_dialogue_finished)
+
+        # 检查是否需要播放开场剧情
+        if GameData.game_flags.get("play_opening", false):
+                GameData.game_flags.erase("play_opening")
+                _play_opening_dialogue()
 
 func _build_area_buttons() -> void:
         for child in area_container.get_children():
@@ -138,3 +153,11 @@ func _on_area_pressed(area: Dictionary) -> void:
 
 func _on_back() -> void:
         GameFlow.return_to_title()
+
+func _play_opening_dialogue() -> void:
+        get_tree().paused = true
+        var dialogue_data = DialogueManager.load_dialogue_from_file("res://assets/data/dialogues/dialogue_opening.json")
+        DialogueManager.start_dialogue(dialogue_data, "start")
+
+func _on_opening_dialogue_finished() -> void:
+        get_tree().paused = false

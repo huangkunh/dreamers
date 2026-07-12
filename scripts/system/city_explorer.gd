@@ -25,6 +25,7 @@ var _game_hud: Control
 var _in_tank: bool = false
 var _nearby_npc: Node = null
 var _is_ui_open: bool = false
+var _is_playing_opening: bool = false
 var area_id: String = "aoduo"
 
 func _ready() -> void:
@@ -72,6 +73,11 @@ func _ready() -> void:
         add_child(_game_hud)
         _game_hud.show_hud()
         _game_hud.set_area_name(_get_area_display_name(area_id))
+
+        # 检查是否需要播放开场剧情
+        if GameData.game_flags.get("play_opening", false):
+                GameData.game_flags.erase("play_opening")
+                _play_opening_dialogue()
 
 func _process(delta: float) -> void:
         # 更新游戏时间
@@ -148,8 +154,19 @@ func _interact_with_npc(npc: Node) -> void:
                 _is_ui_open = true
                 DialogueManager.start_dialogue_queue(dialog_queue)
 
+## 播放开场剧情
+func _play_opening_dialogue() -> void:
+        _is_playing_opening = true
+        _is_ui_open = true
+        get_tree().paused = true
+        var dialogue_data = DialogueManager.load_dialogue_from_file("res://assets/data/dialogues/dialogue_opening.json")
+        DialogueManager.start_dialogue(dialogue_data, "start")
+
 ## 对话结束回调
 func _on_dialogue_finished() -> void:
+        if _is_playing_opening:
+                _is_playing_opening = false
+                get_tree().paused = false
         _is_ui_open = false
 
 ## 对话事件回调
@@ -170,6 +187,64 @@ func _on_dialogue_event(event_name: String) -> void:
                         _open_bounty_guild()
                 "open_bounty_claim":
                         _open_bounty_guild()
+                "open_shop_weapon":
+                        _open_shop("aoduo_weapon")
+                        print("[CityExplorer] 打开武器店")
+                "open_shop_armor":
+                        _open_shop("aoduo_armor")
+                        print("[CityExplorer] 打开防具店")
+                "open_shop_item":
+                        _open_shop("aoduo_item")
+                        print("[CityExplorer] 打开道具店")
+                "open_shop_accessory":
+                        _open_shop("aoduo_accessory")
+                        print("[CityExplorer] 打开饰品店")
+                "give_father_item":
+                        # 给玩家添加父亲的徽章
+                        var badge := GameData.Item.new()
+                        badge.id = "fathers_badge"
+                        badge.name = "父亲的徽章"
+                        badge.description = "父亲留下的徽章，似乎与某段记忆有关。"
+                        badge.type = GameData.Item.ItemType.KEY_ITEM
+                        badge.price = 0
+                        badge.stackable = false
+                        GameData.key_items.append(badge)
+                        print("[CityExplorer] 获得关键道具: 父亲的徽章")
+                        # 给玩家添加初始金币 500G（如果不够的话）
+                        if GameData.coins < 500:
+                                GameData.add_coins(500 - GameData.coins)
+                                print("[CityExplorer] 获得初始金币: 500G")
+                        # 解锁第一辆战车（红色野狼）
+                        if TankSystem.tanks.has("red_wolf"):
+                                TankSystem.tanks["red_wolf"].is_owned = true
+                                print("[CityExplorer] 解锁战车: 红色野狼")
+                "opening_finished":
+                        # 设置开场剧情结束标志
+                        GameData.game_flags["opening_done"] = true
+                        print("[CityExplorer] 开场剧情结束")
+                        # 设置当前区域为 aoduo
+                        GameManager.set_current_area("aoduo")
+                        area_id = "aoduo"
+                        print("[CityExplorer] 当前区域设置为: 奥多市")
+                        # 确保玩家初始状态正确
+                        for member in GameData.party:
+                                if member.current_hp <= 0:
+                                        member.current_hp = member.max_hp
+                        print("[CityExplorer] 玩家初始状态已确认")
+                "rest_inn":
+                        # 扣除 20G
+                        if GameData.spend_coins(20):
+                                print("[CityExplorer] 住宿花费 20G")
+                                # 恢复所有队员HP
+                                for member in GameData.party:
+                                        member.current_hp = member.max_hp
+                                print("[CityExplorer] 所有队员HP已恢复")
+                                # 恢复战车所有状态
+                                for tank in TankSystem.get_owned_tanks():
+                                        TankSystem.resupply_tank(tank.id)
+                                print("[CityExplorer] 所有战车已补给")
+                        else:
+                                print("[CityExplorer] 金币不足，无法住宿")
 
 ## 打开商店
 func _open_shop(shop_id: String) -> void:

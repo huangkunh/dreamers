@@ -19,6 +19,7 @@ var _input_lock_timer: float = 0.0
 const INPUT_COOLDOWN: float = 0.15
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	continue_hint.modulate.a = 0.0
 

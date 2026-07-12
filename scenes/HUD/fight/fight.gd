@@ -39,6 +39,12 @@ var _skill_select_mode: bool = false
 # 待使用的技能索引
 var _pending_skill_index: int = 0
 
+# 玩家道具选择模式 (按下道具键后进入, 选择目标后使用道具)
+var _item_select_mode: bool = false
+
+# 待使用的道具索引
+var _pending_item_index: int = 0
+
 # 战车战模式标志 (true=战车战, false=步行战)
 var _in_tank_battle: bool = false
 
@@ -134,6 +140,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
         # 技能
         elif Input.is_action_just_pressed("battle_skill"):
                 _start_skill_selection()
+                get_viewport().set_input_as_handled()
+        # 道具
+        elif Input.is_action_just_pressed("battle_item"):
+                _start_item_selection()
                 get_viewport().set_input_as_handled()
 
 
@@ -567,6 +577,12 @@ func player_attck(attack_pointer_index):
                 fight.player_use_skill(_pending_skill_index, attack_pointer_index)
                 return
         
+        # 道具选择模式 → 使用道具
+        if _item_select_mode:
+                _item_select_mode = false
+                fight.player_use_item(_pending_item_index, attack_pointer_index)
+                return
+        
         var weapons = fight_unit.weapons
         if AttackData.Attack_Type.REMOTE == weapons.attack_type:
                 if AttackData.Attack_Target.FOE_ONE == weapons.attack_target:
@@ -693,6 +709,51 @@ func _start_skill_selection() -> void:
         fight_hud.attack_pointer_index = 0
 
 
+## 进入道具选择模式 (循环切换消耗品)
+func _start_item_selection() -> void:
+        # 获取所有消耗品
+        var consumables: Array = []
+        for item in GameData.inventory:
+                if item.type == GameData.Item.ItemType.CONSUMABLE:
+                        consumables.append(item)
+        if consumables.is_empty():
+                fight_hud.action_name_animation("没有可用道具!")
+                return
+        # 循环切换到下一个消耗品
+        _pending_item_index += 1
+        if _pending_item_index >= consumables.size():
+                _pending_item_index = 0
+        var item = consumables[_pending_item_index]
+        # 显示道具名字
+        fight_hud.action_name_animation("道具: " + item.name)
+        # 进入目标选择 (复用攻击目标选择流程)
+        _item_select_mode = true
+        fight_menu.visible = false
+        if fight_hud.pointer != null:
+                fight_hud.pointer.visible = false
+        # 根据道具类型选择初始目标
+        var is_attack_item = item.has("damage")
+        if is_attack_item:
+                # 攻击类道具 → 选敌人
+                if enemy_scene_map.is_empty():
+                        _item_select_mode = false
+                        fight_menu.visible = true
+                        return
+                var enemy_scene = enemy_scene_map.values()[0]
+                fight_hud.attack_pointer.global_position = enemy_scene.global_position
+                fight_hud.attack_pointer.global_position.z += 0.05
+                fight_hud.attack_pointer.visible = true
+                fight_hud.attack_pointer_index = 0
+        else:
+                # 治疗类道具 → 选自己 (不显示攻击光标, 直接使用)
+                # 这里暂时也用攻击光标指向玩家, 简化实现
+                var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+                fight_hud.attack_pointer.global_position = player_scene.global_position
+                fight_hud.attack_pointer.global_position.z += 0.05
+                fight_hud.attack_pointer.visible = true
+                fight_hud.attack_pointer_index = 0
+
+
 ## 玩家使用技能
 ## skill_index 技能索引
 ## target_index 目标索引
@@ -808,6 +869,136 @@ func player_use_skill(skill_index: int, target_index: int) -> void:
         
         # 其他目标类型 (队友单体/全体) — 简化为结束回合
         _end_player_turn(player_scene)
+
+
+## 玩家使用道具
+## item_index 消耗品索引 (在消耗品列表中的索引)
+## target_index 目标索引
+func player_use_item(item_index: int, target_index: int) -> void:
+        # 获取所有消耗品
+        var consumables: Array = []
+        for item in GameData.inventory:
+                if item.type == GameData.Item.ItemType.CONSUMABLE:
+                        consumables.append(item)
+        if item_index < 0 or item_index >= consumables.size():
+                return
+        var item = consumables[item_index]
+        if item.count <= 0:
+                fight_hud.action_name_animation("道具不足!")
+                var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+                _end_player_turn(player_scene)
+                return
+        
+        # 道具名字动画
+        fight_hud.action_name_animation(item.name)
+        
+        var fight_unit = fighting_unit_map[fighting_id]
+        var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+        
+        # 治疗类道具 (有 heal_hp 属性)
+        if item.has("heal_hp"):
+                var heal_amount: int
+                if item.heal_hp == -1:
+                        # 完全恢复
+                        heal_amount = fight_unit.max_health - fight_unit.current_health
+                else:
+                        heal_amount = item.heal_hp
+                fight_unit.current_health = min(fight_unit.max_health, fight_unit.current_health + heal_amount)
+                # 战车战模式 — 同步战车HP
+                if _in_tank_battle:
+                        var heal_tank = TankSystem.get_active_tank()
+                        if heal_tank != null:
+                                if item.heal_hp == -1:
+                                        heal_tank.current_hp = heal_tank.max_hp
+                                else:
+                                        heal_tank.current_hp = min(heal_tank.max_hp, heal_tank.current_hp + heal_amount)
+                _update_player_health_ui(fight_unit, heal_amount)
+                var heal_tween = create_tween()
+                heal_tween.tween_callback(player_scene.set_fight_player_data.bind(fight_unit))
+                heal_tween.tween_interval(0.5)
+                # 消耗道具
+                _consume_item(item)
+                # 单位战斗结束
+                heal_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                heal_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                heal_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 攻击类道具 - 单体 (有 damage 属性且 target 为 FOE_ONE)
+        if item.has("damage") and item.get("target", "FOE_ONE") == "FOE_ONE":
+                if enemy_scene_map.is_empty():
+                        _end_player_turn(player_scene)
+                        return
+                var target_idx = clamp(target_index, 0, enemy_scene_map.size() - 1)
+                var enemy_scene: CharacterBody3D = enemy_scene_map.values()[target_idx]
+                var enemy_fight_id = enemy_scene.fight_id
+                var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+                var weapons_tween = player_scene.create_tween()
+                player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+                fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
+                
+                # 道具伤害 = damage - 目标强度
+                var item_damage = max(1, item.damage - int(enemy_fight_unit.get("strength", 0)))
+                var enemy_death = _damage_enemy(enemy_scene, enemy_fight_unit, item_damage, weapons_tween)
+                
+                # 怪物死亡
+                if enemy_death:
+                        enemy_scene.enemy_death(weapons_tween)
+                        weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+                        if check_all_enemy_death():
+                                _consume_item(item)
+                                weapons_tween.tween_callback(self.all_enemy_death)
+                                return
+                
+                # 消耗道具
+                _consume_item(item)
+                # 单位战斗结束
+                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 攻击类道具 - 全体 (有 damage 属性且 target 为 FOE_ALL)
+        if item.has("damage") and item.get("target", "FOE_ONE") == "FOE_ALL":
+                var weapons_tween = player_scene.create_tween()
+                var death_list: Array = []
+                for enemy_scene in enemy_scene_map.values():
+                        var enemy_fight_id = enemy_scene.fight_id
+                        var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+                        player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+                        var item_damage = max(1, item.damage - int(enemy_fight_unit.get("strength", 0)))
+                        var died = _damage_enemy(enemy_scene, enemy_fight_unit, item_damage, weapons_tween)
+                        if died:
+                                death_list.append(enemy_scene)
+                # 处理死亡的敌人
+                for enemy_scene in death_list:
+                        var enemy_fight_id = enemy_scene.fight_id
+                        enemy_scene.enemy_death(weapons_tween)
+                        weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+                if check_all_enemy_death():
+                        _consume_item(item)
+                        weapons_tween.tween_callback(self.all_enemy_death)
+                        return
+                # 消耗道具
+                _consume_item(item)
+                # 单位战斗结束
+                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 其他类型道具 — 简化为结束回合
+        _consume_item(item)
+        _end_player_turn(player_scene)
+
+
+## 消耗一个道具
+## item 要消耗的道具对象
+func _consume_item(item) -> void:
+        item.count -= 1
+        if item.count <= 0:
+                GameData.inventory.erase(item)
+        GameData.inventory_changed.emit()
 
 
 ## 对敌人造成伤害并播放伤害动画
