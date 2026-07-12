@@ -8,7 +8,7 @@ extends Control
 @onready var fullscreen_check: CheckBox = $Panel/ScrollContainer/VBoxContainer/VideoSection/FullscreenCheck
 @onready var vsync_check: CheckBox = $Panel/ScrollContainer/VBoxContainer/VideoSection/VsyncCheck
 @onready var back_button: Button = $Panel/BackButton
-@onready var difficulty_selector: OptionButton = $Panel/ScrollContainer/VBoxContainer/GameSection/DifficultySelector
+@onready var difficulty_selector: OptionButton = $Panel/ScrollContainer/VBoxContainer/GameSection/DifficultyRow/DifficultySelector
 
 ## 设置数据
 var _settings: Dictionary = {

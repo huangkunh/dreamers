@@ -77,6 +77,7 @@
 **Bug 5: 场景按钮功能失效**
 - 文件: `scripts/ui/title_screen.gd`, `scripts/ui/pause_menu.gd`
 - 修复: 添加处理状态标志、修复键盘导航逻辑、改进按钮点击处理
+- 2026-07-12 追加验证：覆盖 `scenes/ui/` 下27个UI场景和32个静态按钮类控件，修复标题、设置、商店、世界地图4处按钮/控件初始化问题，详见 `docs/ui_button_test_report.md`
 
 **Bug 6: 输入映射冲突或缺失**
 - 文件: `project.godot`

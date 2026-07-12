@@ -11,7 +11,7 @@ extends Control
 @onready var buy_button: Button = $ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer/BuyButton
 @onready var sell_button: Button = $ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer/SellButton
 @onready var close_button: Button = $ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ButtonContainer/CloseButton
-@onready var mode_label: Label = $ShopPanel/MarginContainer/VBoxContainer/TitleBar/ModeLabel
+@onready var mode_label: Label = $ShopPanel/MarginContainer/VBoxContainer/HBoxContainer/InfoPanel/ModeLabel
 
 var _shop_items: Array = []
 var _current_index: int = 0

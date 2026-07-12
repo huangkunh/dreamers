@@ -3,8 +3,8 @@ extends Control
 ## HD-2D 风格的区域选择画面
 ## 玩家可以在此选择要前往的地点
 
-@onready var area_container: VBoxContainer = $MarginContainer/VBoxContainer/AreaContainer
-@onready var area_info_label: RichTextLabel = $MarginContainer/VBoxContainer/AreaInfoLabel
+@onready var area_container: VBoxContainer = $MarginContainer/VBoxContainer/ContentRow/AreaContainer
+@onready var area_info_label: RichTextLabel = $MarginContainer/VBoxContainer/ContentRow/AreaInfoLabel
 @onready var back_button: Button = $MarginContainer/VBoxContainer/BottomBar/BackButton
 @onready var title_label: Label = $MarginContainer/VBoxContainer/TitleLabel
 
