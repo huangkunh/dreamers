@@ -13,6 +13,9 @@ const SPEED_PER_LEVEL := 1     ## 每级速度提升
 signal level_up(member_id: String, new_level: int)
 signal exp_gained(member_id: String, amount: int)
 
+func _ready() -> void:
+	level_up.connect(_on_level_up_check_achievements)
+
 ## 获取升级所需经验值
 ## level: 当前等级
 ## 返回: 升到下一级所需经验
@@ -54,6 +57,12 @@ static func _do_level_up(member) -> void:
 	print("[LevelUp] %s 升级到 Lv.%d! HP:%d ATK:%d DEF:%d SPD:%d" % [
 		member.name, member.level, member.max_hp, member.attack, member.defense, member.speed
 	])
+
+	LevelUpSystem.level_up.emit(member.id, member.level)
+
+## 升级时检查成就
+func _on_level_up_check_achievements(member_id: String, new_level: int) -> void:
+	AchievementSystem.check_level_achievements(new_level)
 
 ## 获取经验值等级颜色 (用于UI显示)
 static func get_level_color(level: int) -> Color:

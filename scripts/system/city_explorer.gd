@@ -40,6 +40,9 @@ func _ready() -> void:
         # 设置区域访问标志 (用于解锁后续区域和快速旅行)
         GameData.game_flags[area_id + "_visited"] = true
 
+        # 检查探索成就
+        AchievementSystem.check_explore_achievements(area_id)
+
         # 添加随机遇敌系统到玩家
         if player:
                 var encounter_script = load("res://scripts/system/random_encounter.gd")

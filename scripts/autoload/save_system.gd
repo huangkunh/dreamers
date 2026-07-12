@@ -47,6 +47,8 @@ func save_game(slot: int = 0) -> bool:
                 "party": _serialize_party(),
                 "inventory": _serialize_inventory(),
                 "tanks": _serialize_tanks(),
+                "achievements": _serialize_achievements(),
+                "quests": _serialize_quests(),
                 "current_area": GameData.game_flags.get("current_area", "aoduo"),
                 "flags": GameData.game_flags,
         }
@@ -92,6 +94,8 @@ func load_game(slot: int = 0) -> bool:
         _deserialize_party(data.get("party", []))
         _deserialize_inventory(data.get("inventory", []))
         _deserialize_tanks(data.get("tanks", []))
+        _deserialize_achievements(data.get("achievements", []))
+        _deserialize_quests(data.get("quests", []))
 
         print("[SaveSystem] 读档成功! slot=%d, coins=%d, play_time=%.0f" % [slot, GameData.coins, GameData.play_time])
         game_loaded.emit()
@@ -156,6 +160,33 @@ func _serialize_tanks() -> Array:
                 })
         return result
 
+func _serialize_achievements() -> Array:
+        var result := []
+        for ach in AchievementSystem.achievements.values():
+                result.append({
+                        "id": ach.id,
+                        "unlocked": ach.unlocked,
+                })
+        return result
+
+func _serialize_quests() -> Array:
+        var result := []
+        for quest in QuestSystem.quests.values():
+                var objectives_data := []
+                for obj in quest.objectives:
+                        objectives_data.append({
+                                "type": obj.type,
+                                "target": obj.target,
+                                "count": obj.count,
+                                "current": obj.current,
+                        })
+                result.append({
+                        "id": quest.id,
+                        "status": quest.status,
+                        "objectives": objectives_data,
+                })
+        return result
+
 ## ---- 反序列化 ----
 
 func _deserialize_party(party_data: Array) -> void:
@@ -208,3 +239,25 @@ func _deserialize_tanks(tank_data: Array) -> void:
                 tank.is_owned = bool(td.get("is_owned", false))
                 tank.is_active = bool(td.get("is_active", false))
                 TankSystem.tanks[tank.id] = tank
+
+func _deserialize_achievements(achievement_data: Array) -> void:
+        for ad in achievement_data:
+                var id: String = ad.get("id", "")
+                if AchievementSystem.achievements.has(id):
+                        AchievementSystem.achievements[id].unlocked = bool(ad.get("unlocked", false))
+
+func _deserialize_quests(quest_data: Array) -> void:
+        for qd in quest_data:
+                var id: String = qd.get("id", "")
+                if not QuestSystem.quests.has(id):
+                        continue
+                var quest = QuestSystem.quests[id]
+                quest.status = int(qd.get("status", QuestSystem.QuestStatus.LOCKED))
+                var objectives_data: Array = qd.get("objectives", [])
+                for i in range(min(objectives_data.size(), quest.objectives.size())):
+                        var obj_data = objectives_data[i]
+                        var obj = quest.objectives[i]
+                        obj.type = obj_data.get("type", obj.type)
+                        obj.target = obj_data.get("target", obj.target)
+                        obj.count = int(obj_data.get("count", obj.count))
+                        obj.current = int(obj_data.get("current", 0))

@@ -984,6 +984,10 @@ func all_enemy_death():
         GameData.defeat_count += fighting_unit_map.values().filter(func(u): return not u.confirm_player).size()
         GameData.game_flags["battles_won"] = int(GameData.game_flags.get("battles_won", 0)) + 1
 
+        # 检查成就
+        AchievementSystem.check_battle_achievements()
+        AchievementSystem.check_coins_achievements(GameData.coins)
+
         # 显示战斗结算
         var settlement_data: Dictionary = {}
         settlement_data["earn_exp"] = earn_exp
