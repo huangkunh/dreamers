@@ -20,7 +20,7 @@ var _menu_buttons: Array[Button] = []
 
 func _ready() -> void:
         # 设置版本号
-        version_label.text = "v0.05 - Phase 5"
+        version_label.text = "v0.10"
 
         # 收集菜单按钮
         _menu_buttons = [new_game_btn, continue_btn, options_btn, help_btn, exit_btn]
@@ -107,6 +107,7 @@ func _on_new_game() -> void:
 func _on_continue() -> void:
         if SaveSystem and SaveSystem.has_save_data():
                 print("[TitleScreen] 加载存档")
+                GameManager.init_game_data()
                 SaveSystem.load_game()
                 GameFlow.current_state = GameFlow.GameState.WORLD_MAP
                 GameFlow.change_scene("world_map")

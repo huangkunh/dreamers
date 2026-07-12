@@ -27,13 +27,13 @@ var AREAS := [
                 "area_id": "wasteland",
         },
         {
-                "id": "factory_ruins",
+                "id": "factory",
                 "name": "废弃工厂",
                 "description": "旧文明的工业遗迹。\n据说深处有台失控的自动战斗坦克...赏金1500G。\n[color=#ff4444]推荐等级: Lv.15+[/color]",
                 "scene": "factory",
                 "locked": true,
-                "area_id": "factory_ruins",
-                "unlock_condition": "wasteland_cleared",
+                "area_id": "factory",
+                "unlock_condition": "wasteland_visited",
         },
         {
                 "id": "ant_nest",
@@ -42,7 +42,7 @@ var AREAS := [
                 "scene": "ant_nest",
                 "locked": true,
                 "area_id": "ant_nest",
-                "unlock_condition": "defeat_5_enemies",
+                "unlock_condition": "factory_visited",
         },
         {
                 "id": "ancient_ruins",
@@ -132,10 +132,9 @@ func _on_area_pressed(area: Dictionary) -> void:
                 return
         print("[WorldMap] 进入区域: " + area.name)
         # 设置当前区域ID
-        GameData.game_flags["current_area"] = area.id
-        # 根据区域场景切换
-        var scene_name: String = area.get("scene", "city")
-        GameFlow.change_scene(scene_name)
+        GameData.game_flags["current_area"] = area.get("area_id", area.id)
+        # 使用 enter_city 统一入口 (会设置游戏状态+根据area_id路由)
+        GameFlow.enter_city()
 
 func _on_back() -> void:
         GameFlow.return_to_title()

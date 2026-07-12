@@ -286,12 +286,11 @@ func all_enemy_death():
 
         # 显示战斗结算
         var settlement_data: Dictionary = {}
-        settlement_data.earn_exp = earn_exp
-        settlement_data.earn_coins = earn_coins
-        settlement_data.players_data = fighting_unit_map.values()
-        for i in fighting_unit_map.values().size():
-                var fighting_unit = fighting_unit_map.values()[i]
-                fighting_unit.earn_exp = earn_exp
+        settlement_data["earn_exp"] = earn_exp
+        settlement_data["earn_coins"] = earn_coins
+        settlement_data["players_data"] = fighting_unit_map.values()
+        for fighting_unit in fighting_unit_map.values():
+                fighting_unit["earn_exp"] = earn_exp
         fight_settlement.init_fight_settlement(settlement_data)
 
         fight_settlement.visible = true

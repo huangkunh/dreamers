@@ -21,13 +21,14 @@ func _process(_delta: float) -> void:
                 _return_to_city()
 
 ## 初始化战斗结果
-func init_fight_settlement(data):
-        experience_label.text = str(data.earn_exp)
-        coins_label.text = str(data.earn_coins)
+func init_fight_settlement(data: Dictionary):
+        experience_label.text = str(data.get("earn_exp", 0))
+        coins_label.text = str(data.get("earn_coins", 0))
 
-        for i in (data.players_data.size()):
+        var players_data: Array = data.get("players_data", [])
+        for i in players_data.size():
                 var player_earn_experience = player_earn_experience_scene.instantiate()
-                var player_data = data.players_data[i]
+                var player_data = players_data[i]
                 player_earn_experience._ready()
                 player_earn_experience.init_earn_experience(player_data)
                 get_node("FightResult").add_child(player_earn_experience)

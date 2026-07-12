@@ -22,6 +22,7 @@ var _party_info: VBoxContainer
 
 func _ready() -> void:
         visible = false
+        process_mode = Node.PROCESS_MODE_WHEN_PAUSED
         close_button.pressed.connect(close)
         _build_party_tab()
         _build_inventory_tab()

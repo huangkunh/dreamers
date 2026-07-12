@@ -138,6 +138,7 @@ func open() -> void:
 ## 关闭帮助
 func close() -> void:
         visible = false
+        queue_free()
 
 func _input(event: InputEvent) -> void:
         if visible and event.is_action_pressed("ui_cancel"):

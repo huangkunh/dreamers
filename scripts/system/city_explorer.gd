@@ -38,6 +38,17 @@ func _ready() -> void:
         # 设置区域ID
         area_id = GameManager.get_current_area()
 
+        # 设置区域访问标志 (用于解锁后续区域)
+        match area_id:
+                "wasteland":
+                        GameData.game_flags["wasteland_visited"] = true
+                "factory":
+                        GameData.game_flags["factory_visited"] = true
+                "ant_nest":
+                        GameData.game_flags["ant_nest_visited"] = true
+                "ancient_ruins":
+                        GameData.game_flags["ancient_ruins_visited"] = true
+
         # 添加随机遇敌系统到玩家
         if player:
                 var encounter_script = load("res://scripts/system/random_encounter.gd")
