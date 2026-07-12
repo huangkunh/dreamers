@@ -89,9 +89,42 @@ anchor_bottom = 1.0
 offset_left = 5.0
 offset_top = 5.0
 offset_right = -5.0
-offset_bottom = -5.0
+offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel"]
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -45.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="InstallButton" type="Button" parent="GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+theme_override_font_sizes/font_size = 14
+text = "安装"
+
+[node name="UnequipButton" type="Button" parent="GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+theme_override_font_sizes/font_size = 14
+text = "卸下"
+
+[node name="RepairButton" type="Button" parent="GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+theme_override_font_sizes/font_size = 14
+text = "修复"
 
 [node name="HintLabel" type="Label" parent="GaragePanel/MarginContainer/VBoxContainer"]
 layout_mode = 2

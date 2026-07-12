@@ -9,6 +9,9 @@ extends Control
 @onready var equip_list: ItemList = $GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/EquipList
 @onready var title_label: Label = $GaragePanel/MarginContainer/VBoxContainer/TitleBar/TitleLabel
 @onready var coins_label: Label = $GaragePanel/MarginContainer/VBoxContainer/TitleBar/CoinsLabel
+@onready var install_button: Button = $GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer/InstallButton
+@onready var unequip_button: Button = $GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer/UnequipButton
+@onready var repair_button: Button = $GaragePanel/MarginContainer/VBoxContainer/HBoxContainer/EquipPanel/ButtonContainer/RepairButton
 
 var _current_tank_id: String = ""
 var _current_equip_slot: int = 0  # 0=主炮 1=副炮 2=引擎 3=装甲 4=C装置
@@ -21,6 +24,13 @@ func _ready() -> void:
         process_mode = Node.PROCESS_MODE_WHEN_PAUSED
         tank_list.item_selected.connect(_on_tank_selected)
         equip_list.item_selected.connect(_on_equip_selected)
+        # 连接按钮
+        if install_button:
+                install_button.pressed.connect(_on_install)
+        if unequip_button:
+                unequip_button.pressed.connect(_on_unequip)
+        if repair_button:
+                repair_button.pressed.connect(_on_repair)
 
 func open_garage() -> void:
         visible = true
@@ -117,3 +127,54 @@ func _unhandled_input(event: InputEvent) -> void:
         if visible and event.is_action_pressed("ui_cancel"):
                 close_garage()
                 get_viewport().set_input_as_handled()
+
+## 安装装备按钮
+func _on_install() -> void:
+        var selected = equip_list.get_selected_items()
+        if selected.is_empty():
+                info_label.text = "[color=#ffaa44]请先选择要安装的装备[/color]"
+                return
+        var index = selected[0]
+        var offset = SLOT_NAMES.size() + 1  # 槽位 + 分隔线
+        if index >= offset and index < offset + _available_equips.size():
+                var equip = _available_equips[index - offset]
+                var eq_price: int = equip.get("price", 0)
+                if GameData.coins >= eq_price:
+                        GameData.coins -= eq_price
+                        TankSystem.equip_part(_current_tank_id, equip)
+                        coins_label.text = "💰 " + str(GameData.coins)
+                        info_label.text = "[color=#88ff88]安装成功: " + equip.get("name", "") + "[/color]"
+                        _on_tank_selected(tank_list.get_selected_items()[0] if tank_list.get_selected_items().size() > 0 else 0)
+                else:
+                        info_label.text = "[color=#ff4444]金币不足！需要 " + str(eq_price) + " G[/color]"
+        else:
+                info_label.text = "[color=#ffaa44]请选择装备列表中的装备[/color]"
+
+## 卸下装备按钮
+func _on_unequip() -> void:
+        var selected = equip_list.get_selected_items()
+        if selected.is_empty():
+                info_label.text = "[color=#ffaa44]请先选择要卸下的装备槽位[/color]"
+                return
+        var index = selected[0]
+        if index < SLOT_NAMES.size():
+                # 卸下对应槽位的装备
+                TankSystem.unequip_part(_current_tank_id, index)
+                info_label.text = "[color=#88ff88]已卸下: " + SLOT_NAMES[index] + "[/color]"
+                _on_tank_selected(tank_list.get_selected_items()[0] if tank_list.get_selected_items().size() > 0 else 0)
+        else:
+                info_label.text = "[color=#ffaa44]请选择槽位区域(前5项)[/color]"
+
+## 修复战车按钮
+func _on_repair() -> void:
+        if _current_tank_id.is_empty():
+                info_label.text = "[color=#ffaa44]请先选择战车[/color]"
+                return
+        var cost = TankSystem.repair_tank(_current_tank_id)
+        if cost > 0:
+                GameData.coins -= cost
+                coins_label.text = "💰 " + str(GameData.coins)
+                info_label.text = "[color=#88ff88]修复完成! 花费 " + str(cost) + " G[/color]"
+                _on_tank_selected(tank_list.get_selected_items()[0] if tank_list.get_selected_items().size() > 0 else 0)
+        else:
+                info_label.text = "[color=#88ff88]战车状态良好，无需修复[/color]"
