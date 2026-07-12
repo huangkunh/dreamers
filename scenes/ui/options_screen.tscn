@@ -160,6 +160,37 @@ theme_override_font_sizes/font_size = 16
 text = "垂直同步"
 button_pressed = true
 
+[node name="GameSection" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SectionLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/GameSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "🎮 游戏设置"
+
+[node name="DifficultyRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer/GameSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/GameSection/DifficultyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_font_sizes/font_size = 16
+text = "难度等级"
+
+[node name="DifficultySelector" type="OptionButton" parent="Panel/ScrollContainer/VBoxContainer/GameSection/DifficultyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+theme_override_font_sizes/font_size = 16
+item_count = 4
+popup/item_0/text = "简单"
+popup/item_1/text = "普通"
+popup/item_2/text = "困难"
+popup/item_3/text = "极难"
+popup/item_1/selected = true
+
 [node name="BackButton" type="Button" parent="Panel"]
 layout_mode = 1
 anchor_left = 0.5

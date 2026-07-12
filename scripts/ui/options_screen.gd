@@ -1,6 +1,6 @@
 extends Control
 ## 选项/设置界面 (OptionsScreen)
-## 游戏设置: 音量/全屏/窗口模式/语言等
+## 游戏设置: 音量/全屏/窗口模式/难度等
 
 @onready var master_volume_slider: HSlider = $Panel/ScrollContainer/VBoxContainer/AudioSection/MasterVolume/MasterSlider
 @onready var bgm_volume_slider: HSlider = $Panel/ScrollContainer/VBoxContainer/AudioSection/BGMVolume/BGMSlider
@@ -8,6 +8,7 @@ extends Control
 @onready var fullscreen_check: CheckBox = $Panel/ScrollContainer/VBoxContainer/VideoSection/FullscreenCheck
 @onready var vsync_check: CheckBox = $Panel/ScrollContainer/VBoxContainer/VideoSection/VsyncCheck
 @onready var back_button: Button = $Panel/BackButton
+@onready var difficulty_selector: OptionButton = $Panel/ScrollContainer/VBoxContainer/GameSection/DifficultySelector
 
 ## 设置数据
 var _settings: Dictionary = {
@@ -29,8 +30,25 @@ func _ready() -> void:
         fullscreen_check.toggled.connect(_on_fullscreen_toggled)
         vsync_check.toggled.connect(_on_vsync_toggled)
 
+        # 初始化难度选择器
+        if difficulty_selector:
+                difficulty_selector.clear()
+                for diff in BattleBalance.get_all_difficulties():
+                        difficulty_selector.add_item(diff.name)
+                difficulty_selector.selected = BattleBalance.current_difficulty
+                difficulty_selector.item_selected.connect(_on_difficulty_changed)
+
         # 加载设置
         _load_settings()
+
+## 难度改变
+func _on_difficulty_changed(index: int) -> void:
+        BattleBalance.set_difficulty(index)
+        # 保存到配置
+        var config := ConfigFile.new()
+        config.load("user://settings.cfg")
+        config.set_value("game", "difficulty", index)
+        config.save("user://settings.cfg")
 
 ## 加载设置
 func _load_settings() -> void:
