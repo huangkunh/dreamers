@@ -30,6 +30,18 @@ var player_scene_map = {}
 # 正在战斗的id
 var fighting_id
 
+# 正在防御的单位fight_id列表 (减半受到的伤害, 下回合开始时清除)
+var _defending_units: Array = []
+
+# 玩家技能选择模式 (按下技能键后进入, 选择目标后释放技能)
+var _skill_select_mode: bool = false
+
+# 待使用的技能索引
+var _pending_skill_index: int = 0
+
+# 战车战模式标志 (true=战车战, false=步行战)
+var _in_tank_battle: bool = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
         fight_hud.determine_attack_target_signal.connect(player_attck)
@@ -68,11 +80,17 @@ func _ready() -> void:
         for enemy in enemy_scene:
                 enemy_scene_map[enemy.fight_id] = enemy
         
+        # 检查战车战模式 (战车或步行)
+        _in_tank_battle = GameData.game_flags.get("battle_in_tank", false)
+
         #生成玩家
         for i in range(fight_player_init_data.size()):
                 var fight_player_data = fight_player_init_data[i]
                 var fight_id = fight_player_data.player_name + "_" + str(i)
                 fight_player_data.fight_id = fight_id
+                # 战车战模式 — 使用战车数据覆盖玩家属性
+                if _in_tank_battle:
+                        _apply_tank_battle_data(fight_player_data)
                 fighting_unit_map[fight_id] = fight_player_data
                 
         var player_scene = fight_player_manager.generation_fight_palyer(fight_player_init_data)
@@ -86,14 +104,37 @@ func _ready() -> void:
         # 生成战斗进度
         fight_speed_path.init_fight_speed_Path(fighting_unit_map.values())
         
+        # 播放战斗BGM
+        BgmManager.play_battle_bgm()
+
         # 移动摄像头
         fight_camera_3d.move_horizontally(0.2, 2.0)
-        pass # Replace with function body.
+        pass # Replace with function body
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
         pass
+
+
+## 处理战斗快捷键输入 (防御/逃跑/技能)
+## 仅在玩家回合且菜单可见时响应
+func _unhandled_key_input(event: InputEvent) -> void:
+        # 菜单不可见时不处理 (非玩家回合或目标选择中)
+        if fight_menu == null or not fight_menu.visible:
+                return
+        # 防御
+        if Input.is_action_just_pressed("battle_defend"):
+                player_defend()
+                get_viewport().set_input_as_handled()
+        # 逃跑
+        elif Input.is_action_just_pressed("battle_escape"):
+                player_flee()
+                get_viewport().set_input_as_handled()
+        # 技能
+        elif Input.is_action_just_pressed("battle_skill"):
+                _start_skill_selection()
+                get_viewport().set_input_as_handled()
 
 
 ## 战斗
@@ -102,6 +143,8 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
         var fighting_unit = fighting_unit_map[fight_id]
         # 是玩家
         if fighting_unit.confirm_player:
+                # 清除该单位的防御状态 (新一轮行动开始)
+                _defending_units.erase(fight_id)
                 var player_scene: CharacterBody3D = player_scene_map[fight_id]
                 player_scene.fight_originally_position = player_scene.position
                 fighting_player_marker.position.y = player_scene.position.y
@@ -114,9 +157,25 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
         else: #是怪物
                 var skill_index = randi_range(0, fighting_unit.skills.size() - 1)
                 var skill = fighting_unit.skills[skill_index]
-                if skill.attack_type == attack_data.Attack_Type.MELEE:
-                        if skill.attack_type == attack_data.Attack_Target.FOE_ONE:
+                # 负值强度或自身目标 → 自我治疗
+                if skill.skill_strength < 0 or skill.attack_target == attack_data.Attack_Target.SELF_ONE:
+                        enemy_self_heal(skill)
+                elif skill.attack_type == attack_data.Attack_Type.MELEE:
+                        if skill.attack_target == attack_data.Attack_Target.FOE_ONE:
                                 enemy_melee_foe_one(skill)
+                        elif skill.attack_target == attack_data.Attack_Target.FOE_ALL:
+                                enemy_melee_foe_all(skill)
+                        else:
+                                enemy_melee_foe_one(skill)
+                elif skill.attack_type == attack_data.Attack_Type.REMOTE:
+                        if skill.attack_target == attack_data.Attack_Target.FOE_ONE:
+                                enemy_remote_foe_one(skill)
+                        elif skill.attack_target == attack_data.Attack_Target.FOE_ALL:
+                                enemy_remote_foe_all(skill)
+                        else:
+                                enemy_remote_foe_one(skill)
+                else:
+                        enemy_melee_foe_one(skill)
 
 
 ## 敌人近战单体攻击
@@ -127,17 +186,30 @@ func enemy_melee_foe_one(skill):
         
         # 攻击玩家
         var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
-        var tween = enemy_scene.create_tween()
-        enemy_scene.attack_player(tween)                                
+        var fighting_unit = fighting_unit_map[fighting_id]
         
         # 被攻击的玩家
         var player_scene_index = randi_range(0, player_scene_map.size() - 1)
         var player_scene: CharacterBody3D = player_scene_map.values()[player_scene_index]
+        
+        # C装置迎击检查
+        if _check_c_device_intercept(skill, fighting_unit):
+                var intercept_tween = create_tween()
+                fight_hud.action_name_animation("C装置迎击!")
+                intercept_tween.tween_interval(1.0)
+                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        var tween = enemy_scene.create_tween()
+        enemy_scene.attack_player(tween)                                
         player_scene.under_fire(tween)
         
-        # 受到伤害数值动画
-        var fighting_unit = fighting_unit_map[fighting_id]
+        # 计算伤害 (考虑防御状态)
         var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
+        skill_hurt = _apply_defend_reduction(player_scene.fight_id, skill_hurt)
+        # 战车战模式 — 战车装甲减免伤害
+        skill_hurt = _apply_tank_battle_damage(skill_hurt)
         player_scene.under_fire_label(skill_hurt, tween)
         
         # 摄像机运动
@@ -156,6 +228,9 @@ func enemy_melee_foe_one(skill):
         tween.parallel().tween_callback(health_info.set_text.bind(health_label))
         tween.tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
 
+        # 施加状态效果
+        _apply_skill_status(skill, fighting_unit_palyer)
+
         # 判断玩家是否存活
         if check_all_player_death():
                 tween.parallel().tween_callback(self.all_player_death)
@@ -166,12 +241,332 @@ func enemy_melee_foe_one(skill):
         tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
         
         
+## 敌人远程单体攻击
+## skill 技能
+func enemy_remote_foe_one(skill):
+        # 技能名字动画
+        fight_hud.action_name_animation(skill.skill_name)
+        
+        var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
+        var fighting_unit = fighting_unit_map[fighting_id]
+        
+        # 被攻击的玩家
+        var player_scene_index = randi_range(0, player_scene_map.size() - 1)
+        var player_scene: CharacterBody3D = player_scene_map.values()[player_scene_index]
+        
+        # C装置迎击检查 (远程攻击可被迎击)
+        if _check_c_device_intercept(skill, fighting_unit):
+                var intercept_tween = create_tween()
+                fight_hud.action_name_animation("C装置迎击!")
+                intercept_tween.tween_interval(1.0)
+                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 远程攻击动画 (敌人闪烁, 与近战时序略有差异)
+        var tween = enemy_scene.create_tween()
+        enemy_scene.attack_player(tween)
+        player_scene.under_fire(tween)
+        
+        # 计算伤害 (考虑防御状态)
+        var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
+        skill_hurt = _apply_defend_reduction(player_scene.fight_id, skill_hurt)
+        # 战车战模式 — 战车装甲减免伤害
+        skill_hurt = _apply_tank_battle_damage(skill_hurt)
+        player_scene.under_fire_label(skill_hurt, tween)
+        
+        # 摄像机运动
+        fight_camera_3d.look_at_target(player_scene.global_position, 0.1)
+        
+        # 玩家信息
+        var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
+        fighting_unit_palyer.current_health -= skill_hurt
+        if fighting_unit_palyer.current_health <= 0:
+                fighting_unit_palyer.current_health = 0
+        var current_health = str(fighting_unit_palyer.current_health)
+        var max_health = str(fighting_unit_palyer.max_health)
+        var health_info = player_info_container.find_child("HealthInfo")
+        var health_label = "HP: " + current_health + " / " + max_health
+        tween.parallel().tween_callback(health_bar.health_update.bind( - skill_hurt))
+        tween.parallel().tween_callback(health_info.set_text.bind(health_label))
+        tween.tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
+
+        # 施加状态效果
+        _apply_skill_status(skill, fighting_unit_palyer)
+
+        # 判断玩家是否存活
+        if check_all_player_death():
+                tween.parallel().tween_callback(self.all_player_death)
+                return
+        
+        # 单位战斗结束
+        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 敌人近战全体攻击
+## skill 技能
+func enemy_melee_foe_all(skill):
+        # 技能名字动画
+        fight_hud.action_name_animation(skill.skill_name)
+        
+        var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
+        var fighting_unit = fighting_unit_map[fighting_id]
+        var tween = enemy_scene.create_tween()
+        enemy_scene.attack_player(tween)
+        
+        # 摄像机运动
+        if player_scene_map.size() > 0:
+                fight_camera_3d.look_at_target(player_scene_map.values()[0].global_position, 0.1)
+        
+        # 对所有玩家造成伤害
+        var total_hurt = 0
+        for player_scene in player_scene_map.values():
+                var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
+                skill_hurt = _apply_defend_reduction(player_scene.fight_id, skill_hurt)
+                # 战车战模式 — 战车装甲减免伤害
+                skill_hurt = _apply_tank_battle_damage(skill_hurt)
+                total_hurt += skill_hurt
+                player_scene.under_fire(tween)
+                player_scene.under_fire_label(skill_hurt, tween)
+                
+                var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
+                fighting_unit_palyer.current_health -= skill_hurt
+                if fighting_unit_palyer.current_health <= 0:
+                        fighting_unit_palyer.current_health = 0
+                tween.parallel().tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
+                # 施加状态效果
+                _apply_skill_status(skill, fighting_unit_palyer)
+        
+        # 更新玩家信息 (以第一个玩家为代表)
+        if player_scene_map.size() > 0:
+                var first_player = player_scene_map.values()[0]
+                var first_unit = fighting_unit_map[first_player.fight_id]
+                var health_info = player_info_container.find_child("HealthInfo")
+                var health_label = "HP: " + str(first_unit.current_health) + " / " + str(first_unit.max_health)
+                tween.parallel().tween_callback(health_bar.health_update.bind( - total_hurt))
+                tween.parallel().tween_callback(health_info.set_text.bind(health_label))
+        
+        # 判断玩家是否存活
+        if check_all_player_death():
+                tween.parallel().tween_callback(self.all_player_death)
+                return
+        
+        # 单位战斗结束
+        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 敌人远程全体攻击
+## skill 技能
+func enemy_remote_foe_all(skill):
+        # 技能名字动画
+        fight_hud.action_name_animation(skill.skill_name)
+        
+        var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
+        var fighting_unit = fighting_unit_map[fighting_id]
+        
+        # C装置迎击检查 (远程攻击可被迎击)
+        if _check_c_device_intercept(skill, fighting_unit):
+                var intercept_tween = create_tween()
+                fight_hud.action_name_animation("C装置迎击!")
+                intercept_tween.tween_interval(1.0)
+                intercept_tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                intercept_tween.tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        var tween = enemy_scene.create_tween()
+        enemy_scene.attack_player(tween)
+        
+        # 摄像机运动
+        if player_scene_map.size() > 0:
+                fight_camera_3d.look_at_target(player_scene_map.values()[0].global_position, 0.1)
+        
+        # 对所有玩家造成伤害
+        var total_hurt = 0
+        for player_scene in player_scene_map.values():
+                var skill_hurt = (skill.skill_strength * fighting_unit.battle_lv) as int
+                skill_hurt = _apply_defend_reduction(player_scene.fight_id, skill_hurt)
+                # 战车战模式 — 战车装甲减免伤害
+                skill_hurt = _apply_tank_battle_damage(skill_hurt)
+                total_hurt += skill_hurt
+                player_scene.under_fire(tween)
+                player_scene.under_fire_label(skill_hurt, tween)
+                
+                var fighting_unit_palyer = fighting_unit_map[player_scene.fight_id]
+                fighting_unit_palyer.current_health -= skill_hurt
+                if fighting_unit_palyer.current_health <= 0:
+                        fighting_unit_palyer.current_health = 0
+                tween.parallel().tween_callback(player_scene.set_fight_player_data.bind(fighting_unit_palyer))
+                # 施加状态效果
+                _apply_skill_status(skill, fighting_unit_palyer)
+        
+        # 更新玩家信息 (以第一个玩家为代表)
+        if player_scene_map.size() > 0:
+                var first_player = player_scene_map.values()[0]
+                var first_unit = fighting_unit_map[first_player.fight_id]
+                var health_info = player_info_container.find_child("HealthInfo")
+                var health_label = "HP: " + str(first_unit.current_health) + " / " + str(first_unit.max_health)
+                tween.parallel().tween_callback(health_bar.health_update.bind( - total_hurt))
+                tween.parallel().tween_callback(health_info.set_text.bind(health_label))
+        
+        # 判断玩家是否存活
+        if check_all_player_death():
+                tween.parallel().tween_callback(self.all_player_death)
+                return
+        
+        # 单位战斗结束
+        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 敌人自我治疗
+## skill 技能 (skill_strength为负值表示治疗量倍率)
+func enemy_self_heal(skill):
+        # 技能名字动画
+        fight_hud.action_name_animation(skill.skill_name)
+        
+        var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
+        var fighting_unit = fighting_unit_map[fighting_id]
+        
+        # 治疗量 = |skill_strength| * battle_lv
+        var heal_amount = (abs(skill.skill_strength) * fighting_unit.battle_lv) as int
+        fighting_unit.current_health = min(fighting_unit.max_health, fighting_unit.current_health + heal_amount)
+        enemy_scene.fight_enemy_data = fighting_unit
+        
+        # 治疗动画 (复用敌人攻击动画)
+        var tween = enemy_scene.create_tween()
+        enemy_scene.attack_player(tween)
+        
+        # 摄像机运动
+        fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
+        
+        # 单位战斗结束
+        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## C装置迎击检查
+## skill 技能
+## fighting_unit 攻击单位数据
+## 返回true表示攻击被迎击 (跳过伤害)
+func _check_c_device_intercept(skill, fighting_unit) -> bool:
+        var active_tank = TankSystem.get_active_tank()
+        if active_tank == null or active_tank.c_device.is_empty():
+                return false
+        var tank_data = {"c_device": active_tank.c_device, "speed": active_tank.speed}
+        var attacker_power = int(skill.skill_strength * fighting_unit.battle_lv)
+        return CDeviceSystem.try_intercept(tank_data, attacker_power)
+
+
+## 防御减伤
+## fight_id 目标单位id
+## damage 原始伤害
+## 返回减伤后的伤害 (防御状态减半)
+func _apply_defend_reduction(fight_id, damage: int) -> int:
+        if _defending_units.has(fight_id):
+                return int(damage * 0.5)
+        return damage
+
+
+## 应用战车战数据到玩家单位 (在 _ready 中调用)
+## fight_player_data 玩家单位数据 (会被修改)
+func _apply_tank_battle_data(fight_player_data: Dictionary) -> void:
+        var tank = TankSystem.get_active_tank()
+        if tank == null:
+                # 没有战车 — 退回步行模式
+                _in_tank_battle = false
+                GameData.game_flags["battle_in_tank"] = false
+                return
+        # 使用战车属性覆盖玩家单位
+        fight_player_data["current_health"] = tank.current_hp
+        fight_player_data["max_health"] = tank.max_hp
+        fight_player_data["battle_lv"] = tank.attack
+        fight_player_data["strength"] = tank.defense
+        # 战车武器 (主炮单体远程)
+        fight_player_data["weapons"] = {
+                "attack_type": AttackData.Attack_Type.REMOTE,
+                "attack_target": AttackData.Attack_Target.FOE_ONE,
+                "battle_lv": int(tank.main_cannon.get("attack", tank.attack)),
+        }
+        # 战车专用技能 (主炮射击/机枪扫射/修理包)
+        fight_player_data["skills"] = [AttackData.tank_cannon, AttackData.tank_machine_gun, AttackData.repair_kit]
+        # 战车纹理 (如有配置)
+        if not tank.sprite_path.is_empty():
+                fight_player_data["albedo_texture_path"] = tank.sprite_path
+
+
+## 检查战车战模式下的伤害处理
+## damage 原始伤害
+## 返回战车装甲减免后的实际伤害
+## 注: 战车HP在 TankSystem.damage_tank 中扣减, 玩家单位HP由调用方扣减 (两者起始值相同, 保持同步)
+func _apply_tank_battle_damage(damage: int) -> int:
+        if not _in_tank_battle:
+                return damage
+        var tank = TankSystem.get_active_tank()
+        if tank == null:
+                return damage
+        # 战车装甲减免伤害
+        var actual_damage = max(1, damage - tank.defense / 2)
+        TankSystem.damage_tank(tank.id, actual_damage)
+        # 检查战车大破
+        if tank.current_hp <= 0:
+                _on_tank_destroyed()
+        return actual_damage
+
+
+## 战车大破处理
+func _on_tank_destroyed() -> void:
+        _in_tank_battle = false
+        GameData.game_flags["battle_in_tank"] = false
+        TankSystem.exit_tank()
+        fight_hud.action_name_animation("战车大破!")
+        # TODO: 战斗中切换为步行模式 (目前仅通知)
+
+
+## 施加技能状态效果
+## skill 技能
+## target_unit 目标单位数据
+func _apply_skill_status(skill, target_unit: Dictionary) -> void:
+        if not skill.has("status_effect"):
+                return
+        var status_name = skill.get("status_effect", "")
+        if status_name == null or status_name.is_empty():
+                return
+        var chance = float(skill.get("status_chance", 1.0))
+        if randf() > chance:
+                return
+        var effect_type = _get_status_effect_type(status_name)
+        var duration = int(skill.get("status_duration", 1))
+        StatusEffectSystem.apply_status(target_unit, effect_type, duration, 1.0, fighting_id)
+
+
+## 状态效果名称转枚举值 (与StatusEffectSystem内部编号一致)
+func _get_status_effect_type(status_name: String) -> int:
+        match status_name:
+                "POISON": return 0
+                "PARALYZE": return 1
+                "STUN": return 2
+                "DEFENSE_UP": return 3
+                "ATTACK_UP": return 4
+                "SPEED_UP": return 5
+                "BLEED": return 6
+                _: return 0
+
+
 ## 玩家攻击
 ## attack_pointer_index 攻击的光标索引
 func player_attck(attack_pointer_index):        
         var fight = self
         var fighting_id = fight.fighting_id
         var fight_unit = fight.fighting_unit_map[fighting_id]
+        
+        # 技能选择模式 → 使用技能
+        if _skill_select_mode:
+                _skill_select_mode = false
+                fight.player_use_skill(_pending_skill_index, attack_pointer_index)
+                return
+        
         var weapons = fight_unit.weapons
         if AttackData.Attack_Type.REMOTE == weapons.attack_type:
                 if AttackData.Attack_Target.FOE_ONE == weapons.attack_target:
@@ -182,35 +577,341 @@ func player_attck(attack_pointer_index):
 ## 玩家远程单体攻击
 ## attack_pointer_index 敌人索引
 func player_remote_foe_one(attack_pointer_index):
-        
+
         # 武器攻击动画
         var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+
+        # 战车战模式 — 主炮射击 (消耗弹药)
+        if _in_tank_battle:
+                _player_tank_main_cannon_attack(attack_pointer_index, player_scene)
+                return
+
         var enemy_scene:CharacterBody3D = enemy_scene_map.values()[attack_pointer_index]
         var enemy_fight_id = enemy_scene.fight_id
         var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
         var weapons_tween = player_scene.create_tween()
         player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
-        
+
         # 摄像机运动
         fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
-        
+
         # 造成伤害 = 武器白刃战LV + 人物白刃战LV - 目标强度
         var fight_unit = fighting_unit_map[fighting_id]
         var enemy_death = enemy_scene.under_fire(fight_unit, enemy_fight_unit, weapons_tween)
-        
+
         # 怪物死亡
         if enemy_death:
                 enemy_scene.enemy_death(weapons_tween)
                 weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
                 # 校验所有敌人死亡
                 if check_all_enemy_death():
-                        weapons_tween.tween_callback(self.all_enemy_death)                      
+                        weapons_tween.tween_callback(self.all_enemy_death)
                         return
                 
         # 单位战斗结束
         weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
         weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
         weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 战车主炮攻击 (战车战模式, 消耗弹药)
+## attack_pointer_index 敌人索引
+## player_scene 玩家场景
+func _player_tank_main_cannon_attack(attack_pointer_index: int, player_scene: CharacterBody3D) -> void:
+        var tank = TankSystem.get_active_tank()
+        if tank == null:
+                # 战车丢失 — 切换回步行模式
+                _in_tank_battle = false
+                _end_player_turn(player_scene)
+                return
+        # 弹药检查
+        if tank.current_ammo <= 0:
+                fight_hud.action_name_animation("弹药耗尽!")
+                var ammo_tween = create_tween()
+                ammo_tween.tween_interval(1.0)
+                ammo_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                ammo_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                ammo_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        # 消耗弹药
+        tank.current_ammo -= 1
+
+        var enemy_scene: CharacterBody3D = enemy_scene_map.values()[attack_pointer_index]
+        var enemy_fight_id = enemy_scene.fight_id
+        var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+        var weapons_tween = player_scene.create_tween()
+        player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+        fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
+
+        # 战车战伤害 = tank.attack + weapon_battle_lv - enemy.defense
+        var fight_unit = fighting_unit_map[fighting_id]
+        var weapon_battle_lv = int(fight_unit.weapons.get("battle_lv", 0))
+        var enemy_defense = int(enemy_fight_unit.get("defense", enemy_fight_unit.get("strength", 0)))
+        var damage = max(1, tank.attack + weapon_battle_lv - enemy_defense)
+        var enemy_death = _damage_enemy(enemy_scene, enemy_fight_unit, damage, weapons_tween)
+
+        # 怪物死亡
+        if enemy_death:
+                enemy_scene.enemy_death(weapons_tween)
+                weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+                if check_all_enemy_death():
+                        weapons_tween.tween_callback(self.all_enemy_death)
+                        return
+
+        # 单位战斗结束
+        weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+        weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 进入技能选择模式 (循环切换技能, 跳过普通攻击)
+func _start_skill_selection() -> void:
+        var fight_unit = fighting_unit_map[fighting_id]
+        var skills = fight_unit.skills
+        if skills.is_empty():
+                return
+        if enemy_scene_map.is_empty():
+                return
+        # 循环切换到下一个技能 (跳过索引0的普通攻击)
+        _pending_skill_index += 1
+        if _pending_skill_index >= skills.size():
+                _pending_skill_index = 1
+        if _pending_skill_index >= skills.size():
+                _pending_skill_index = 0
+        var skill = skills[_pending_skill_index]
+        # 显示技能名字
+        fight_hud.action_name_animation("技能: " + skill.skill_name)
+        # 进入目标选择 (复用攻击目标选择流程)
+        _skill_select_mode = true
+        fight_menu.visible = false
+        if fight_hud.pointer != null:
+                fight_hud.pointer.visible = false
+        var enemy_scene = enemy_scene_map.values()[0]
+        fight_hud.attack_pointer.global_position = enemy_scene.global_position
+        fight_hud.attack_pointer.global_position.z += 0.05
+        fight_hud.attack_pointer.visible = true
+        fight_hud.attack_pointer_index = 0
+
+
+## 玩家使用技能
+## skill_index 技能索引
+## target_index 目标索引
+func player_use_skill(skill_index: int, target_index: int) -> void:
+        var fight_unit = fighting_unit_map[fighting_id]
+        if skill_index < 0 or skill_index >= fight_unit.skills.size():
+                return
+        var skill = fight_unit.skills[skill_index]
+        
+        # 技能名字动画
+        fight_hud.action_name_animation(skill.skill_name)
+        
+        var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+        
+        # 防御技能
+        if skill.has("defense_boost"):
+                if not _defending_units.has(fighting_id):
+                        _defending_units.append(fighting_id)
+                _end_player_turn(player_scene)
+                return
+        
+        # 治疗/辅助 (负值skill_strength 或 自身目标)
+        if skill.skill_strength < 0 or skill.attack_target == attack_data.Attack_Target.SELF_ONE:
+                var heal_amount = (abs(skill.skill_strength) * fight_unit.battle_lv) as int
+                fight_unit.current_health = min(fight_unit.max_health, fight_unit.current_health + heal_amount)
+                # 战车战模式 — 同步战车HP (修理包等)
+                if _in_tank_battle:
+                        var heal_tank = TankSystem.get_active_tank()
+                        if heal_tank != null:
+                                heal_tank.current_hp = min(heal_tank.max_hp, heal_tank.current_hp + heal_amount)
+                _update_player_health_ui(fight_unit, heal_amount)
+                var heal_tween = create_tween()
+                heal_tween.tween_callback(player_scene.set_fight_player_data.bind(fight_unit))
+                heal_tween.tween_interval(0.5)
+                # 单位战斗结束
+                heal_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                heal_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                heal_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 攻击单体敌人
+        if skill.attack_target == attack_data.Attack_Target.FOE_ONE:
+                if enemy_scene_map.is_empty():
+                        _end_player_turn(player_scene)
+                        return
+                # 战车战模式 — 主炮技能消耗弹药
+                if _in_tank_battle and skill.get("skill_name", "") == AttackData.tank_cannon.skill_name:
+                        var tank = TankSystem.get_active_tank()
+                        if tank == null or tank.current_ammo <= 0:
+                                fight_hud.action_name_animation("弹药耗尽!")
+                                _end_player_turn(player_scene)
+                                return
+                        tank.current_ammo -= 1
+                var target_idx = clamp(target_index, 0, enemy_scene_map.size() - 1)
+                var enemy_scene: CharacterBody3D = enemy_scene_map.values()[target_idx]
+                var enemy_fight_id = enemy_scene.fight_id
+                var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+                var weapons_tween = player_scene.create_tween()
+                player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+                fight_camera_3d.look_at_target(enemy_scene.global_position, 0.1)
+                
+                # 技能伤害 = skill_strength * battle_lv - 目标强度
+                var skill_hurt = (skill.skill_strength * fight_unit.battle_lv) as int
+                skill_hurt = max(1, skill_hurt - int(enemy_fight_unit.get("strength", 0)))
+                var enemy_death = _damage_enemy(enemy_scene, enemy_fight_unit, skill_hurt, weapons_tween)
+                
+                # 施加状态效果
+                if not enemy_death:
+                        _apply_skill_status(skill, enemy_fight_unit)
+                
+                # 怪物死亡
+                if enemy_death:
+                        enemy_scene.enemy_death(weapons_tween)
+                        weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+                        if check_all_enemy_death():
+                                weapons_tween.tween_callback(self.all_enemy_death)
+                                return
+                
+                # 单位战斗结束
+                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 攻击全体敌人
+        if skill.attack_target == attack_data.Attack_Target.FOE_ALL:
+                var weapons_tween = player_scene.create_tween()
+                var death_list: Array = []
+                for enemy_scene in enemy_scene_map.values():
+                        var enemy_fight_id = enemy_scene.fight_id
+                        var enemy_fight_unit = fighting_unit_map[enemy_fight_id]
+                        player_scene.attack_enemy(enemy_scene, enemy_fight_unit, weapons_tween)
+                        var skill_hurt = (skill.skill_strength * fight_unit.battle_lv) as int
+                        skill_hurt = max(1, skill_hurt - int(enemy_fight_unit.get("strength", 0)))
+                        var died = _damage_enemy(enemy_scene, enemy_fight_unit, skill_hurt, weapons_tween)
+                        if not died:
+                                _apply_skill_status(skill, enemy_fight_unit)
+                        else:
+                                death_list.append(enemy_scene)
+                # 处理死亡的敌人
+                for enemy_scene in death_list:
+                        var enemy_fight_id = enemy_scene.fight_id
+                        enemy_scene.enemy_death(weapons_tween)
+                        weapons_tween.tween_callback(clear_fight_data.bind(enemy_fight_id))
+                if check_all_enemy_death():
+                        weapons_tween.tween_callback(self.all_enemy_death)
+                        return
+                # 单位战斗结束
+                weapons_tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                weapons_tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                weapons_tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+                return
+        
+        # 其他目标类型 (队友单体/全体) — 简化为结束回合
+        _end_player_turn(player_scene)
+
+
+## 对敌人造成伤害并播放伤害动画
+## enemy_scene 敌人场景
+## enemy_fight_unit 敌人单位数据
+## damage 伤害值
+## tween 补间动画对象
+## 返回是否死亡
+func _damage_enemy(enemy_scene, enemy_fight_unit: Dictionary, damage: int, tween) -> bool:
+        enemy_fight_unit.current_health -= damage
+        if enemy_fight_unit.current_health <= 0:
+                enemy_fight_unit.current_health = 0
+        enemy_scene.fight_enemy_data = enemy_fight_unit
+        
+        # 伤害数字动画
+        var hurt_label: Label3D = enemy_scene.hurt_label
+        var enemy_global_position = enemy_scene.global_position
+        hurt_label.global_position = enemy_global_position
+        var hurt_label_position = hurt_label.position
+        hurt_label.text = str(damage)
+        var hurt_label_position_tween = Vector3(hurt_label_position)
+        hurt_label_position_tween.x -= 0.05
+        hurt_label_position_tween.y += 0.05
+        tween.tween_property(hurt_label, "visible", true, 0.5)
+        tween.parallel().tween_property(hurt_label, "position", hurt_label_position_tween, 0.5)
+        tween.parallel().tween_property(hurt_label, "scale", Vector3(1.5, 1.5, 1.5), 0.1)
+        hurt_label_position_tween.x -= 0.05
+        hurt_label_position_tween.y -= 0.05
+        tween.tween_property(hurt_label, "position", hurt_label_position_tween, 0.5)
+        tween.parallel().tween_property(hurt_label, "scale", Vector3.ONE, 0.1)
+        tween.tween_callback(hurt_label.set_visible.bind(false))
+        return enemy_fight_unit.current_health <= 0
+
+
+## 更新玩家HP信息UI
+## fight_unit 玩家单位数据
+## delta HP变化 (负值为伤害, 正值为治疗)
+func _update_player_health_ui(fight_unit: Dictionary, delta: int) -> void:
+        var current_health = str(fight_unit.current_health)
+        var max_health = str(fight_unit.max_health)
+        var health_info = player_info_container.find_child("HealthInfo")
+        var health_label = "HP: " + current_health + " / " + max_health
+        health_bar.health_update(delta)
+        if health_info != null:
+                health_info.text = health_label
+
+
+## 结束玩家回合 (无动画的备用流程)
+## player_scene 玩家场景
+func _end_player_turn(player_scene: CharacterBody3D) -> void:
+        var tween = create_tween()
+        tween.tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 玩家防御 (减半下回合受到的伤害)
+func player_defend() -> void:
+        fight_hud.action_name_animation("防御")
+        if not _defending_units.has(fighting_id):
+                _defending_units.append(fighting_id)
+        # 隐藏菜单
+        fight_menu.visible = false
+        if fight_hud.pointer != null:
+                fight_hud.pointer.visible = false
+        var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+        var tween = create_tween()
+        tween.tween_interval(0.5)
+        # 单位战斗结束
+        tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+        tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+        tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 玩家逃跑 (70%成功率)
+func player_flee() -> void:
+        fight_hud.action_name_animation("逃跑")
+        # 隐藏菜单
+        fight_menu.visible = false
+        if fight_hud.pointer != null:
+                fight_hud.pointer.visible = false
+        var player_scene: CharacterBody3D = player_scene_map[fighting_id]
+        var tween = create_tween()
+        tween.tween_interval(0.5)
+        if randf() <= 0.7:
+                # 逃跑成功
+                tween.tween_callback(self._flee_battle)
+        else:
+                # 逃跑失败
+                fight_hud.action_name_animation("逃跑失败!")
+                tween.parallel().tween_callback(fight_speed_path.unit_fight_end.bind(fighting_id))
+                tween.tween_property(player_scene, "position", player_scene.fight_originally_position, 0.3)
+                tween.parallel().tween_callback(fight_camera_3d.reset_camera_status)
+
+
+## 逃离战斗 (返回之前的区域)
+func _flee_battle() -> void:
+        audio_stream_player.stream = load("res://music/sound_effect/select.wav")
+        audio_stream_player.play()
+        fight_hud.visible = false
+        fight_speed_path.fight_stop()
+        # 返回之前的区域
+        await get_tree().create_timer(1.0).timeout
+        GameFlow.enter_city()
 
 
 ## 清除战斗数据
@@ -229,9 +930,8 @@ func check_all_enemy_death()-> bool:
         
 ## 所有敌人死亡
 func all_enemy_death():
-        # 播放战斗胜利音乐
-        audio_stream_player.stream = load("res://music/sound_effect/battle_victory_normal.wav")
-        audio_stream_player.play()
+        # 播放战斗胜利音效
+        BgmManager.play_victory_bgm()
 
         # 暂停战斗进度
         fight_hud.visible = false
@@ -306,8 +1006,8 @@ func check_all_player_death()-> bool:
 
 ## 全部玩家死亡
 func all_player_death():
-        audio_stream_player.stream = load("res://music/background_music/defeat.ogg")
-        audio_stream_player.play()
+        BgmManager.stop_bgm()
+        BgmManager.play_defeat_bgm()
 
         # 显示游戏结束画面
         var game_over_scene := load("res://scenes/ui/game_over_screen.tscn")

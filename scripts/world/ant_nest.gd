@@ -25,13 +25,12 @@ var _boss_trigger: Area3D
 var _game_hud: Control
 
 func _ready() -> void:
-        # 播放背景音乐
-        if audio_stream_player and not audio_stream_player.playing:
-                audio_stream_player.play()
-
         # 设置游戏状态
         GameFlow.current_state = GameFlow.GameState.CITY
         GameData.game_flags["current_area"] = "ant_nest"
+
+        # 播放区域BGM
+        BgmManager.play_area_bgm("ant_nest")
 
         # 将玩家加入player组
         if player:
@@ -143,7 +142,6 @@ func _on_boss_trigger_entered(body: Node) -> void:
 ## 遇敌回调
 func _on_encounter() -> void:
         print("[AntNest] 蚂蚁袭击!")
-        if audio_stream_player:
-                audio_stream_player.stop()
+        BgmManager.stop_bgm()
         GameData.game_flags["battle_area"] = "ant_nest"
         GameFlow.enter_battle()

@@ -54,6 +54,85 @@ var encounter_count: int = 0  ## 战斗次数
 var defeat_count: int = 0  ## 击败敌人数
 var game_flags: Dictionary = {}  ## 游戏标志位 (用于剧情触发/存档)
 
+## ---- 物品数据库 (Metal Max 忠实还原道具) ----
+var item_database: Dictionary = {
+        # ---- 恢复类消耗品 ----
+        "tea_egg": {
+                "name": "茶叶蛋",
+                "description": "恢复 50 HP",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 30,
+                "heal_hp": 50,
+        },
+        "instant_noodles": {
+                "name": "泡面",
+                "description": "恢复 100 HP",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 50,
+                "heal_hp": 100,
+        },
+        "full_recovery": {
+                "name": "全恢复药",
+                "description": "完全恢复 HP",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 200,
+                "heal_hp": -1,  ## -1 表示完全恢复
+        },
+        "repair_kit": {
+                "name": "修理包",
+                "description": "将战车完全修复",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 300,
+                "repair_tank": true,
+        },
+        "fuel_barrel": {
+                "name": "燃料桶",
+                "description": "补充战车燃料",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 100,
+                "refuel_tank": true,
+        },
+        # ---- 战斗类消耗品 ----
+        "smoke_bomb": {
+                "name": "烟雾弹",
+                "description": "70%概率提升逃跑成功率",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 80,
+                "escape_boost": 0.7,
+        },
+        "grenade": {
+                "name": "手榴弹",
+                "description": "对单个敌人造成 80 伤害",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 120,
+                "damage": 80,
+                "target": "FOE_ONE",
+        },
+        "molotov": {
+                "name": "火焰瓶",
+                "description": "对所有敌人造成 60 伤害",
+                "type": Item.ItemType.CONSUMABLE,
+                "price": 150,
+                "damage": 60,
+                "target": "FOE_ALL",
+        },
+        # ---- 关键道具 ----
+        "fathers_badge": {
+                "name": "父亲的徽章",
+                "description": "父亲留下的徽章，似乎与某段记忆有关。",
+                "type": Item.ItemType.KEY_ITEM,
+                "price": 0,
+                "stackable": false,
+        },
+        "ancient_key": {
+                "name": "古代钥匙",
+                "description": "可以打开古代遗迹中隐藏房间的门。",
+                "type": Item.ItemType.KEY_ITEM,
+                "price": 0,
+                "stackable": false,
+        },
+}
+
 ## 信号
 signal coins_changed(new_coins: int)
 signal inventory_changed
@@ -63,6 +142,8 @@ signal hp_changed(member_id: String, new_hp: int)
 func _ready() -> void:
         _init_default_party()
         _init_default_inventory()
+        # 初始化战斗模式标志 (false=步行战, true=战车战)
+        game_flags["battle_in_tank"] = false
 
 func _process(delta: float) -> void:
         play_time += delta

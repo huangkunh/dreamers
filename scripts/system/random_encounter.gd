@@ -61,6 +61,9 @@ func _trigger_encounter() -> void:
         print("[RandomEncounter] 触发随机战斗! 区域: " + area_id)
         # 设置战斗区域
         GameData.game_flags["battle_area"] = area_id
+        # 保存战斗模式 (战车或步行)
+        var active_tank = TankSystem.get_active_tank()
+        GameData.game_flags["battle_in_tank"] = active_tank != null
         # 通过 GameFlow 进入战斗
         GameFlow.enter_battle()
 

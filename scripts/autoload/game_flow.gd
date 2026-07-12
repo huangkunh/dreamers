@@ -82,6 +82,7 @@ func change_scene(scene_name: String, fade_duration: float = 0.5) -> void:
 
 ## 开始新游戏
 func start_new_game() -> void:
+        BgmManager.play_area_bgm("world_map")
         change_scene("world_map")
 
 ## 进入城市
@@ -111,9 +112,11 @@ func enter_battle() -> void:
 ## 返回标题
 func return_to_title() -> void:
         current_state = GameState.TITLE
+        BgmManager.stop_bgm()
         change_scene("title")
 
 ## 返回世界地图
 func return_to_world_map() -> void:
         current_state = GameState.WORLD_MAP
+        BgmManager.play_area_bgm("world_map")
         change_scene("world_map")

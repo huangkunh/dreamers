@@ -287,13 +287,260 @@ var r01_ancient_guard: Dictionary = {
         "enemy_position": Vector3.ZERO,
 }
 
+## 铁甲蛙 (奥多周边)
+var l03_iron_frog: Dictionary = {
+        "player_name": "l03_iron_frog",
+        "local_player_name": "铁甲蛙",
+        "skills": [AttackData.normal_attack],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 5,
+        "current_health": 150,
+        "max_health": 150,
+        "battle_lv": 7,
+        "strength": 8,
+        "exp_reward": 18,
+        "coin_reward": 20,
+        "weakness": "fire",
+        "animated": ["l03_iron_frog_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l02_amoeba.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l02_amoeba_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 泥人 (奥多周边)
+var l04_mud_doll: Dictionary = {
+        "player_name": "l04_mud_doll",
+        "local_player_name": "泥人",
+        "skills": [AttackData.normal_attack, AttackData.acid_spit],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 4,
+        "current_health": 200,
+        "max_health": 200,
+        "battle_lv": 9,
+        "strength": 10,
+        "exp_reward": 22,
+        "coin_reward": 28,
+        "animated": ["l04_mud_doll_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l02_amoeba.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l02_amoeba_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 金属鼠 (荒野)
+var w05_metal_rat: Dictionary = {
+        "player_name": "w05_metal_rat",
+        "local_player_name": "金属鼠",
+        "skills": [AttackData.normal_attack, AttackData.normal_attack],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 20,
+        "current_health": 100,
+        "max_health": 100,
+        "battle_lv": 14,
+        "strength": 12,
+        "exp_reward": 28,
+        "coin_reward": 45,
+        "animated": ["w05_metal_rat_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/w01_desert_rat.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/w01_desert_rat_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 巨蝎 (荒野)
+var w06_giant_scorpion: Dictionary = {
+        "player_name": "w06_giant_scorpion",
+        "local_player_name": "巨蝎",
+        "skills": [AttackData.normal_attack, AttackData.acid_spit],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 10,
+        "current_health": 280,
+        "max_health": 280,
+        "battle_lv": 16,
+        "strength": 16,
+        "exp_reward": 40,
+        "coin_reward": 65,
+        "animated": ["w06_giant_scorpion_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/w02_sand_worm.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/w02_sand_worm_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 安保机器人 (工厂)
+var f02_security_bot: Dictionary = {
+        "player_name": "f02_security_bot",
+        "local_player_name": "安保机器人",
+        "skills": [AttackData.normal_attack, AttackData.stun_gun],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 8,
+        "current_health": 180,
+        "max_health": 180,
+        "battle_lv": 20,
+        "strength": 18,
+        "exp_reward": 45,
+        "coin_reward": 70,
+        "animated": ["f02_security_bot_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 锈蚀无人机 (工厂)
+var f03_rusted_drone: Dictionary = {
+        "player_name": "f03_rusted_drone",
+        "local_player_name": "锈蚀无人机",
+        "skills": [AttackData.normal_attack, AttackData.flame_breath],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 22,
+        "current_health": 90,
+        "max_health": 90,
+        "battle_lv": 17,
+        "strength": 14,
+        "exp_reward": 30,
+        "coin_reward": 50,
+        "animated": ["f03_rusted_drone_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 兵蚁 (蚁穴)
+var l05_soldier_ant: Dictionary = {
+        "player_name": "l05_soldier_ant",
+        "local_player_name": "兵蚁",
+        "skills": [AttackData.normal_attack, AttackData.group_bite],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 10,
+        "current_health": 100,
+        "max_health": 100,
+        "battle_lv": 10,
+        "strength": 10,
+        "exp_reward": 18,
+        "coin_reward": 20,
+        "animated": ["l05_soldier_ant_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 幼虫 (蚁穴)
+var l06_larva: Dictionary = {
+        "player_name": "l06_larva",
+        "local_player_name": "幼虫",
+        "skills": [AttackData.normal_attack],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 6,
+        "current_health": 50,
+        "max_health": 50,
+        "battle_lv": 5,
+        "strength": 5,
+        "exp_reward": 8,
+        "coin_reward": 10,
+        "animated": ["l06_larva_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_sour_ants.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_sour_ants_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 哨戒炮台 (古代遗迹)
+var r02_sentry_gun: Dictionary = {
+        "player_name": "r02_sentry_gun",
+        "local_player_name": "哨戒炮台",
+        "skills": [AttackData.cannon_fire, AttackData.tank_machine_gun],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 7,
+        "current_health": 150,
+        "max_health": 150,
+        "battle_lv": 22,
+        "strength": 18,
+        "exp_reward": 35,
+        "coin_reward": 55,
+        "animated": ["r02_sentry_gun_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 全息守卫 (古代遗迹)
+var r03_hologram_guard: Dictionary = {
+        "player_name": "r03_hologram_guard",
+        "local_player_name": "全息守卫",
+        "skills": [AttackData.normal_attack, AttackData.stun_gun, AttackData.flame_breath],
+        "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
+        "fight_speed": 12,
+        "current_health": 250,
+        "max_health": 250,
+        "battle_lv": 28,
+        "strength": 22,
+        "exp_reward": 60,
+        "coin_reward": 90,
+        "animated": ["r03_hologram_guard_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 沙漠之狼 (赏金首b05)
+var b05_desert_wolf: Dictionary = {
+        "player_name": "b05_desert_wolf",
+        "local_player_name": "沙漠之狼",
+        "skills": [AttackData.normal_attack, AttackData.flame_breath, AttackData.group_bite],
+        "confirm_player": false,
+        "fight_speed": 18,
+        "current_health": 1200,
+        "max_health": 1200,
+        "battle_lv": 28,
+        "strength": 25,
+        "exp_reward": 300,
+        "coin_reward": 600,
+        "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
+        "bounty_id": "b05_desert_wolf",
+        "bounty_reward": 600,
+        "animated": ["b05_desert_wolf_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b01_rock_butterfly.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b01_rock_butterfly_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
+## 诺亚化身 (赏金首b07 - 最终BOSS)
+var b07_noah_avatar: Dictionary = {
+        "player_name": "b07_noah_avatar",
+        "local_player_name": "诺亚化身",
+        "skills": [AttackData.normal_attack, AttackData.flame_breath, AttackData.acid_spit, AttackData.cannon_fire, AttackData.group_bite],
+        "confirm_player": false,
+        "fight_speed": 10,
+        "current_health": 3000,
+        "max_health": 3000,
+        "battle_lv": 50,
+        "strength": 40,
+        "exp_reward": 2000,
+        "coin_reward": 5000,
+        "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
+        "bounty_id": "b07_noah_avatar",
+        "bounty_reward": 5000,
+        "animated": ["b07_noah_avatar_default"],
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen_n.png",
+        "enemy_position": Vector3.ZERO,
+}
+
 ## ---- 敌人编组 ----
-var aoduo_enemies: Array = [l02_amoeba, e01_flame_guns, e02_cannon, l01_giant_ants, l01_sour_ants]
-var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker, w04_mutant_bat]
-var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly, f01_spider_bot]
-var ant_nest_enemies: Array = [l01_giant_ants, l01_sour_ants, l02_amoeba]
-var ancient_ruins_enemies: Array = [e02_cannon, b01_rock_butterfly, l02_amoeba, e01_flame_guns, r01_ancient_guard]
-var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen, b04_amorphous]
+var aoduo_enemies: Array = [l02_amoeba, e01_flame_guns, e02_cannon, l01_giant_ants, l01_sour_ants, l03_iron_frog, l04_mud_doll]
+var wasteland_enemies: Array = [w01_desert_rat, w02_sand_worm, w03_mad_biker, w04_mutant_bat, w05_metal_rat, w06_giant_scorpion]
+var factory_enemies: Array = [e02_cannon, l02_amoeba, e01_flame_guns, b01_rock_butterfly, f01_spider_bot, f02_security_bot, f03_rusted_drone]
+var ant_nest_enemies: Array = [l01_giant_ants, l01_sour_ants, l02_amoeba, l05_soldier_ant, l06_larva]
+var ancient_ruins_enemies: Array = [e02_cannon, b01_rock_butterfly, l02_amoeba, e01_flame_guns, r01_ancient_guard, r02_sentry_gun, r03_hologram_guard]
+var bounty_enemies: Array = [b01_rock_butterfly, b02_mad_tank, b03_ant_queen, b04_amorphous, b05_desert_wolf, b07_noah_avatar]
 
 ## 不定形 (古代遗迹BOSS - 赏金首b04)
 var b04_amorphous: Dictionary = {
@@ -331,6 +578,18 @@ var enemies_init_data: Dictionary = {
         9: b02_mad_tank,
         10: b03_ant_queen,
         11: b04_amorphous,
+        12: l03_iron_frog,
+        13: l04_mud_doll,
+        14: w05_metal_rat,
+        15: w06_giant_scorpion,
+        16: f02_security_bot,
+        17: f03_rusted_drone,
+        18: l05_soldier_ant,
+        19: l06_larva,
+        20: r02_sentry_gun,
+        21: r03_hologram_guard,
+        22: b05_desert_wolf,
+        23: b07_noah_avatar,
 }
 
 ## 根据区域获取敌人列表

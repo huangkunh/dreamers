@@ -1,33 +1,68 @@
 {
 	"start": {
 		"speaker": "公会会长",
-		"text": "这里是赏金猎人公会。消灭赏金首后来这里领赏。",
-		"next_id": "guild_2"
+		"text": "欢迎来到赏金猎人公会。这里是登记和领取赏金的地方。新面孔啊……",
+		"next_id": "guild_intro_2"
 	},
-	"guild_2": {
+	"guild_intro_2": {
 		"speaker": "公会会长",
-		"text": "目前悬赏中的目标:\n- 巨蝶 (500G) - 奥多荒野\n- 失控坦克 (1500G) - 废弃工厂\n- 蚁后 (1000G) - 蚂蚁巢穴",
+		"text": "当猎人就三条规矩：击倒赏金首、带回证据、公会按价付钱。简单粗暴，但能活下来的没几个。",
+		"next_id": "guild_choices"
+	},
+	"guild_choices": {
+		"speaker": "公会会长",
+		"text": "需要什么？",
 		"choices": [
-			{"text": "查看赏金列表", "next_id": "open_bounty"},
+			{"text": "查看赏金首", "next_id": "open_bounty"},
 			{"text": "领取赏金", "next_id": "claim_bounty"},
+			{"text": "打听情报", "next_id": "ask_info"},
 			{"text": "告别", "next_id": "end"}
 		]
 	},
 	"open_bounty": {
 		"speaker": "公会会长",
-		"text": "这是当前的赏金首列表。",
+		"text": "这是当前悬赏中的赏金首，按难度排了序：\n- 巨蝶 (500G) — 奥多荒野\n- 沙漠之狼 (600G) — 沙漠公路\n- 蚁后 (1000G) — 蚂蚁巢穴\n- 失控坦克 (1500G) — 废弃工厂\n- 不定形 (3000G) — 古代遗迹",
 		"event": "open_bounty_list",
-		"next_id": "end"
+		"next_id": "guild_choices"
 	},
 	"claim_bounty": {
 		"speaker": "公会会长",
-		"text": "让我看看...你击败了哪些赏金首？",
+		"text": "把战利品拿出来我看看……嗯，让我核实一下。",
 		"event": "open_bounty_claim",
-		"next_id": "end"
+		"next_id": "guild_choices"
+	},
+	"ask_info": {
+		"speaker": "公会会长",
+		"text": "情报？这行水很深。你想知道什么？",
+		"choices": [
+			{"text": "赏金首的详情", "next_id": "info_targets"},
+			{"text": "这行的内幕", "next_id": "info_conspiracy"},
+			{"text": "返回", "next_id": "guild_choices"}
+		]
+	},
+	"info_targets": {
+		"speaker": "公会会长",
+		"text": "巨蝶是荒野上的巨型变异蝶，翅膀一扇能掀翻战车。沙漠之狼就是红狼帮的头目，骑着改装战车四处抢掠。",
+		"next_id": "info_targets_2"
+	},
+	"info_targets_2": {
+		"speaker": "公会会长",
+		"text": "蚁后在南边巢穴深处，身边全是工蚁。失控坦克是旧文明的自动兵器，装甲厚重。不定形……没人说得清那到底是什么。",
+		"next_id": "ask_info"
+	},
+	"info_conspiracy": {
+		"speaker": "公会会长",
+		"text": "你注意到没有？这些赏金首出现的位置，都围着古代遗迹。不定形、失控坦克，都像是在守护着什么。",
+		"next_id": "info_conspiracy_2"
+	},
+	"info_conspiracy_2": {
+		"speaker": "公会会长",
+		"text": "老猎人里有个说法：大破坏不是天灾，是有什么东西在幕后操纵。你要真想查……先去古代遗迹会会不定形吧。活着回来再说。",
+		"next_id": "ask_info"
 	},
 	"end": {
 		"speaker": "公会会长",
-		"text": "祝你好运，猎人。",
+		"text": "祝你好运，猎人。希望还能在公会见到你。",
 		"next_id": ""
 	}
 }

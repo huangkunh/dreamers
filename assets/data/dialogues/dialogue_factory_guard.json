@@ -1,50 +1,68 @@
 {
 	"start": {
-		"speaker": "工厂守卫",
-		"text": "站住！你是来探索这座废弃工厂的赏金猎人吗？",
-		"next_id": "intro_1"
+		"speaker": "倒下的士兵",
+		"text": "咳咳……你、你是谁？……猎人？来得正好……",
+		"next_id": "guard_intro_2"
 	},
-	"intro_1": {
-		"speaker": "工厂守卫",
-		"text": "这里是旧文明的武器工厂遗址。最近里面有一台失控的自动坦克在巡逻，见人就攻击。",
-		"next_id": "intro_2"
-	},
-	"intro_2": {
-		"speaker": "工厂守卫",
-		"text": "赏金猎人公会悬赏1500金币缉拿那台失控坦克。不过它的装甲很厚，普通武器很难造成伤害。",
+	"guard_intro_2": {
+		"speaker": "倒下的士兵",
+		"text": "这座工厂……是旧文明的军事基地。我们小队奉命来调查，结果……全完了。那台失控坦克，火力太猛了……",
 		"choices": [
-			{
-				"text": "我去解决它",
-				"next_id": "accept"
-			},
-			{
-				"text": "有什么需要注意的？",
-				"next_id": "tips"
-			},
-			{
-				"text": "太危险了，我再准备准备",
-				"next_id": "decline"
-			}
+			{"text": "坦克在哪？", "next_id": "ask_tank"},
+			{"text": "它有弱点吗？", "next_id": "ask_weakness"},
+			{"text": "你伤得很重……", "next_id": "ask_injury"}
 		]
 	},
-	"accept": {
-		"speaker": "工厂守卫",
-		"text": "好样的！坦克在工厂深处巡逻。小心它的主炮，一炮就能把你送上天。祝你好运！",
+	"ask_tank": {
+		"speaker": "倒下的士兵",
+		"text": "工厂最深处……B3层的核心仓库。它沿固定路线巡逻，趁它转向时冲过去……",
+		"next_id": "guard_info_common"
+	},
+	"ask_weakness": {
+		"speaker": "倒下的士兵",
+		"text": "弱点……正面装甲厚得要命，主炮都打不穿。但它的后部装甲很薄，散热口就在那里。",
+		"next_id": "ask_weakness_2"
+	},
+	"ask_weakness_2": {
+		"speaker": "倒下的士兵",
+		"text": "绕到它背后开火，或者等它主炮冷却的间隙——那时散热口会打开。一击必杀的机会，就在那几秒。",
+		"next_id": "guard_info_common"
+	},
+	"ask_injury": {
+		"speaker": "倒下的士兵",
+		"text": "我……没救了。主炮擦着打的，内脏都烧坏了。别管我……把那台坦克，替我们干掉……",
+		"next_id": "guard_info_common"
+	},
+	"guard_info_common": {
+		"speaker": "倒下的士兵",
+		"text": "对了……我身上还有个修理包，你拿去吧。这鬼地方战车一坏就是等死，用得上。",
+		"event": "give_item_repair_kit",
+		"next_id": "guard_final"
+	},
+	"guard_final": {
+		"speaker": "倒下的士兵",
+		"text": "替我们……报仇……咳咳……",
+		"next_id": "end"
+	},
+	"end": {
+		"speaker": "旁白",
+		"text": "士兵闭上了眼睛。你攥紧手里的修理包，向工厂深处走去。",
 		"next_id": ""
 	},
-	"tips": {
-		"speaker": "工厂守卫",
-		"text": "那台坦克的弱点是散热口，在它开炮后的间隙攻击效果最好。如果你有战车，用它来对付坦克会轻松很多。",
-		"next_id": "tips_2"
+	"start_post_victory": {
+		"speaker": "旁白",
+		"text": "失控坦克化为残骸。你回到士兵倒下的地方，他已没了气息，脸上却带着一丝安详。",
+		"next_id": "post_victory_2"
 	},
-	"tips_2": {
-		"speaker": "工厂守卫",
-		"text": "工厂里还有不少变异生物，比如变形虫和自行炮。别被它们拖住脚步，速战速决。",
-		"next_id": ""
+	"post_victory_2": {
+		"speaker": "旁白",
+		"text": "你在他手边发现一张字条，上面用颤抖的字迹写着——'谢了，猎人。'",
+		"event": "mad_tank_defeated",
+		"next_id": "post_victory_end"
 	},
-	"decline": {
-		"speaker": "工厂守卫",
-		"text": "明智的选择。那台坦克可不是闹着玩的。等你准备好了再来吧。",
+	"post_victory_end": {
+		"speaker": "旁白",
+		"text": "工厂的警报停了。该回公会领那1500G赏金了。",
 		"next_id": ""
 	}
 }

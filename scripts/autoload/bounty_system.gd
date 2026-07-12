@@ -35,15 +35,19 @@ func _ready() -> void:
 
 ## 初始化赏金首数据
 func _init_bounties() -> void:
-        _register_bounty("b01_rock_butterfly", "巨蝶", "出现在奥多周边的变异蝴蝶，体型巨大，翅膀上的鳞粉有剧毒。", 500, "e01_flame_guns", 1, 2, "奥多荒野", 1)
-        _register_bounty("b02_mad_tank", "失控坦克", "旧文明留下的自动战斗坦克，仍在废墟中巡逻。火力极强。", 1500, "e02_cannon", 1, 4, "废弃工厂", 5)
-        _register_bounty("b03_ant_queen", "蚁后", "巨大蚂蚁群落的母体，位于地下巢穴深处。", 800, "l01_giant_ants", 3, 3, "蚂蚁巢穴", 3)
+        _register_bounty("b01_rock_butterfly", "巨蝶", "出现在奥多周边的变异蝴蝶，体型巨大，翅膀上的鳞粉有剧毒。", 500, "b01_rock_butterfly", 1, 2, "奥多荒野", 1)
+        _register_bounty("b02_mad_tank", "失控坦克", "旧文明留下的自动战斗坦克，仍在废墟中巡逻。火力极强。", 1500, "b02_mad_tank", 1, 4, "废弃工厂", 5)
+        _register_bounty("b03_ant_queen", "蚁后", "巨大蚂蚁群落的母体，位于地下巢穴深处。", 800, "b03_ant_queen", 3, 3, "蚂蚁巢穴", 3)
         _register_bounty("b04_amorphous", "不定形", "神秘的液态生命体，能吞噬一切。", 3000, "b04_amorphous", 1, 5, "古代遗迹", 15)
-        _register_bounty("b05_desert_wolf", "沙漠之狼", "在荒野游荡的变异巨狼，速度极快，牙尖爪利。", 600, "l01_sour_ants", 2, 2, "沙漠公路", 2)
+        _register_bounty("b05_desert_wolf", "沙漠之狼", "在荒野游荡的变异巨狼，速度极快，牙尖爪利。", 600, "b05_desert_wolf", 2, 2, "沙漠公路", 2)
 
         # 隐藏赏金首 (需要解锁条件)
         _register_bounty("b06_red_ribcock", "红色公鸡", "传说中的变异公鸡，据说没人见过它还活着回来。", 5000, "e02_cannon", 2, 5, "未知", 15)
         bounties["b06_red_ribcock"].status = BountyStatus.LOCKED
+
+        # 最终BOSS赏金首 (需要解锁条件)
+        _register_bounty("b07_noah_avatar", "诺亚化身", "古代遗迹深处的超级计算机诺亚的化身。它声称大破坏是为了拯救人类。", 5000, "b07_noah_avatar", 1, 5, "古代遗迹最深处", 30)
+        bounties["b07_noah_avatar"].status = BountyStatus.LOCKED
 
 ## 注册赏金首
 func _register_bounty(bid: String, bname: String, bdesc: String, reward: int, enemy_id: String, count: int, difficulty: int, location: String, min_level: int) -> void:

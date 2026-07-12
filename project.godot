@@ -45,6 +45,7 @@ CraftingSystem="*res://scripts/autoload/crafting_system.gd"
 SceneTransitionManager="*res://scripts/autoload/scene_transition_manager.gd"
 EnemyAI="*res://scripts/autoload/enemy_ai.gd"
 BattleBalance="*res://scripts/autoload/battle_balance.gd"
+BgmManager="*res://scripts/autoload/bgm_manager.gd"
 
 [editor]
 

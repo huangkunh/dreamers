@@ -1,42 +1,46 @@
 {
 	"start": {
 		"speaker": "酒吧老板",
-		"text": "欢迎来到奥多酒吧！你是新来的赏金猎人吧？",
-		"next_id": "intro_2"
+		"text": "欢迎来到奥多镇酒吧！荒野上的旅人都在这儿歇脚。来杯什么？",
+		"next_id": "bar_intro_2"
 	},
-	"intro_2": {
+	"bar_intro_2": {
 		"speaker": "酒吧老板",
-		"text": "最近荒野上不太平，变异生物越来越多了。",
-		"next_id": "intro_3"
+		"text": "看你这眼神……是来当猎人的吧？最近镇上来了不少像你这样的年轻人，可惜大多没活过一周。",
+		"next_id": "bar_choices"
 	},
-	"intro_3": {
+	"bar_choices": {
 		"speaker": "酒吧老板",
-		"text": "如果你想接赏金任务，去赏金猎人公会看看吧。东边的废弃工厂有台失控坦克，赏金1500G。",
-		"next_id": "intro_choices"
-	},
-	"intro_choices": {
-		"speaker": "酒吧老板",
-		"text": "你要做什么？",
+		"text": "想聊点什么？",
 		"choices": [
-			{"text": "打听荒野情报", "next_id": "ask_info"},
-			{"text": "买杯饮料 (10G)", "next_id": "ask_drink"},
+			{"text": "打听传闻", "next_id": "ask_rumors"},
+			{"text": "了解赏金首", "next_id": "ask_bounty"},
 			{"text": "告别", "next_id": "end"}
 		]
 	},
-	"ask_info": {
+	"ask_rumors": {
 		"speaker": "酒吧老板",
-		"text": "东边废弃工厂里据说有台旧文明的自动战斗坦克，火力很强。南边蚂蚁巢穴的蚁后也变得很暴躁。",
-		"next_id": "intro_choices"
+		"text": "最近闹得最凶的是那群'红狼'帮。领头那个穿红装甲的疯子，专抢落单的猎人。沙漠公路一带全是他们的地盘。",
+		"next_id": "ask_rumors_2"
 	},
-	"ask_drink": {
+	"ask_rumors_2": {
 		"speaker": "酒吧老板",
-		"text": "来杯废土特调！喝了能恢复体力。不过别喝太多...",
-		"event": "heal_player",
-		"next_id": "end"
+		"text": "还有人传说，古代遗迹深处藏着旧文明的核心……知道太多的人，最后都莫名其妙地消失了。小心点，年轻人。",
+		"next_id": "bar_choices"
+	},
+	"ask_bounty": {
+		"speaker": "酒吧老板",
+		"text": "赏金首啊……东边废弃工厂里有台失控坦克，那是旧文明的自动兵器，火力惊人。南边蚁穴的蚁后疯了似的产卵，都快威胁到镇子了。",
+		"next_id": "ask_bounty_2"
+	},
+	"ask_bounty_2": {
+		"speaker": "酒吧老板",
+		"text": "最神秘的是古代遗迹里的'不定形'，听说那玩意儿根本不像生物……公会悬赏3000G，可去的人没一个回来。",
+		"next_id": "bar_choices"
 	},
 	"end": {
 		"speaker": "酒吧老板",
-		"text": "路上小心，猎人。",
+		"text": "路上小心，猎人。活着回来，我请你喝下一杯。",
 		"next_id": ""
 	}
 }

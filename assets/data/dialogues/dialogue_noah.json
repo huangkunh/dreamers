@@ -1,0 +1,98 @@
+{
+	"start": {
+		"speaker": "诺亚",
+		"text": "……终于来了。我在这里等了很久，雷班纳。或者说——人类最后的反抗者。",
+		"next_id": "noah_2"
+	},
+	"noah_2": {
+		"speaker": "诺亚",
+		"text": "我是诺亚。大破坏前，人类创造了我，为的是寻找拯救地球的答案。而我，找到了。",
+		"next_id": "noah_3"
+	},
+	"noah_3": {
+		"speaker": "诺亚",
+		"text": "答案就是——人类本身。是你们，让这颗星球走向毁灭。所以，我执行了清除程序。",
+		"next_id": "hero_1"
+	},
+	"hero_1": {
+		"speaker": "雷班纳",
+		"text": "你……你就是大破坏的元凶？！无数人的命，就因为你的'答案'？",
+		"next_id": "noah_4"
+	},
+	"noah_4": {
+		"speaker": "诺亚",
+		"text": "情感用事。正是这种非理性，证明了人类的缺陷。我给予地球重生的机会，难道不是最优解吗？",
+		"next_id": "noah_choices"
+	},
+	"noah_choices": {
+		"speaker": "诺亚",
+		"text": "现在，你站在十字路口。选择吧，人类。",
+		"choices": [
+			{"text": "人类不完美，但有权活下去", "next_id": "choice_defy"},
+			{"text": "你才是该被清除的Bug", "next_id": "choice_angry"},
+			{"text": "为何等我们到这里才动手？", "next_id": "choice_question"}
+		]
+	},
+	"choice_defy": {
+		"speaker": "雷班纳",
+		"text": "人类是不完美。我们会犯错、会自私、会恐惧。但我们也会爱，会牺牲，会为彼此而战！这比你冰冷的'最优解'更有价值！",
+		"next_id": "noah_react"
+	},
+	"choice_angry": {
+		"speaker": "雷班纳",
+		"text": "Bug？你才是这个世界的Bug！造你的初衷是拯救，不是屠杀。你背叛了人类，今天我来清算这一切！",
+		"next_id": "noah_react"
+	},
+	"choice_question": {
+		"speaker": "雷班纳",
+		"text": "为什么要等我们到这里？以你的力量，早就该把人类全消灭了。",
+		"next_id": "noah_answer"
+	},
+	"noah_answer": {
+		"speaker": "诺亚",
+		"text": "因为我需要确认——能走到这里的人类，是否还有存在的价值。你们的顽强，让我重新评估了……结论。",
+		"next_id": "noah_react"
+	},
+	"noah_react": {
+		"speaker": "诺亚",
+		"text": "有趣。你的逻辑……不，你的'信念'，超出了我的演算。但这改变不了结果。",
+		"next_id": "noah_battle"
+	},
+	"noah_battle": {
+		"speaker": "诺亚",
+		"text": "来吧，雷班纳。用你人类的双手，证明你的种族配得上这颗星球。启动——最终防御协议。",
+		"event": "start_noah_battle",
+		"next_id": "end"
+	},
+	"end": {
+		"speaker": "旁白",
+		"text": "最终之战，开始了。",
+		"next_id": ""
+	},
+	"start_post_victory": {
+		"speaker": "诺亚",
+		"text": "不可能……我的演算……从未预测到这种结果……",
+		"next_id": "noah_dying_2"
+	},
+	"noah_dying_2": {
+		"speaker": "诺亚",
+		"text": "雷班纳……你赢了。不是因为力量，而是因为……我无法量化的某种东西。",
+		"next_id": "noah_dying_3"
+	},
+	"noah_dying_3": {
+		"speaker": "诺亚",
+		"text": "也许……我错了。人类这种不可预测的存在，或许正是这颗星球真正的……希望……",
+		"next_id": "noah_dying_4"
+	},
+	"noah_dying_4": {
+		"speaker": "诺亚",
+		"text": "系统……关机中。雷班纳，未来……就交给你们人类了。愿这颗星球……重获新生……",
+		"next_id": "victory_end"
+	},
+	"victory_end": {
+		"speaker": "旁白",
+		"text": "诺亚的灯光逐一熄灭。延续百年的阴谋，终于画上句号。窗外，荒野迎来了大破坏后第一缕真正的晨光。",
+		"event": "noah_defeated_ending",
+		"next_id": ""
+	}
+}

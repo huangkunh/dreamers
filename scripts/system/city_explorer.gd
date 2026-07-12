@@ -28,15 +28,14 @@ var _is_ui_open: bool = false
 var area_id: String = "aoduo"
 
 func _ready() -> void:
-        # 确保背景音乐播放
-        if audio_stream_player and not audio_stream_player.playing:
-                audio_stream_player.play()
-
         # 设置游戏状态
         GameFlow.current_state = GameFlow.GameState.CITY
 
         # 设置区域ID
         area_id = GameManager.get_current_area()
+
+        # 播放区域BGM
+        BgmManager.play_area_bgm(area_id)
 
         # 设置区域访问标志 (用于解锁后续区域和快速旅行)
         GameData.game_flags[area_id + "_visited"] = true
@@ -220,8 +219,7 @@ func _on_encounter() -> void:
         if _is_ui_open:
                 return
         print("[CityExplorer] 进入战斗! 区域: " + area_id)
-        if audio_stream_player:
-                audio_stream_player.stop()
+        BgmManager.stop_bgm()
         GameData.game_flags["battle_area"] = area_id
         GameFlow.enter_battle()
 

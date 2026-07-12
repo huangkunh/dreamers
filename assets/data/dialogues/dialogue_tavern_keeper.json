@@ -1,45 +1,53 @@
 {
 	"start": {
 		"speaker": "酒馆老板",
-		"text": "欢迎来到奥多市！这里是荒野中为数不多的安全地带。",
-		"next_id": "intro_1"
+		"text": "欢迎来到奥多镇酒馆！这里是荒野中为数不多的安全地带。想吃点什么？",
+		"next_id": "tavern_intro_2"
 	},
-	"intro_1": {
+	"tavern_intro_2": {
 		"speaker": "酒馆老板",
-		"text": "你是新来的赏金猎人吧？最近荒野上不太平，变异生物越来越多了。",
-		"next_id": "intro_2"
+		"text": "你最近在荒野上闹出不小动静啊，镇上都在传你的名字。看来虎父无犬子，你爸当年也这副德行。",
+		"next_id": "tavern_choices"
 	},
-	"intro_2": {
+	"tavern_choices": {
 		"speaker": "酒馆老板",
-		"text": "如果你有战车的话，可以去更远的地方探索。不过要小心燃料和弹药。",
+		"text": "今天想做什么？",
 		"choices": [
-			{
-				"text": "告诉我更多关于赏金首的事",
-				"next_id": "bounty_info"
-			},
-			{
-				"text": "哪里可以补给？",
-				"next_id": "supply_info"
-			},
-			{
-				"text": "谢谢，我出去看看",
-				"next_id": ""
-			}
+			{"text": "来份饭菜 (20G)", "next_id": "order_food"},
+			{"text": "听听最近的消息", "next_id": "ask_gossip"},
+			{"text": "其他猎人怎么样了", "next_id": "ask_hunters"},
+			{"text": "告别", "next_id": "end"}
 		]
 	},
-	"bounty_info": {
+	"order_food": {
 		"speaker": "酒馆老板",
-		"text": "赏金首是最危险的变异生物，击败它们可以获得高额赏金。不过它们通常都有战车级别的装甲，普通武器很难造成伤害。",
-		"next_id": "bounty_info_2"
+		"text": "好嘞，废土炖肉配变异麦酒！吃完睡一觉，包你精神百倍。",
+		"event": "heal_player",
+		"next_id": "tavern_choices"
 	},
-	"bounty_info_2": {
+	"ask_gossip": {
 		"speaker": "酒馆老板",
-		"text": "听说东边的废墟里藏着一辆旧战车，如果你能找到它，对付赏金首就容易多了。",
-		"next_id": ""
+		"text": "最近的事儿？南边蚁穴的蚂蚁越来越多了，镇上人心惶惶。还有人看见古代遗迹那边夜里会发光……邪门得很。",
+		"next_id": "ask_gossip_2"
 	},
-	"supply_info": {
+	"ask_gossip_2": {
 		"speaker": "酒馆老板",
-		"text": "隔壁的机械师可以帮你修理和补给战车。药品和弹药在杂货店有卖。",
+		"text": "哦对了，伊斯特镇那边传来消息，说赫尔墨斯镇的科学家们正在研究旧文明遗产。你要是往北走，可以去看看。",
+		"next_id": "tavern_choices"
+	},
+	"ask_hunters": {
+		"speaker": "酒馆老板",
+		"text": "前阵子有个自称'老猎手'的胡子大叔来过，说要去找不定形，再没回来。还有个女战士雅金，一直在打听红狼帮的下落。",
+		"next_id": "ask_hunters_2"
+	},
+	"ask_hunters_2": {
+		"speaker": "酒馆老板",
+		"text": "你现在的名气可不比他们小啦。加油，年轻人，说不定哪天你也能成荒野上的传奇。",
+		"next_id": "tavern_choices"
+	},
+	"end": {
+		"speaker": "酒馆老板",
+		"text": "慢走啊，猎人。下次再来，我给你留个好位置。",
 		"next_id": ""
 	}
 }

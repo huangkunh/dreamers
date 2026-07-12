@@ -1,33 +1,84 @@
 {
 	"start": {
-		"speaker": "机械师",
-		"text": "嘿！我是镇上的机械师。你的战车有问题就来找我。",
-		"next_id": "mechanic_2"
+		"speaker": "蒙斯塔",
+		"text": "哟，新人！我是蒙斯塔，奥多镇唯一的机械师。看你这身行头……是刚离家出走来当猎人的吧？",
+		"next_id": "mechanic_intro_2"
 	},
-	"mechanic_2": {
-		"speaker": "机械师",
-		"text": "战车的装甲、引擎、武器都可以升级。好零件可不便宜，多攒点钱吧。",
+	"mechanic_intro_2": {
+		"speaker": "蒙斯塔",
+		"text": "大破坏洗礼过的荒野上，没战车的猎人活不过三天。还好你老爸当年留下的那辆老坦克，一直停在我车库里。",
+		"next_id": "mechanic_intro_3"
+	},
+	"mechanic_intro_3": {
+		"speaker": "蒙斯塔",
+		"text": "装甲、引擎、主炮、副炮、SE装置，全都能改。钱够的话，我能把它打造成荒野上最强的战车！",
+		"next_id": "mechanic_choices"
+	},
+	"mechanic_choices": {
+		"speaker": "蒙斯塔",
+		"text": "说吧，这次来有什么事？",
 		"choices": [
 			{"text": "改造战车", "next_id": "open_garage"},
 			{"text": "修复战车", "next_id": "repair_tank"},
+			{"text": "打听情报", "next_id": "ask_info"},
 			{"text": "告别", "next_id": "end"}
 		]
 	},
 	"open_garage": {
-		"speaker": "机械师",
-		"text": "来吧，让我看看你的战车。",
+		"speaker": "蒙斯塔",
+		"text": "好嘞！把车开进车库，我看看能换什么零件。",
 		"event": "open_garage",
-		"next_id": "end"
+		"next_id": "mechanic_choices"
 	},
 	"repair_tank": {
-		"speaker": "机械师",
-		"text": "战车修复完成！不收你钱了，算我请的。",
+		"speaker": "蒙斯塔",
+		"text": "伤得不轻啊……交给我吧，很快就好。算你成本价！",
 		"event": "repair_tank",
-		"next_id": "end"
+		"next_id": "mechanic_choices"
+	},
+	"ask_info": {
+		"speaker": "蒙斯塔",
+		"text": "荒野上的事儿我知道不少。你想问什么？",
+		"choices": [
+			{"text": "关于赏金首", "next_id": "info_bounty"},
+			{"text": "关于大破坏", "next_id": "info_destruction"},
+			{"text": "关于我老爸", "next_id": "info_father"},
+			{"text": "返回", "next_id": "mechanic_choices"}
+		]
+	},
+	"info_bounty": {
+		"speaker": "蒙斯塔",
+		"text": "赏金首就是公会悬赏的危险家伙。东边废弃工厂有台失控坦克，南边蚁穴有蚁后，古代遗迹里还有个不定形……都是硬骨头。",
+		"next_id": "info_bounty_2"
+	},
+	"info_bounty_2": {
+		"speaker": "蒙斯塔",
+		"text": "干掉它们去公会领赏，有钱了回来改车，再去挑战更强的目标——这就是猎人的循环。慢慢来，别急。",
+		"next_id": "ask_info"
+	},
+	"info_destruction": {
+		"speaker": "蒙斯塔",
+		"text": "大破坏啊……老一辈人说，是台超级电脑判定人类是地球的毒瘤，发动了核战争。文明几乎一夜归零。",
+		"next_id": "info_destruction_2"
+	},
+	"info_destruction_2": {
+		"speaker": "蒙斯塔",
+		"text": "现在的战车武器，都是从旧文明遗物里翻出来的。我们机械师啊，说白就是在捡旧文明的破烂拼凑日子。不过……能跑能打就行！",
+		"next_id": "ask_info"
+	},
+	"info_father": {
+		"speaker": "蒙斯塔",
+		"text": "你老爸？那可是当年赫赫有名的猎人！他那辆战车陪我改装过无数次，我们一起干掉过不少赏金首。",
+		"next_id": "info_father_2"
+	},
+	"info_father_2": {
+		"speaker": "蒙斯塔",
+		"text": "他退隐后一直反对你当猎人……哼，倔老头子。不过你既然出来了，就别给他丢脸。好好干，年轻人！",
+		"next_id": "ask_info"
 	},
 	"end": {
-		"speaker": "机械师",
-		"text": "有事再来找我。",
+		"speaker": "蒙斯塔",
+		"text": "路上小心，别把车弄报废了——修起来可不便宜！",
 		"next_id": ""
 	}
 }
