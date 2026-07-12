@@ -9,11 +9,11 @@ extends Control
 
 ## 可快速旅行的区域
 const TRAVEL_AREAS := [
-        {"id": "city", "name": "奥多市", "scene": "city", "desc": "安全区域，有商店和NPC"},
-        {"id": "wasteland", "name": "荒野", "scene": "wasteland", "desc": "危险的野外区域，适合练级"},
-        {"id": "factory", "name": "废弃工厂", "scene": "factory", "desc": "BOSS: 失控坦克 (1500G)"},
-        {"id": "ant_nest", "name": "蚂蚁巢穴", "scene": "ant_nest", "desc": "BOSS: 蚁后 (800G)"},
-        {"id": "ancient_ruins", "name": "古代遗迹", "scene": "ancient_ruins", "desc": "BOSS: 不定形 (1200G)"},
+        {"id": "aoduo", "name": "奥多市", "area_id": "aoduo", "desc": "安全区域，有商店和NPC"},
+        {"id": "wasteland", "name": "荒野", "area_id": "wasteland", "desc": "危险的野外区域，适合练级"},
+        {"id": "factory", "name": "废弃工厂", "area_id": "factory", "desc": "BOSS: 失控坦克 (1500G)"},
+        {"id": "ant_nest", "name": "蚂蚁巢穴", "area_id": "ant_nest", "desc": "BOSS: 蚁后 (800G)"},
+        {"id": "ancient_ruins", "name": "古代遗迹", "area_id": "ancient_ruins", "desc": "BOSS: 不定形 (3000G)"},
 ]
 
 var _area_buttons: Array[Button] = []
@@ -31,8 +31,11 @@ func _build_area_list() -> void:
         _area_buttons.clear()
 
         for area in TRAVEL_AREAS:
-                # 检查是否已解锁 (访问过)
-                var visited = GameData.game_flags.get("visited_" + area.id, false)
+                # 检查是否已访问过 (使用与 city_explorer 一致的标志名)
+                var visited_flag = area.area_id + "_visited"
+                if area.area_id == "aoduo":
+                        visited_flag = "aoduo_visited" # 奥多市默认已访问
+                var visited = GameData.game_flags.get(visited_flag, area.area_id == "aoduo")
                 if not visited:
                         continue
 
@@ -58,11 +61,10 @@ func _build_area_list() -> void:
 ## 选择区域
 func _on_area_selected(area: Dictionary) -> void:
         print("[FastTravel] 快速旅行到: " + area.name)
-        # 标记当前区域为已访问
-        GameData.game_flags["visited_" + area.id] = true
-        # 切换场景
-        GameFlow.change_scene(area.scene)
-        close()
+        # 设置当前区域ID
+        GameData.game_flags["current_area"] = area.area_id
+        # 使用 enter_city 统一入口
+        GameFlow.enter_city()
 
 ## 打开快速旅行
 func open() -> void:

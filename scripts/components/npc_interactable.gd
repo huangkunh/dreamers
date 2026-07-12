@@ -22,16 +22,19 @@ var _dialogue_data: Dictionary = {}
 signal interacted
 
 func _ready() -> void:
-        # 设置碰撞区域
-        var collision := CollisionShape3D.new()
-        var sphere := SphereShape3D.new()
-        sphere.radius = interact_radius
-        collision.shape = sphere
-        add_child(collision)
+        # 如果没有碰撞形状，创建一个
+        if not has_node("CollisionShape3D"):
+                var collision := CollisionShape3D.new()
+                var sphere := SphereShape3D.new()
+                sphere.radius = interact_radius
+                collision.shape = sphere
+                add_child(collision)
 
         # 连接Area3D信号
-        body_entered.connect(_on_body_entered)
-        body_exited.connect(_on_body_exited)
+        if body_entered.is_connected(_on_body_entered) == false:
+                body_entered.connect(_on_body_entered)
+        if body_exited.is_connected(_on_body_exited) == false:
+                body_exited.connect(_on_body_exited)
 
         # 加载对话数据
         if dialogue_file != "":

@@ -15,6 +15,7 @@ const MAX_SLOTS := 3
 
 func _ready() -> void:
         visible = false
+        process_mode = Node.PROCESS_MODE_WHEN_PAUSED
         back_button.pressed.connect(close)
 
 ## 打开存档界面
@@ -74,10 +75,13 @@ func _create_slot(slot_num: int) -> Control:
         info_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
         info_label.add_theme_font_size_override("font_size", 16)
 
-        var has_save := SaveSystem.has_save_data()
+        var has_save := SaveSystem.has_save_slot(slot_num)
         if has_save:
-                # TODO: 显示存档详情 (游戏时间、金币等)
-                info_label.text = "存档存在 - 点击%s" % ("覆盖" if _mode == Mode.SAVE else "读取")
+                var save_info = SaveSystem.get_save_info(slot_num)
+                var play_time = save_info.get("play_time", 0)
+                var coins = save_info.get("coins", 0)
+                var area = save_info.get("area", "???")
+                info_label.text = "时间: %s | 金币: %dG | 区域: %s" % [_format_time(play_time), coins, area]
                 info_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
         else:
                 info_label.text = "空槽位" if _mode == Mode.SAVE else "无存档"
@@ -115,3 +119,11 @@ func _on_load_slot(slot_num: int) -> void:
 func _input(event: InputEvent) -> void:
         if visible and event.is_action_pressed("ui_cancel"):
                 close()
+
+## 格式化游戏时间
+func _format_time(seconds: float) -> String:
+        var s := int(seconds)
+        var h := s / 3600
+        var m := (s % 3600) / 60
+        var sec := s % 60
+        return "%02d:%02d:%02d" % [h, m, sec]
