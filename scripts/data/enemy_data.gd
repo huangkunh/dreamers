@@ -10,6 +10,7 @@ var l02_amoeba: Dictionary = {
         "local_player_name": "变形虫",
         "skills": [AttackData.normal_attack],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 3,
         "current_health": 300,
         "max_health": 300,
@@ -28,6 +29,7 @@ var e01_flame_guns: Dictionary = {
         "local_player_name": "火焰枪",
         "skills": [AttackData.normal_attack, AttackData.flame_breath],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 10,
         "current_health": 100,
         "max_health": 100,
@@ -46,6 +48,7 @@ var e02_cannon: Dictionary = {
         "local_player_name": "自行炮",
         "skills": [AttackData.normal_attack, AttackData.cannon_fire],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 8,
         "current_health": 150,
         "max_health": 150,
@@ -64,6 +67,7 @@ var l01_giant_ants: Dictionary = {
         "local_player_name": "巨型蚂蚁",
         "skills": [AttackData.normal_attack, AttackData.group_bite],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 12,
         "current_health": 80,
         "max_health": 80,
@@ -82,6 +86,7 @@ var l01_sour_ants: Dictionary = {
         "local_player_name": "酸蚁",
         "skills": [AttackData.normal_attack, AttackData.acid_spit],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 9,
         "current_health": 60,
         "max_health": 60,
@@ -101,6 +106,7 @@ var w01_desert_rat: Dictionary = {
         "local_player_name": "沙漠鼠",
         "skills": [AttackData.normal_attack],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 15,
         "current_health": 120,
         "max_health": 120,
@@ -119,6 +125,7 @@ var w02_sand_worm: Dictionary = {
         "local_player_name": "沙虫",
         "skills": [AttackData.normal_attack, AttackData.acid_spit],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 6,
         "current_health": 350,
         "max_health": 350,
@@ -137,6 +144,7 @@ var w03_mad_biker: Dictionary = {
         "local_player_name": "暴走族",
         "skills": [AttackData.normal_attack, AttackData.flame_breath],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 14,
         "current_health": 200,
         "max_health": 200,
@@ -164,6 +172,7 @@ var b01_rock_butterfly: Dictionary = {
         "exp_reward": 200,
         "coin_reward": 500,
         "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
         "bounty_id": "b01_rock_butterfly",
         "bounty_reward": 500,
         "animated": ["b01_rock_butterfly_default"],
@@ -185,6 +194,7 @@ var b02_mad_tank: Dictionary = {
         "exp_reward": 500,
         "coin_reward": 1500,
         "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
         "bounty_id": "b02_mad_tank",
         "bounty_reward": 1500,
         "animated": ["b02_mad_tank_default"],
@@ -206,6 +216,7 @@ var b03_ant_queen: Dictionary = {
         "exp_reward": 350,
         "coin_reward": 1000,
         "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
         "bounty_id": "b03_ant_queen",
         "bounty_reward": 1000,
         "animated": ["b03_ant_queen_default"],
@@ -222,6 +233,7 @@ var w04_mutant_bat: Dictionary = {
         "local_player_name": "变异蝙蝠",
         "skills": [AttackData.normal_attack],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 25,
         "current_health": 60,
         "max_health": 60,
@@ -241,6 +253,7 @@ var f01_spider_bot: Dictionary = {
         "local_player_name": "机械蜘蛛",
         "skills": [AttackData.normal_attack],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 15,
         "current_health": 120,
         "max_health": 120,
@@ -260,6 +273,7 @@ var r01_ancient_guard: Dictionary = {
         "local_player_name": "古代守卫",
         "skills": [AttackData.normal_attack],
         "confirm_player": false,
+        "ai_behavior": 0,  # RANDOM AI
         "fight_speed": 8,
         "current_health": 200,
         "max_health": 200,
@@ -299,6 +313,7 @@ var b04_amorphous: Dictionary = {
         "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/bounty/b03_ant_queen_n.png",
         "enemy_position": Vector3.ZERO,
         "is_bounty": true,
+        "ai_behavior": 4,  # BOSS AI
         "bounty_id": "b04_amorphous",
         "bounty_reward": 3000,
 }

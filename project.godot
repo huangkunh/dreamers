@@ -43,6 +43,7 @@ GameTimeSystem="*res://scripts/autoload/game_time_system.gd"
 AchievementSystem="*res://scripts/autoload/achievement_system.gd"
 CraftingSystem="*res://scripts/autoload/crafting_system.gd"
 SceneTransitionManager="*res://scripts/autoload/scene_transition_manager.gd"
+EnemyAI="*res://scripts/autoload/enemy_ai.gd"
 
 [editor]
 
