@@ -12,7 +12,7 @@ config_version=5
 
 config/name="DREAMERS"
 config/description="Metal Max Returns HD-2D 复刻 - 废土冒险RPG"
-config/version="v0.10"
+config/version="v0.11"
 run/main_scene="res://scenes/ui/title_screen.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://resource/tilesets/ff90dfe80d394faaa685776e4d7901ff_1507863071.png"
