@@ -625,3 +625,130 @@ func get_random_enemies(area: String, count: int = 1) -> Array:
                 enemy["current_health"] = enemy.get("max_health", 100)
                 result.append(enemy)
         return result
+
+## ---- 敌人专属掉落表 (Metal Max原作特色) ----
+## 每个敌人有特定的掉落物，格式: [{"id", "name", "chance", "count_min", "count_max"}]
+var enemy_drops: Dictionary = {
+        "l02_amoeba": [
+                {"id": "slime_gel", "name": "黏液凝胶", "chance": 0.3, "count_min": 1, "count_max": 2},
+                {"id": "potion", "name": "恢复药", "chance": 0.15, "count_min": 1, "count_max": 1},
+        ],
+        "e01_flame_guns": [
+                {"id": "gun_barrel", "name": "枪管", "chance": 0.25, "count_min": 1, "count_max": 1},
+                {"id": "potion", "name": "恢复药", "chance": 0.2, "count_min": 1, "count_max": 2},
+        ],
+        "e02_cannon": [
+                {"id": "cannon_parts", "name": "炮管碎片", "chance": 0.3, "count_min": 1, "count_max": 2},
+                {"id": "repair_kit", "name": "修理包", "chance": 0.1, "count_min": 1, "count_max": 1},
+        ],
+        "l01_giant_ants": [
+                {"id": "ant_mandible", "name": "蚁颚", "chance": 0.35, "count_min": 1, "count_max": 2},
+                {"id": "potion", "name": "恢复药", "chance": 0.15, "count_min": 1, "count_max": 1},
+        ],
+        "l01_sour_ants": [
+                {"id": "acid_sac", "name": "酸囊", "chance": 0.3, "count_min": 1, "count_max": 1},
+                {"id": "antidote", "name": "解毒药", "chance": 0.2, "count_min": 1, "count_max": 1},
+        ],
+        "w01_desert_rat": [
+                {"id": "rat_tail", "name": "鼠尾", "chance": 0.3, "count_min": 1, "count_max": 2},
+                {"id": "potion", "name": "恢复药", "chance": 0.2, "count_min": 1, "count_max": 2},
+        ],
+        "w02_sand_worm": [
+                {"id": "worm_skin", "name": "虫皮", "chance": 0.35, "count_min": 1, "count_max": 2},
+                {"id": "energy_drink", "name": "能量饮料", "chance": 0.15, "count_min": 1, "count_max": 1},
+        ],
+        "w03_mad_biker": [
+                {"id": "biker_helmet", "name": "骑士头盔", "chance": 0.2, "count_min": 1, "count_max": 1},
+                {"id": "coins_medium", "name": "中袋金币", "chance": 0.4, "count_min": 20, "count_max": 50},
+        ],
+        "w04_mutant_bat": [
+                {"id": "bat_wing", "name": "蝙蝠翅膀", "chance": 0.3, "count_min": 1, "count_max": 2},
+        ],
+        "w05_metal_rat": [
+                {"id": "metal_scrap", "name": "金属碎片", "chance": 0.4, "count_min": 1, "count_max": 3},
+        ],
+        "w06_giant_scorpion": [
+                {"id": "scorpion_tail", "name": "蝎尾", "chance": 0.3, "count_min": 1, "count_max": 1},
+                {"id": "antidote", "name": "解毒药", "chance": 0.25, "count_min": 1, "count_max": 2},
+        ],
+        "f01_spider_bot": [
+                {"id": "spider_leg", "name": "机械蜘蛛腿", "chance": 0.3, "count_min": 1, "count_max": 2},
+                {"id": "machine_part", "name": "机械零件", "chance": 0.2, "count_min": 1, "count_max": 1},
+        ],
+        "f02_security_bot": [
+                {"id": "security_chip", "name": "安保芯片", "chance": 0.25, "count_min": 1, "count_max": 1},
+                {"id": "repair_kit", "name": "修理包", "chance": 0.15, "count_min": 1, "count_max": 1},
+        ],
+        "f03_rusted_drone": [
+                {"id": "drone_rotor", "name": "无人机旋翼", "chance": 0.3, "count_min": 1, "count_max": 2},
+                {"id": "fuel_barrel", "name": "燃料桶", "chance": 0.2, "count_min": 1, "count_max": 1},
+        ],
+        "l05_soldier_ant": [
+                {"id": "soldier_ant_head", "name": "兵蚁头颅", "chance": 0.3, "count_min": 1, "count_max": 1},
+                {"id": "ant_chitin", "name": "蚁壳", "chance": 0.25, "count_min": 1, "count_max": 2},
+        ],
+        "l06_larva": [
+                {"id": "larva_meat", "name": "幼虫肉", "chance": 0.4, "count_min": 1, "count_max": 2},
+        ],
+        "r01_ancient_guard": [
+                {"id": "ancient_plate", "name": "古代甲片", "chance": 0.25, "count_min": 1, "count_max": 1},
+                {"id": "energy_cell", "name": "能量电池", "chance": 0.2, "count_min": 1, "count_max": 2},
+        ],
+        "r02_sentry_gun": [
+                {"id": "sentry_barrel", "name": "炮管", "chance": 0.3, "count_min": 1, "count_max": 1},
+                {"id": "ancient_chip", "name": "古代芯片", "chance": 0.15, "count_min": 1, "count_max": 1},
+        ],
+        "r03_hologram_guard": [
+                {"id": "hologram_core", "name": "全息核心", "chance": 0.2, "count_min": 1, "count_max": 1},
+                {"id": "energy_cell", "name": "能量电池", "chance": 0.25, "count_min": 1, "count_max": 2},
+        ],
+        ## 赏金首专属掉落
+        "b01_rock_butterfly": [
+                {"id": "butterfly_wing", "name": "巨蝶翅膀", "chance": 1.0, "count_min": 1, "count_max": 1},
+                {"id": "poison_gland", "name": "毒腺", "chance": 0.5, "count_min": 1, "count_max": 2},
+                {"id": "coins_large", "name": "大袋金币", "chance": 0.8, "count_min": 50, "count_max": 100},
+        ],
+        "b02_mad_tank": [
+                {"id": "tank_treads", "name": "坦克履带", "chance": 1.0, "count_min": 1, "count_max": 1},
+                {"id": "heavy_cannon", "name": "重型炮管", "chance": 0.5, "count_min": 1, "count_max": 1},
+                {"id": "coins_large", "name": "大袋金币", "chance": 0.8, "count_min": 80, "count_max": 150},
+        ],
+        "b03_ant_queen": [
+                {"id": "queen_antenna", "name": "蚁后触角", "chance": 1.0, "count_min": 1, "count_max": 1},
+                {"id": "royal_jelly", "name": "蜂王浆", "chance": 0.6, "count_min": 1, "count_max": 2},
+                {"id": "coins_large", "name": "大袋金币", "chance": 0.8, "count_min": 60, "count_max": 120},
+        ],
+        "b04_amorphous": [
+                {"id": "amorphous_core", "name": "不定形核心", "chance": 1.0, "count_min": 1, "count_max": 1},
+                {"id": "ancient_chip", "name": "古代芯片", "chance": 0.7, "count_min": 1, "count_max": 3},
+                {"id": "coins_huge", "name": "巨袋金币", "chance": 0.8, "count_min": 100, "count_max": 200},
+        ],
+        "b05_desert_wolf": [
+                {"id": "wolf_fang", "name": "狼牙", "chance": 1.0, "count_min": 1, "count_max": 2},
+                {"id": "wolf_pelt", "name": "狼皮", "chance": 0.6, "count_min": 1, "count_max": 1},
+                {"id": "coins_large", "name": "大袋金币", "chance": 0.8, "count_min": 40, "count_max": 80},
+        ],
+        "b07_noah_avatar": [
+                {"id": "noah_memory", "name": "诺亚记忆芯片", "chance": 1.0, "count_min": 1, "count_max": 1},
+                {"id": "ancient_chip", "name": "古代芯片", "chance": 1.0, "count_min": 3, "count_max": 5},
+                {"id": "coins_huge", "name": "巨袋金币", "chance": 1.0, "count_min": 200, "count_max": 500},
+        ],
+}
+
+## 获取敌人专属掉落
+func get_enemy_drops(enemy_id: String) -> Array:
+        return enemy_drops.get(enemy_id, [])
+
+## 计算敌人掉落 (用于战斗中)
+func calculate_enemy_drops(enemy_id: String) -> Array:
+        var drops := []
+        var table = get_enemy_drops(enemy_id)
+        for drop in table:
+                if randf() <= drop.chance:
+                        var count = randi_range(drop.count_min, drop.count_max)
+                        drops.append({
+                                "id": drop.id,
+                                "name": drop.name,
+                                "count": count,
+                        })
+        return drops

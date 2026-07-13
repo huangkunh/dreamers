@@ -33,6 +33,31 @@ func init_fight_settlement(data: Dictionary):
                 player_earn_experience.init_earn_experience(player_data)
                 get_node("FightResult").add_child(player_earn_experience)
 
+        # 显示掉落物品
+        var drops: Array = data.get("drops", [])
+        if drops.size() > 0:
+                var drop_text = "\n[color=#ffcc44]掉落物品:[/color]\n"
+                for drop in drops:
+                        drop_text += "  %s x%d\n" % [drop.name, drop.count]
+                var drop_label = get_node_or_null("FightResult/DropLabel")
+                if drop_label == null:
+                        drop_label = Label.new()
+                        drop_label.name = "DropLabel"
+                        drop_label.position = Vector2(0, 200)
+                        get_node("FightResult").add_child(drop_label)
+                drop_label.text = drop_text
+
+        # BOSS战特殊提示
+        if data.get("is_bounty_battle", false):
+                var bounty_name = data.get("bounty_name", "")
+                var bounty_label = get_node_or_null("FightResult/BountyLabel")
+                if bounty_label == null:
+                        bounty_label = Label.new()
+                        bounty_label.name = "BountyLabel"
+                        bounty_label.position = Vector2(0, 280)
+                        get_node("FightResult").add_child(bounty_label)
+                bounty_label.text = "[color=#ff4444]☠ 赏金首 %s 已被击败![/color]" % bounty_name
+
         # 显示确认提示
         if confirm_label:
                 var tw := create_tween()

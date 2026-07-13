@@ -13,11 +13,33 @@
 		"speaker": "公会会长",
 		"text": "需要什么？",
 		"choices": [
+			{"text": "注册成为猎人", "next_id": "register_hunter"},
 			{"text": "查看赏金首", "next_id": "open_bounty"},
 			{"text": "领取赏金", "next_id": "claim_bounty"},
 			{"text": "打听情报", "next_id": "ask_info"},
 			{"text": "告别", "next_id": "end"}
 		]
+	},
+	"register_hunter": {
+		"speaker": "公会会长",
+		"text": "想注册？报名费100G。注册后你就是正式猎人了，可以接取赏金任务、使用公会设施。",
+		"event": "register_hunter",
+		"next_id": "register_result"
+	},
+	"register_result": {
+		"speaker": "公会会长",
+		"text": "欢迎加入赏金猎人公会！这是你猎人徽章，别弄丢了。",
+		"next_id": "guild_choices"
+	},
+	"already_registered": {
+		"speaker": "公会会长",
+		"text": "你已经注册过了。怎么，徽章丢了？再办一个得交50G。",
+		"next_id": "guild_choices"
+	},
+	"register_no_money": {
+		"speaker": "公会会长",
+		"text": "钱不够？那就先去荒野打几只怪赚点本钱再来吧。",
+		"next_id": "guild_choices"
 	},
 	"open_bounty": {
 		"speaker": "公会会长",

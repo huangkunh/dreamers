@@ -1288,6 +1288,28 @@ func all_enemy_death():
         AchievementSystem.check_battle_achievements()
         AchievementSystem.check_coins_achievements(GameData.coins)
 
+        # 计算战斗掉落 (使用敌人专属掉落表)
+        var drops := []
+        for enemy_id in enemy_scene_map.keys():
+                var enemy_unit = fighting_unit_map[enemy_id]
+                var enemy_name = enemy_unit.get("player_name", "")
+                if enemy_name != "":
+                        var enemy_drops = EnemyData.calculate_enemy_drops(enemy_name)
+                        drops.append_array(enemy_drops)
+        # 通用掉落补充 (区域基础掉落)
+        var battle_area = GameData.game_flags.get("battle_area", "aoduo")
+        var generic_drops = ItemDropSystem.calculate_drops(battle_area, enemy_count, has_bounty)
+        drops.append_array(generic_drops)
+        # 将掉落加入背包
+        for drop in drops:
+                var item = GameData.Item.new()
+                item.id = drop.id
+                item.name = drop.name
+                item.type = GameData.Item.ItemType.CONSUMABLE
+                item.count = drop.count
+                item.stackable = true
+                GameData.add_item(item)
+
         # 显示战斗结算
         var settlement_data: Dictionary = {}
         settlement_data["earn_exp"] = earn_exp
@@ -1295,6 +1317,7 @@ func all_enemy_death():
         settlement_data["players_data"] = fighting_unit_map.values()
         settlement_data["is_bounty_battle"] = has_bounty
         settlement_data["bounty_name"] = defeated_bounty_name
+        settlement_data["drops"] = drops
         for fighting_unit in fighting_unit_map.values():
                 fighting_unit["earn_exp"] = earn_exp
         fight_settlement.init_fight_settlement(settlement_data)

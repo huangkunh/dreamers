@@ -275,6 +275,28 @@ func _on_dialogue_event(event_name: String) -> void:
                         # 解锁最终BOSS诺亚
                         BountySystem.unlock_bounty("b07_noah_avatar")
                         print("[CityExplorer] 最终BOSS诺亚已解锁!")
+                "register_hunter":
+                        # 猎人注册
+                        if GameData.game_flags.get("is_hunter_registered", false):
+                                print("[CityExplorer] 已经是注册猎人了")
+                                # 跳转已注册对话 (通过重新加载对话)
+                                _show_already_registered()
+                        elif GameData.spend_coins(100):
+                                GameData.game_flags["is_hunter_registered"] = true
+                                # 给猎人徽章
+                                var badge := GameData.Item.new()
+                                badge.id = "hunter_badge"
+                                badge.name = "猎人徽章"
+                                badge.description = "赏金猎人公会的正式徽章，猎人的身份象征。"
+                                badge.type = GameData.Item.ItemType.KEY_ITEM
+                                badge.price = 0
+                                badge.stackable = false
+                                GameData.key_items.append(badge)
+                                SfxManager.play_sfx("quest_complete")
+                                print("[CityExplorer] 注册成为猎人! 花费100G")
+                        else:
+                                print("[CityExplorer] 金币不足，无法注册")
+                                _show_no_money_for_register()
 
 ## 打开商店
 func _open_shop(shop_id: String) -> void:
@@ -340,3 +362,23 @@ func _get_area_display_name(area: String) -> String:
                 "ant_nest": return "蚂蚁巢穴"
                 "ancient_ruins": return "古代遗迹"
                 _: return area
+
+## 显示已注册猎人对话
+func _show_already_registered() -> void:
+	var dialog_queue = []
+	dialog_queue.append({
+		"speaker": "公会会长",
+		"text": "你已经注册过了。怎么，徽章丢了？再办一个得交50G。",
+		"event": ""
+	})
+	DialogueManager.start_dialogue_queue(dialog_queue)
+
+## 显示金币不足对话
+func _show_no_money_for_register() -> void:
+	var dialog_queue = []
+	dialog_queue.append({
+		"speaker": "公会会长",
+		"text": "钱不够？那就先去荒野打几只怪赚点本钱再来吧。",
+		"event": ""
+	})
+	DialogueManager.start_dialogue_queue(dialog_queue)
