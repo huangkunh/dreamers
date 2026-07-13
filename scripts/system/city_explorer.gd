@@ -26,6 +26,7 @@ var _in_tank: bool = false
 var _nearby_npc: Node = null
 var _is_ui_open: bool = false
 var _is_playing_opening: bool = false
+var _cutscene_player: Node = null
 var area_id: String = "aoduo"
 
 func _ready() -> void:
@@ -77,7 +78,7 @@ func _ready() -> void:
 	# 检查是否需要播放开场剧情
 	if GameData.game_flags.get("play_opening", false):
 		GameData.game_flags.erase("play_opening")
-		_play_opening_dialogue()
+		_play_opening_cutscene()
 
 func _exit_tree() -> void:
 	if _game_hud:
@@ -158,7 +159,84 @@ func _interact_with_npc(npc: Node) -> void:
 		_is_ui_open = true
 		DialogueManager.start_dialogue_queue(dialog_queue)
 
-## 播放开场剧情
+## 播放开场剧情演出 (HD-2D 分场景演出)
+func _play_opening_cutscene() -> void:
+        _is_playing_opening = true
+        _is_ui_open = true
+
+        # 创建 CutscenePlayer
+        var cutscene_script = load("res://scripts/system/cutscene_player.gd")
+        _cutscene_player = cutscene_script.new(self)
+        add_child(_cutscene_player)
+        _cutscene_player.cutscene_finished.connect(_on_opening_cutscene_done)
+
+        # 获取区域描述数据
+        var aoduo_info = GameData.get_area_info("aoduo")
+        var area_name = aoduo_info.get("name", "奥多市")
+        var area_subtitle = aoduo_info.get("subtitle", "文明最后的堡垒")
+
+        # 定义演出步骤序列 (Metal Max Returns 原作开场)
+        var steps: Array = [
+                # 第一幕：黑屏旁白 - 世界观
+                {
+                        "type": "narrate",
+                        "speaker": "",
+                        "text": "大破坏之后，世界满目疮痍。文明化为废墟，变异生物横行荒野，人类在残存的城市中苟延残喘……",
+                        "fade_in": 1.5,
+                },
+                {
+                        "type": "narrate",
+                        "speaker": "",
+                        "text": "在这个混乱的时代，有一群人以猎杀危险生物为生——他们被称为"赏金猎人"。\n这是关于其中一位年轻猎人的故事。",
+                        "fade_in": 1.0,
+                },
+                # 第二幕：奥多市区域名演出 (八方旅人风格)
+                {
+                        "type": "area_title",
+                        "title": area_name,
+                        "subtitle": area_subtitle,
+                        "hold": 3.0,
+                },
+                # 第三幕：旁白过渡到家中
+                {
+                        "type": "narrate",
+                        "speaker": "",
+                        "text": "深夜，一户人家里传出了争吵声……",
+                        "fade_in": 1.0,
+                },
+                # 第四幕：父子对话 (使用 DialogueManager)
+                {
+                        "type": "dialogue",
+                        "file": "res://assets/data/dialogues/dialogue_opening.json",
+                        "start_id": "start",
+                },
+                # 第五幕：对话结束后淡入游戏
+                {
+                        "type": "wait",
+                        "duration": 1.0,
+                },
+                {
+                        "type": "fade_in",
+                        "duration": 1.5,
+                },
+        ]
+
+        # 停止BGM，等演出完毕再播放
+        BgmManager.stop_bgm()
+        _cutscene_player.play(steps)
+
+## 开场演出完成
+func _on_opening_cutscene_done() -> void:
+        _is_playing_opening = false
+        _is_ui_open = false
+        if _cutscene_player:
+                _cutscene_player.queue_free()
+                _cutscene_player = null
+        # 播放奥多市BGM
+        BgmManager.play_area_bgm("aoduo")
+        print("[CityExplorer] 开场剧情演出结束")
+
+## 旧版开场对话 (保留用于其他场景)
 func _play_opening_dialogue() -> void:
 	_is_playing_opening = true
 	_is_ui_open = true

@@ -146,6 +146,9 @@ func _on_new_game() -> void:
 	print("[TitleScreen] 开始新游戏")
 	GameManager.start_new_game()
 	GameData.game_flags["play_opening"] = true
+	# 新游戏直接进入奥多市 (触发开场剧情演出)
+	GameFlow.current_state = GameFlow.GameState.CITY
+	GameFlow.change_scene("city")
 
 func _on_continue() -> void:
 	if _is_processing:

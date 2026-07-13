@@ -84,10 +84,7 @@ func _ready() -> void:
         _game_hud.set_area_name("世界地图")
         _game_hud.show_hud()
 
-        # 检查是否需要播放开场剧情
-        if GameData.game_flags.get("play_opening", false):
-                GameData.game_flags.erase("play_opening")
-                _play_opening_dialogue()
+        # 开场剧情已移到奥多市场景中触发 (不再在世界地图播放)
 
 func _build_area_buttons() -> void:
         for child in area_container.get_children():
