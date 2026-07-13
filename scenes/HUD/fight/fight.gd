@@ -203,6 +203,7 @@ func _on_fight_speed_path_uint_fighting(fight_id) -> void:
 func enemy_melee_foe_one(skill):
         # 技能名字动画
         fight_hud.action_name_animation(skill.skill_name)
+        SfxManager.play_sfx("attack_melee")
         
         # 攻击玩家
         var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
@@ -264,6 +265,7 @@ func enemy_melee_foe_one(skill):
 func enemy_remote_foe_one(skill):
         # 技能名字动画
         fight_hud.action_name_animation(skill.skill_name)
+        SfxManager.play_sfx("attack_ranged")
         
         var enemy_scene: CharacterBody3D = enemy_scene_map[fighting_id]
         var fighting_unit = fighting_unit_map[fighting_id]
@@ -655,7 +657,11 @@ func player_remote_foe_one(attack_pointer_index):
         # 战车战模式 — 主炮射击 (消耗弹药)
         if _in_tank_battle:
                 _player_tank_main_cannon_attack(attack_pointer_index, player_scene)
+                SfxManager.play_sfx("tank_cannon")
                 return
+
+        # 白刃战模式
+        SfxManager.play_sfx("attack_melee")
 
         var enemy_scene:CharacterBody3D = enemy_scene_map.values()[attack_pointer_index]
         var enemy_fight_id = enemy_scene.fight_id
@@ -1175,9 +1181,10 @@ func all_enemy_death():
         # 清除所有单位的状态效果
         for unit in fighting_unit_map.values():
                 StatusEffectSystem.clear_all_statuses(unit)
-        
+
         # 播放战斗胜利音效
         BgmManager.play_victory_bgm()
+        SfxManager.play_sfx("victory")
 
         # 暂停战斗进度
         fight_hud.visible = false
@@ -1290,14 +1297,30 @@ func all_player_death():
         # 清除所有单位的状态效果
         for unit in fighting_unit_map.values():
                 StatusEffectSystem.clear_all_statuses(unit)
-        
+
         BgmManager.stop_bgm()
         BgmManager.play_defeat_bgm()
+        SfxManager.play_sfx("defeat")
 
-        # 显示游戏结束画面
-        var game_over_scene := load("res://scenes/ui/game_over_screen.tscn")
-        var game_over: Control = game_over_scene.instantiate()
-        add_child(game_over)
-        # 延迟显示，让失败音乐先播放
+        # 暂停战斗进度
+        fight_hud.visible = false
+        fight_speed_path.fight_stop()
+
+        # 等待2秒让玩家看到失败画面
         await get_tree().create_timer(2.0).timeout
-        game_over.show_game_over()
+
+        # 应用死亡惩罚：丢失30%金币（至少保留100G），队伍和战车半血复活
+        var lost_coins := GameData.apply_death_penalty()
+        GameData.respawn_party()
+        GameData.respawn_tanks()
+
+        # 打印死亡惩罚信息
+        print("[Fight] 战斗失败！损失 %d G，队伍和战车已半血复活" % lost_coins)
+
+        # 等待1秒显示惩罚信息
+        await get_tree().create_timer(1.0).timeout
+
+        # 停止失败BGM，返回奥多市
+        BgmManager.stop_bgm()
+        BgmManager.play_area_bgm("aoduo")
+        SceneTransitionManager.return_to_nearest_city()

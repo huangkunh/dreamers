@@ -92,3 +92,12 @@ func get_saved_player_position() -> Vector3:
 ## 清除保存的位置
 func clear_saved_position() -> void:
 	_transition_data.erase("saved_player_pos")
+
+## 返回最近的安全城市 (用于死亡惩罚)
+## 优先返回奥多市（出生点）
+func return_to_nearest_city() -> void:
+	print("[SceneTransitionManager] 死亡后返回城市")
+	# 默认返回奥多市
+	GameFlow.change_scene("res://scenes/city/aoduo_base.tscn")
+	# 设置当前区域
+	GameData.game_flags["current_area"] = "aoduo"

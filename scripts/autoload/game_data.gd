@@ -264,3 +264,76 @@ func get_play_time_string() -> String:
         var minutes = (int(play_time) % 3600) / 60
         var seconds = int(play_time) % 60
         return "%02d:%02d:%02d" % [hours, minutes, seconds]
+
+## ---- 区域描述数据 (Metal Max 世界观) ----
+const AREA_DESCRIPTIONS := {
+        "aoduo": {
+                "name": "奥多市",
+                "subtitle": "文明最后的堡垒",
+                "description": "大破坏后仅存的繁华都市，钢铁城墙保护着最后的居民。猎人公会的总部就坐落于此，是冒险者的起点与归宿。",
+                "ambient": "城市街道的喧嚣，远处工厂的轰鸣声",
+                "atmosphere_color": Color(0.8, 0.7, 0.5),
+        },
+        "wasteland": {
+                "name": "无尽荒野",
+                "subtitle": "变异生物的家园",
+                "description": "大破坏后形成的广阔沙漠，辐射尘暴常年肆虐。游荡着凶残的变异兽群，是猎人狩猎的试炼场。",
+                "ambient": "呼啸的风沙声，远处偶尔传来的兽吼",
+                "atmosphere_color": Color(0.7, 0.5, 0.3),
+        },
+        "factory": {
+                "name": "废弃工厂",
+                "subtitle": "机械的墓地",
+                "description": "大破坏前的大型军工厂遗址，到处都是锈蚀的机械残骸。仍有大量失控的安保机器人和改造兽在其中游荡。",
+                "ambient": "金属碰撞声，机械运转的嗡鸣",
+                "atmosphere_color": Color(0.4, 0.4, 0.5),
+        },
+        "ant_nest": {
+                "name": "蚁穴",
+                "subtitle": "变异虫族的巢穴",
+                "description": "地下深处的巨大蚁穴网络，巨型变异蚂蚁的王国。蚁后盘踞在最深处的王座中，统治着庞大的虫群。",
+                "ambient": "黏液滴落声，密集的虫足爬行声",
+                "atmosphere_color": Color(0.5, 0.3, 0.2),
+        },
+        "ancient_ruins": {
+                "name": "古代遗迹",
+                "subtitle": "诺亚文明的遗产",
+                "description": "大破坏前的古代文明遗迹，神秘的建筑群中充满了全息守卫和哨戒炮台。最深处隐藏着诺亚的核心服务器。",
+                "ambient": "低频电子嗡鸣，神秘的全息投影音效",
+                "atmosphere_color": Color(0.3, 0.4, 0.7),
+        },
+}
+
+## 获取区域信息
+func get_area_info(area_id: String) -> Dictionary:
+        return AREA_DESCRIPTIONS.get(area_id, {})
+
+## ---- 死亡惩罚机制 ----
+
+## 应用死亡惩罚 (丢失30%金币，保留至少100G)
+## 返回 实际损失的金币数量
+func apply_death_penalty() -> int:
+        var lost_coins := int(coins * 0.3)
+        # 至少保留100G，避免破产
+        if coins - lost_coins < 100:
+                lost_coins = max(0, coins - 100)
+        coins = max(coins - lost_coins, 100)
+        coins_changed.emit(coins)
+        print("[GameData] 死亡惩罚：失去 %d G，当前 %d G" % [lost_coins, coins])
+        return lost_coins
+
+## 队伍复活 (HP恢复50%)
+func respawn_party() -> void:
+        for member in party:
+                member.current_hp = int(member.max_hp * 0.5)
+        party_changed.emit()
+        print("[GameData] 队伍复活，HP恢复至50%")
+
+## 战车复活 (HP恢复50%，燃料弹药全满)
+func respawn_tanks() -> void:
+        for tank in TankSystem.tanks.values():
+                if tank.is_active or tank.is_owned:
+                        tank.current_hp = int(tank.max_hp * 0.5)
+                        tank.current_fuel = tank.max_fuel
+                        tank.current_ammo = tank.max_ammo
+        print("[GameData] 战车复活，HP恢复至50%，燃料弹药全满")
