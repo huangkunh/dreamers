@@ -10,6 +10,8 @@ const VIGNETTE_SHADER := preload("res://scripts/shader/vignette.gdshader")
 const DOF_SHADER := preload("res://scripts/shader/depth_of_field.gdshader")
 const PIXEL_ENHANCE_SHADER := preload("res://scripts/shader/hd2d_enhance.gdshader")
 const HEAT_HAZE_SHADER := preload("res://scripts/shader/heat_haze.gdshader")
+const HD2D_MASTER_SHADER := preload("res://scripts/shader/hd2d_master.gdshader")
+const BATTLE_TRANSITION_SHADER := preload("res://scripts/shader/battle_transition_hd2d.gdshader")
 
 ## 预设名称常量
 enum Preset {
@@ -34,6 +36,10 @@ var _dof_rect: ColorRect
 var _pixel_rect: ColorRect
 ## 热浪扭曲叠加层
 var _haze_rect: ColorRect
+## HD-2D Master叠加层 (综合效果)
+var _master_rect: ColorRect
+## 战斗过渡叠加层
+var _battle_transition_rect: ColorRect
 ## 当前过渡Tween
 var _transition_tween: Tween
 ## 视口大小缓存
@@ -168,6 +174,14 @@ func _create_overlay_nodes() -> void:
 	_canvas_layer.layer = 100
 	_canvas_layer.name = "Hd2dOverlay"
 	add_child(_canvas_layer)
+
+	# HD-2D Master叠加层 (综合效果，默认启用)
+	_master_rect = _create_shader_rect("HD2DMaster", HD2D_MASTER_SHADER)
+	_canvas_layer.add_child(_master_rect)
+	
+	# 战斗过渡叠加层 (默认隐藏)
+	_battle_transition_rect = _create_shader_rect("BattleTransition", BATTLE_TRANSITION_SHADER)
+	_canvas_layer.add_child(_battle_transition_rect)
 
 	# 像素增强叠加层（最先处理，最底层）
 	_pixel_rect = _create_shader_rect("PixelEnhance", PIXEL_ENHANCE_SHADER)
@@ -451,3 +465,86 @@ func _preset_from_string(preset_name: String) -> Preset:
 			return Preset.TITLE
 	push_warning("[Hd2dManager] 未知预设名称: %s, 使用默认CITY" % preset_name)
 	return Preset.CITY
+
+## ===== 战斗过渡效果 =====
+
+## 播放战斗开始过渡效果
+## duration 过渡时长
+func play_battle_start_transition(duration: float = 0.6) -> void:
+	if not enabled or not _battle_transition_rect:
+		return
+	_battle_transition_rect.visible = true
+	var mat: ShaderMaterial = _battle_transition_rect.material as ShaderMaterial
+	mat.set_shader_parameter("transition_type", 0)  # 战斗开始
+	mat.set_shader_parameter("flash_intensity", 1.8)
+	mat.set_shader_parameter("flash_color", Color(1.0, 1.0, 1.0, 1.0))
+	
+	# 动画进度
+	var tween := create_tween()
+	tween.tween_method(
+		func(val: float) -> void: mat.set_shader_parameter("progress", val),
+		0.0, 1.0, duration
+	).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+	tween.tween_callback(func(): _battle_transition_rect.visible = false)
+
+## 播放战斗结束过渡效果
+## duration 过渡时长
+func play_battle_end_transition(duration: float = 0.5) -> void:
+	if not enabled or not _battle_transition_rect:
+		return
+	_battle_transition_rect.visible = true
+	var mat: ShaderMaterial = _battle_transition_rect.material as ShaderMaterial
+	mat.set_shader_parameter("transition_type", 1)  # 战斗结束
+	mat.set_shader_parameter("flash_intensity", 1.2)
+	mat.set_shader_parameter("flash_color", Color(1.0, 0.95, 0.9, 1.0))
+	
+	var tween := create_tween()
+	tween.tween_method(
+		func(val: float) -> void: mat.set_shader_parameter("progress", val),
+		0.0, 1.0, duration
+	).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tween.tween_callback(func(): _battle_transition_rect.visible = false)
+
+## 播放战斗胜利过渡效果
+## duration 过渡时长
+func play_battle_victory_transition(duration: float = 0.8) -> void:
+	if not enabled or not _battle_transition_rect:
+		return
+	_battle_transition_rect.visible = true
+	var mat: ShaderMaterial = _battle_transition_rect.material as ShaderMaterial
+	mat.set_shader_parameter("transition_type", 2)  # 战斗胜利
+	mat.set_shader_parameter("flash_intensity", 1.5)
+	mat.set_shader_parameter("flash_color", Color(1.0, 0.95, 0.6, 1.0))  # 金色
+	
+	var tween := create_tween()
+	tween.tween_method(
+		func(val: float) -> void: mat.set_shader_parameter("progress", val),
+		0.0, 1.0, duration
+	).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
+	tween.tween_callback(func(): _battle_transition_rect.visible = false)
+
+## ===== HD-2D Master 着色器控制 =====
+
+## 设置Master着色器参数（高级API）
+func set_hd2d_master_params(
+	blur_str: float = 2.5,
+	vignette_int: float = 0.6,
+	sat_boost: float = 1.08,
+	temp: float = 0.12
+) -> void:
+	if not enabled or not _master_rect:
+		return
+	_master_rect.visible = true
+	var mat: ShaderMaterial = _master_rect.material as ShaderMaterial
+	mat.set_shader_parameter("blur_strength", blur_str)
+	mat.set_shader_parameter("vignette_intensity", vignette_int)
+	mat.set_shader_parameter("saturation_boost", sat_boost)
+	mat.set_shader_parameter("color_temperature", temp)
+
+## 设置色调映射参数
+func set_tone_mapping(exposure: float = 1.1, gamma: float = 1.05) -> void:
+	if not enabled or not _master_rect:
+		return
+	var mat: ShaderMaterial = _master_rect.material as ShaderMaterial
+	mat.set_shader_parameter("exposure", exposure)
+	mat.set_shader_parameter("gamma", gamma)

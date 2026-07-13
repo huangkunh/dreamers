@@ -1,0 +1,68 @@
+[gd_scene load_steps=8 format=3 uid="uid://tank_explosion_001"]
+
+[sub_resource type="Gradient" id="Gradient_explosion"]
+offsets = PackedFloat32Array(0, 0.15, 0.4, 0.7, 1)
+colors = PackedColorArray(1, 1, 1, 1.5, 1, 0.95, 0.6, 1.2, 1, 0.7, 0.2, 0.9, 0.9, 0.3, 0.05, 0.5, 0.6, 0.15, 0.0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_explosion"]
+gradient = SubResource("Gradient_explosion")
+
+[sub_resource type="Curve" id="Curve_explosion"]
+_data = [Vector2(0, 0.8), 0.0, -3.0, 0, 0, Vector2(0.2, 1.5), 0.0, -2.0, 0, 0, Vector2(0.5, 1.0), -2.0, -2.0, 0, 0, Vector2(1, 0), -1.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_explosion"]
+curve = SubResource("Curve_explosion")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleMat_explosion"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+particle_flag_rotate_y = true
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 15.0
+angular_velocity_min = -400.0
+angular_velocity_max = 400.0
+gravity = Vector3(0, -8, 0)
+scale_min = 0.1
+scale_max = 0.4
+scale_curve = SubResource("CurveTexture_explosion")
+color_ramp = SubResource("GradientTexture_explosion")
+anim_speed_min = 2.0
+anim_speed_max = 4.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_explosion"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(1, 0.9, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.7, 0.3)
+emission_energy_multiplier = 4.0
+shading_mode = 0
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_explosion"]
+material = SubResource("Mat_explosion")
+size = Vector2(0.2, 0.2)
+
+[node name="TankExplosion" type="Node3D"]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.85, 0.5, 1)
+light_energy = 5.0
+light_indirect_energy = 1.0
+light_volumetric_fog_energy = 2.0
+omni_range = 12.0
+omni_attenuation = 1.5
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 80
+lifetime = 1.2
+explosiveness = 1.0
+randomness = 0.4
+one_shot = true
+emitting = false
+visibility_aabb = AABB(-5, -5, -5, 10, 10, 10)
+process_material = SubResource("ParticleMat_explosion")
+draw_pass_1 = SubResource("QuadMesh_explosion")

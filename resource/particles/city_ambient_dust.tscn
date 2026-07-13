@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://city_ambient_dust_001"]
+
+[sub_resource type="Gradient" id="Gradient_dust"]
+offsets = PackedFloat32Array(0, 0.4, 0.8, 1)
+colors = PackedColorArray(0.9, 0.85, 0.75, 0.15, 0.85, 0.8, 0.7, 0.4, 0.8, 0.75, 0.65, 0.6, 0.75, 0.7, 0.6, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_dust"]
+gradient = SubResource("Gradient_dust")
+
+[sub_resource type="Curve" id="Curve_dust"]
+_data = [Vector2(0, 0), 0.0, 2.5, 0, 0, Vector2(0.15, 0.7), 0.0, 0.0, 0, 0, Vector2(0.85, 0.7), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.5, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_dust"]
+curve = SubResource("Curve_dust")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleMat_dust"]
+emission_shape = 3
+emission_box_extents = Vector3(25, 4, 25)
+direction = Vector3(0.3, 0.05, 0.2)
+spread = 35.0
+initial_velocity_min = 0.1
+initial_velocity_max = 0.4
+angular_velocity_min = -20.0
+angular_velocity_max = 20.0
+gravity = Vector3(0.02, -0.01, 0.01)
+scale_min = 0.02
+scale_max = 0.08
+scale_curve = SubResource("CurveTexture_dust")
+color_ramp = SubResource("GradientTexture_dust")
+turbulence_enabled = true
+turbulence_noise_strength = 0.5
+turbulence_noise_scale = 2.5
+turbulence_noise_speed = Vector3(0.02, 0.01, 0.015)
+
+[sub_resource type="StandardMaterial3D" id="Mat_dust"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(0.9, 0.85, 0.75, 0.5)
+shading_mode = 0
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_dust"]
+material = SubResource("Mat_dust")
+size = Vector2(0.08, 0.08)
+
+[node name="CityAmbientDust" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 200
+lifetime = 8.0
+explosiveness = 0.05
+randomness = 0.7
+visibility_aabb = AABB(-30, -5, -30, 60, 10, 60)
+process_material = SubResource("ParticleMat_dust")
+draw_pass_1 = SubResource("QuadMesh_dust")
