@@ -49,6 +49,7 @@ TankBattleSystem="*res://scripts/autoload/tank_battle_system.gd"
 HunterRankSystem="*res://scripts/autoload/hunter_rank_system.gd"
 BgmManager="*res://scripts/autoload/bgm_manager.gd"
 SfxManager="*res://scripts/autoload/sfx_manager.gd"
+Hd2dManager="*res://scripts/autoload/hd2d_manager.gd"
 SceneFadeTransition="*res://scenes/ui/scene_fade_transition.tscn"
 
 [editor]

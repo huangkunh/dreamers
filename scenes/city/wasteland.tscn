@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://wasteland_scene_001"]
+[gd_scene load_steps=26 format=3 uid="uid://wasteland_scene_001"]
 
 [ext_resource type="Environment" path="res://default_env.tres" id="1_env"]
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="2_player"]
@@ -7,6 +7,7 @@
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="5_vignette"]
 [ext_resource type="Shader" path="res://scripts/shader/simulating_cloud_shadows.gdshader" id="6_cloud"]
 [ext_resource type="Shader" path="res://scripts/shader/heat_haze.gdshader" id="7_heat_haze"]
+[ext_resource type="Shader" path="res://scripts/shader/hd2d_enhance.gdshader" id="17_hd2d"]
 [ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="8_particles"]
 [ext_resource type="PackedScene" path="res://resource/particles/sand_particles.tscn" id="9_sand_particles"]
 [ext_resource type="Script" path="res://scripts/components/area_entrance_trigger.gd" id="10_entrance"]
@@ -37,13 +38,47 @@ fog_density = 0.12
 fog_height = 2.0
 fog_height_density = 0.05
 glow_enabled = true
-glow_intensity = 0.6
-glow_strength = 0.8
+glow_intensity = 0.7
+glow_strength = 0.5
+glow_bloom = 0.1
+glow_blend_mode = 1
+glow_hdr_threshold = 1.3
+glow_hdr_scale = 2.0
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.04
 volumetric_fog_albedo = Color(0.8, 0.65, 0.4, 1)
 volumetric_fog_emission = 0.15
 volumetric_fog_emission_energy = 0.08
+volumetric_fog_anisotropy = -0.2
+volumetric_fog_length = 20.0
+volumetric_fog_detail_spread = 4.0
+volumetric_fog_ambient_inject = 0.5
+volumetric_fog_sky_affect = 0.7
+volumetric_fog_temporal_reprojection_enabled = true
+volumetric_fog_temporal_reprojection_amount = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.1
+tonemap_white = 1.3
+ssr_enabled = true
+ssr_fade_in = 0.8
+ssr_fade_out = 4.0
+ssr_max_steps = 48
+ssao_enabled = true
+ssao_radius = 3.0
+ssao_intensity = 1.5
+ssao_power = 1.8
+ssao_detail = 0.3
+ssao_horizon = 0.5
+ssil_enabled = true
+ssil_radius = 4.0
+ssil_intensity = 0.6
+sdfgi_enabled = true
+sdfgi_cascades = 5
+sdfgi_min_cell_size = 0.2
+adjustment_enabled = true
+adjustment_brightness = 1.0
+adjustment_contrast = 1.2
+adjustment_saturation = 1.05
 
 [sub_resource type="StandardMaterial3D" id="GroundMat_waste"]
 albedo_color = Color(0.55, 0.4, 0.25, 1)
@@ -85,6 +120,23 @@ shader_parameter/distortion_frequency = 6.0
 shader_parameter/direction_bias = 0.6
 shader_parameter/vertical_falloff = 0.4
 
+[sub_resource type="CameraAttributesPractical" id="CamAttr_waste"]
+auto_exposure_enabled = true
+dof_blur_far_enabled = true
+dof_blur_far_distance = 15.0
+dof_blur_far_transition = 10.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 1.5
+dof_blur_near_transition = 1.0
+
+[sub_resource type="ShaderMaterial" id="HD2DEnhance_waste"]
+shader = ExtResource("17_hd2d")
+shader_parameter/pixel_size = 2.0
+shader_parameter/edge_highlight = 0.25
+shader_parameter/saturation_boost = 1.1
+shader_parameter/contrast = 1.15
+shader_parameter/color_temperature = 0.15
+
 [node name="Wasteland" type="Node3D"]
 script = ExtResource("3_explorer")
 area_id = "wasteland"
@@ -96,12 +148,16 @@ environment = SubResource("Env_waste")
 transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 10, 0)
 light_color = Color(1, 0.85, 0.6, 1)
 light_energy = 1.5
+light_indirect_energy = 0.5
+light_volumetric_fog_energy = 1.2
 shadow_enabled = true
+shadow_blur = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 3, 4)
 fov = 35.0
 size = 5.0
+attributes = SubResource("CamAttr_waste")
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("GroundMesh_waste")
@@ -135,6 +191,15 @@ color = Color(0, 0, 0, 1)
 
 [node name="HeatHazeOverlay" type="ColorRect" parent="."]
 material = SubResource("HeatHaze_waste")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="HD2DEnhanceOverlay" type="ColorRect" parent="."]
+material = SubResource("HD2DEnhance_waste")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -293,6 +358,31 @@ omni_range = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1, 12)
 light_color = Color(0.3, 1.0, 0.3)
 light_energy = 1.5
+omni_range = 8.0
+
+[node name="RuinGlow1" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.8, -10)
+light_color = Color(0.6, 0.4, 0.3, 1)
+light_energy = 0.8
+light_indirect_energy = 0.2
+light_volumetric_fog_energy = 1.0
+omni_range = 6.0
+
+[node name="RuinGlow2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.0, 15)
+light_color = Color(0.5, 0.35, 0.25, 1)
+light_energy = 0.6
+light_indirect_energy = 0.15
+light_volumetric_fog_energy = 0.8
+omni_range = 5.0
+
+[node name="CampfireLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0.5, -5)
+light_color = Color(1.0, 0.7, 0.3, 1)
+light_energy = 2.5
+light_indirect_energy = 0.4
+light_volumetric_fog_energy = 2.0
+light_size = 0.3
 omni_range = 8.0
 
 [node name="WastelandWeather" type="Node" parent="."]

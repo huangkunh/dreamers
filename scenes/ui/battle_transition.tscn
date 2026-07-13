@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://bbattle_trans_001"]
+[gd_scene load_steps=4 format=3 uid="uid://bbattle_trans_001"]
 
 [ext_resource type="Script" path="res://scripts/ui/battle_transition.gd" id="1_trans"]
+[ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="2_vignette"]
+[ext_resource type="Shader" path="res://scripts/shader/depth_of_field.gdshader" id="3_dof"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("2_vignette")
+shader_parameter/vignette_intensity = 0.6
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dof"]
+shader = ExtResource("3_dof")
+shader_parameter/blur_strength = 2.0
+shader_parameter/blur_radius = 2.0
+shader_parameter/center_focus = 0.5
+shader_parameter/vignette_color = Vector4(0, 0, 0, 1)
+shader_parameter/vignette_intensity = 0.3
 
 [node name="BattleTransition" type="Control"]
 layout_mode = 3
@@ -54,3 +69,23 @@ theme_override_font_sizes/font_size = 48
 text = "战 斗"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="VignetteOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_vignette")
+mouse_filter = 2
+
+[node name="DOFOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_dof")
+mouse_filter = 2

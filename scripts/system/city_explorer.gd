@@ -89,6 +89,10 @@ func _ready() -> void:
 	_game_hud.show_hud()
 	_game_hud.set_area_name(_get_area_display_name(area_id))
 
+	# 应用 HD-2D 后处理预设
+	if Hd2dManager:
+		Hd2dManager.set_enabled(false)  # 场景自带 overlay，禁用全局管理器
+
 	# 检查是否需要播放开场剧情
 	if GameData.game_flags.get("play_opening", false):
 		GameData.game_flags.erase("play_opening")
@@ -128,6 +132,16 @@ func _update_hd2d_effects(delta: float) -> void:
 	if dust_particles:
 		var intensity_mod = 0.8 + randf() * 0.4
 		dust_particles.amount_ratio = _weather_intensity * intensity_mod
+
+	# 根据玩家移动状态调整景深
+	var dof_overlay = get_node_or_null("DOFOverlay")
+	if dof_overlay and dof_overlay.material:
+		var speed_factor = 0.0
+		if player and player.velocity:
+			speed_factor = min(player.velocity.length() * 0.15, 1.0)
+		var target_strength = 2.0 + speed_factor * 1.5
+		var current_strength = dof_overlay.material.get_shader_parameter("blur_strength")
+		dof_overlay.material.set_shader_parameter("blur_strength", lerp(current_strength, target_strength, delta * 2.0))
 
 ## 更新附近交互提示
 func _update_nearby_interactions() -> void:
@@ -180,23 +194,47 @@ func set_weather_intensity(intensity: float) -> void:
 		var fog_density = 0.8 * _weather_intensity
 		environment_node.environment.volumetric_fog_density = fog_density
 
-## 切换时段效果 (黄昏/夜晚)
+## 切换时段效果 (黄昏/夜晚) - HD-2D 增强版
 func set_time_of_day(time: float) -> void:
 	_time_of_day = clamp(time, 0.0, 1.0)
 	if main_light:
-		# 调整主光源颜色和强度
 		if _time_of_day < 0.3:
-			# 早晨 - 柔和暖光
 			main_light.light_color = Color(1.0, 0.9, 0.7)
 			main_light.light_energy = 0.7
 		elif _time_of_day < 0.7:
-			# 下午 - 明亮暖黄
 			main_light.light_color = Color(1.0, 0.75, 0.45)
 			main_light.light_energy = 0.85
 		else:
-			# 黄昏/夜晚 - 低强度暖橙
 			main_light.light_color = Color(1.0, 0.6, 0.3)
 			main_light.light_energy = 0.5
+	
+	# HD-2D 环境联动
+	if environment_node and environment_node.environment:
+		var env: Environment = environment_node.environment
+		if _time_of_day < 0.3:
+			# 早晨 - 清冷蓝调
+			env.ambient_light_color = Color(0.7, 0.75, 0.9)
+			env.ambient_light_energy = 0.5
+			env.volumetric_fog_density = 0.5
+			if env.adjustment_enabled:
+				env.adjustment_brightness = 1.0
+				env.adjustment_saturation = 1.0
+		elif _time_of_day < 0.7:
+			# 下午 - 暖黄调
+			env.ambient_light_color = Color(0.95, 0.85, 0.65)
+			env.ambient_light_energy = 0.65
+			env.volumetric_fog_density = 0.8
+			if env.adjustment_enabled:
+				env.adjustment_brightness = 1.05
+				env.adjustment_saturation = 1.1
+		else:
+			# 黄昏/夜晚 - 暖橙暗调
+			env.ambient_light_color = Color(0.9, 0.6, 0.35)
+			env.ambient_light_energy = 0.35
+			env.volumetric_fog_density = 1.0
+			if env.adjustment_enabled:
+				env.adjustment_brightness = 0.9
+				env.adjustment_saturation = 1.2
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _is_ui_open:

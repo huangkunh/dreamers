@@ -23,6 +23,10 @@ var _is_processing: bool = false
 var _button_actions: Dictionary = {}
 
 func _ready() -> void:
+	# 应用 HD-2D 标题画面预设
+	if Hd2dManager:
+		Hd2dManager.set_enabled(false)  # 标题画面自带 overlay
+
 	# 设置版本号
 	version_label.text = "v0.10"
 	_is_processing = false
@@ -52,12 +56,12 @@ func _ready() -> void:
 	_update_menu_highlight()
 
 	# 设置粒子效果 - 模拟废土中的沙尘
-	particles.amount = 60
+	particles.amount = 100
 	particles.lifetime = 4.0
 	particles.direction = Vector2(1, 0.2)
 	particles.spread = 15
 	particles.initial_velocity_min = 20.0
-	particles.initial_velocity_max = 60.0
+	particles.initial_velocity_max = 80.0
 	particles.gravity = Vector2(0, 5)
 	particles.color = Color(0.7, 0.6, 0.4, 0.3)
 

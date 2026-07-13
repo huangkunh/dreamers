@@ -1,12 +1,30 @@
-[gd_scene load_steps=4 format=3 uid="uid://btitle_screen_001"]
+[gd_scene load_steps=6 format=3 uid="uid://btitle_screen_001"]
 
 [ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1_title"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="2_vignette"]
+[ext_resource type="Shader" path="res://scripts/shader/depth_of_field.gdshader" id="3_dof"]
+[ext_resource type="Shader" path="res://scripts/shader/hd2d_enhance.gdshader" id="4_hd2d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
 shader = ExtResource("2_vignette")
 shader_parameter/vignette_intensity = 0.8
 shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dof"]
+shader = ExtResource("3_dof")
+shader_parameter/blur_strength = 3.0
+shader_parameter/blur_radius = 4.0
+shader_parameter/center_focus = 0.5
+shader_parameter/vignette_color = Vector4(0, 0, 0, 1)
+shader_parameter/vignette_intensity = 0.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hd2d"]
+shader = ExtResource("4_hd2d")
+shader_parameter/pixel_size = 2.0
+shader_parameter/edge_highlight = 0.2
+shader_parameter/saturation_boost = 1.2
+shader_parameter/contrast = 1.15
+shader_parameter/color_temperature = 0.15
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
@@ -45,9 +63,29 @@ grow_vertical = 2
 material = SubResource("ShaderMaterial_vignette")
 mouse_filter = 2
 
+[node name="DOFRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_dof")
+mouse_filter = 2
+
+[node name="HD2DEnhanceRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+material = SubResource("ShaderMaterial_hd2d")
+mouse_filter = 2
+
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 position = Vector2(-50, 360)
-amount = 60
+amount = 100
 lifetime = 4.0
 local_coords = false
 emission_shape = 3
@@ -55,7 +93,7 @@ emission_rect_extents = Vector2(50, 360)
 direction = Vector2(1, 0.2)
 spread = 15.0
 initial_velocity_min = 20.0
-initial_velocity_max = 60.0
+initial_velocity_max = 80.0
 gravity = Vector2(0, 5)
 scale_min = 1.0
 scale_max = 3.0

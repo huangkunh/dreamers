@@ -1,9 +1,10 @@
-[gd_scene load_steps=35 format=3 uid="uid://bant_nest_001"]
+[gd_scene load_steps=36 format=3 uid="uid://bant_nest_001"]
 
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/ant_nest.gd" id="2_antnest"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
+[ext_resource type="Shader" path="res://scripts/shader/hd2d_enhance.gdshader" id="5_hd2d"]
 
 # === 天空和环境 ===
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_ant"]
@@ -40,6 +41,15 @@ glow_intensity = 0.8
 glow_strength = 1.2
 glow_bloom = 0.3
 glow_blend_mode = 1
+ssr_enabled = true
+ssr_max_steps = 32
+sdfgi_enabled = true
+sdfgi_cascades = 4
+sdfgi_min_cell_size = 0.15
+adjustment_enabled = true
+adjustment_brightness = 0.9
+adjustment_contrast = 1.15
+adjustment_saturation = 1.1
 
 # === 有机材质 ===
 # 地面 - 深棕土质
@@ -147,9 +157,20 @@ shader_parameter/vignette_intensity = 0.85
 shader_parameter/vignette_color = Color(0.02, 0.01, 0.0, 1)
 
 [sub_resource type="ShaderMaterial" id="HD2DPostProcess"]
-shader = ExtResource("4_vignette")
-shader_parameter/vignette_intensity = 1.0
-shader_parameter/vignette_color = Color(0.05, 0.02, 0.0, 1)
+shader = ExtResource("5_hd2d")
+shader_parameter/pixel_size = 2.0
+shader_parameter/edge_highlight = 0.3
+shader_parameter/saturation_boost = 1.1
+shader_parameter/contrast = 1.15
+shader_parameter/color_temperature = 0.2
+
+[sub_resource type="CameraAttributesPractical" id="CamAttr_ant"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 10.0
+dof_blur_far_transition = 6.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 1.0
+dof_blur_near_transition = 0.5
 
 # === 碰撞形状 ===
 [sub_resource type="BoxShape3D" id="BossTriggerShape"]
@@ -185,6 +206,7 @@ shadow_enabled = true
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 6, 8)
 fov = 55.0
+attributes = SubResource("CamAttr_ant")
 
 # === 地面 ===
 [node name="Ground" type="MeshInstance3D" parent="."]
@@ -213,7 +235,6 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-modulate = Color(1, 0.95, 0.9, 0.1)
 
 # ========================================
 # === 蚁穴入口区域 (Ant Hill Entrance) ===

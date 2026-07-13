@@ -1,10 +1,12 @@
-[gd_scene load_steps=28 format=3 uid="uid://bfactory_scene_001"]
+[gd_scene load_steps=31 format=3 uid="uid://bfactory_scene_001"]
 
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/abandoned_factory.gd" id="2_factory"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
 [ext_resource type="Environment" path="res://default_env.tres" id="5_env"]
+[ext_resource type="Shader" path="res://scripts/shader/depth_of_field.gdshader" id="6_dof"]
+[ext_resource type="Shader" path="res://scripts/shader/hd2d_enhance.gdshader" id="7_hd2d"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_factory"]
 sky_top_color = Color(0.3, 0.25, 0.2, 1)
@@ -27,11 +29,49 @@ volumetric_fog_enabled = true
 volumetric_fog_density = 0.8
 volumetric_fog_albedo = Color(0.4, 0.3, 0.25, 1)
 tonemap_mode = 2
+tonemap_exposure = 0.9
+ssr_enabled = true
+ssr_max_steps = 32
+ssao_enabled = true
+ssao_radius = 2.0
+ssao_intensity = 1.5
+ssao_power = 2.0
+glow_enabled = true
+glow_intensity = 0.6
+glow_strength = 0.4
+glow_bloom = 0.1
+adjustment_enabled = true
+adjustment_contrast = 1.1
+adjustment_saturation = 0.9
 
 [sub_resource type="ShaderMaterial" id="VignetteMat"]
 shader = ExtResource("4_vignette")
 shader_parameter/vignette_intensity = 0.7
 shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[sub_resource type="CameraAttributesPractical" id="CamAttr_factory"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 12.0
+dof_blur_far_transition = 8.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 1.5
+dof_blur_near_transition = 0.8
+
+[sub_resource type="ShaderMaterial" id="DOFMat_factory"]
+shader = ExtResource("6_dof")
+shader_parameter/blur_strength = 2.5
+shader_parameter/blur_radius = 2.5
+shader_parameter/center_focus = 0.5
+shader_parameter/vignette_color = Vector4(0, 0, 0, 1)
+shader_parameter/vignette_intensity = 0.35
+
+[sub_resource type="ShaderMaterial" id="HD2DMat_factory"]
+shader = ExtResource("7_hd2d")
+shader_parameter/pixel_size = 2.0
+shader_parameter/edge_highlight = 0.25
+shader_parameter/saturation_boost = 1.05
+shader_parameter/contrast = 1.1
+shader_parameter/color_temperature = -0.05
 
 [sub_resource type="BoxMesh" id="GroundMesh"]
 size = Vector2(40, 40)
@@ -119,6 +159,7 @@ shadow_enabled = true
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 8, 10)
 fov = 45.0
+attributes = SubResource("CamAttr_factory")
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("GroundMesh")
@@ -136,6 +177,24 @@ material = SubResource("VignetteMat")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="DOFOverlay" type="ColorRect" parent="."]
+material = SubResource("DOFMat_factory")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HD2DEnhanceOverlay" type="ColorRect" parent="."]
+material = SubResource("HD2DMat_factory")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="Walls" type="Node3D" parent="."]

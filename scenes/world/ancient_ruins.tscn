@@ -1,10 +1,11 @@
-[gd_scene load_steps=30 format=3 uid="uid://bancient_ruins_001"]
+[gd_scene load_steps=32 format=3 uid="uid://bancient_ruins_001"]
 
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/ancient_ruins.gd" id="2_ruins"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
 [ext_resource type="Shader" path="res://scripts/shader/hd2d_enhance.gdshader" id="5_hd2d"]
+[ext_resource type="Shader" path="res://scripts/shader/depth_of_field.gdshader" id="6_dof"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_ruins"]
 sky_top_color = Color(0.02, 0.05, 0.12, 1)
@@ -32,6 +33,19 @@ tonemap_mode = 2
 glow_enabled = true
 glow_intensity = 0.5
 glow_bloom = 0.3
+ssao_enabled = true
+ssao_radius = 3.0
+ssao_intensity = 1.8
+ssao_power = 2.0
+ssr_enabled = true
+ssr_max_steps = 48
+sdfgi_enabled = true
+sdfgi_cascades = 5
+sdfgi_min_cell_size = 0.15
+adjustment_enabled = true
+adjustment_brightness = 0.85
+adjustment_contrast = 1.2
+adjustment_saturation = 1.1
 
 [sub_resource type="StandardMaterial3D" id="FloorMat"]
 albedo_color = Color(0.1, 0.12, 0.18, 1)
@@ -119,6 +133,22 @@ shader_parameter/saturation_boost = 1.15
 shader_parameter/contrast = 1.1
 shader_parameter/color_temperature = -0.15
 
+[sub_resource type="CameraAttributesPractical" id="CamAttr_ruins"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 15.0
+dof_blur_far_transition = 10.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 1.5
+dof_blur_near_transition = 1.0
+
+[sub_resource type="ShaderMaterial" id="DOFMat_ruins"]
+shader = ExtResource("6_dof")
+shader_parameter/blur_strength = 2.0
+shader_parameter/blur_radius = 3.0
+shader_parameter/center_focus = 0.5
+shader_parameter/vignette_color = Vector4(0.02, 0.05, 0.15, 1)
+shader_parameter/vignette_intensity = 0.4
+
 [sub_resource type="BoxShape3D" id="SpawnBox5"]
 size = Vector3(5, 2, 5)
 
@@ -163,6 +193,7 @@ shadow_enabled = true
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 8, 12)
 fov = 55.0
+attributes = SubResource("CamAttr_ruins")
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("FloorMesh")
@@ -189,6 +220,15 @@ material = SubResource("VignetteMat")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="DOFOverlay" type="ColorRect" parent="."]
+material = SubResource("DOFMat_ruins")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="Walls" type="Node3D" parent="."]
