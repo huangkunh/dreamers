@@ -1157,6 +1157,8 @@ func _flee_battle() -> void:
         audio_stream_player.play()
         fight_hud.visible = false
         fight_speed_path.fight_stop()
+        # 重置随机遇敌计数
+        _reset_encounter_counter()
         # 返回之前的区域
         await get_tree().create_timer(1.0).timeout
         GameFlow.enter_city()
@@ -1168,6 +1170,22 @@ func clear_fight_data(fight_id):
         enemy_scene_map.erase(fight_id)
         player_scene_map.erase(fight_id)
         fight_speed_path.unit_fight_death(fight_id)
+
+## 重置随机遇敌计数
+func _reset_encounter_counter() -> void:
+        # 在场景树中查找 RandomEncounter 节点并重置
+        var root = get_tree().root
+        for i in range(root.get_child_count()):
+                var child = root.get_child(i)
+                _find_and_reset_encounter(child)
+
+func _find_and_reset_encounter(node: Node) -> void:
+        if node.has_method("reset_encounter_counter"):
+                node.reset_encounter_counter()
+                print("[Fight] 随机遇敌计数已重置")
+                return
+        for i in range(node.get_child_count()):
+                _find_and_reset_encounter(node.get_child(i))
 
                 
 ## 检测所有敌人死亡
@@ -1319,6 +1337,9 @@ func all_player_death():
 
         # 等待1秒显示惩罚信息
         await get_tree().create_timer(1.0).timeout
+
+        # 重置随机遇敌计数
+        _reset_encounter_counter()
 
         # 停止失败BGM，返回奥多市
         BgmManager.stop_bgm()

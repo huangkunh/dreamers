@@ -249,6 +249,32 @@ func _on_dialogue_event(event_name: String) -> void:
                                 print("[CityExplorer] 所有战车已补给")
                         else:
                                 print("[CityExplorer] 金币不足，无法住宿")
+                "start_noah_battle":
+                        print("[CityExplorer] 触发诺亚最终BOSS战!")
+                        # 解锁诺亚化身赏金首状态（确保可战斗）
+                        BountySystem.unlock_bounty("b07_noah_avatar")
+                        # 设置战斗区域
+                        GameData.game_flags["battle_area"] = "ancient_ruins"
+                        GameData.game_flags["boss_battle"] = "b07_noah_avatar"
+                        # 进入战斗场景
+                        get_tree().create_timer(1.0).timeout.connect(func():
+                                GameFlow.enter_battle()
+                        )
+                "noah_defeated_ending":
+                        print("[CityExplorer] 诺亚被击败，播放结局!")
+                        # 设置结局标志
+                        GameData.game_flags["game_cleared"] = true
+                        GameData.game_flags["ending_type"] = "good"
+                        # 解锁全成就
+                        AchievementSystem.check_explore_achievements("ancient_ruins")
+                        # 播放结局后延迟返回标题
+                        get_tree().create_timer(5.0).timeout.connect(func():
+                                GameFlow.change_scene("res://scenes/ui/title_screen.tscn")
+                        )
+                "unlock_noah":
+                        # 解锁最终BOSS诺亚
+                        BountySystem.unlock_bounty("b07_noah_avatar")
+                        print("[CityExplorer] 最终BOSS诺亚已解锁!")
 
 ## 打开商店
 func _open_shop(shop_id: String) -> void:

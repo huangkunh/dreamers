@@ -50,5 +50,23 @@ func init_fight_settlement(data: Dictionary):
 func _return_to_city() -> void:
         _settlement_shown = false
         print("[FightSettlement] 战斗结束，返回之前区域")
+        # 重置随机遇敌计数，避免返回后立即遇敌
+        _reset_encounter_counter()
         # 使用SceneTransitionManager返回
         SceneTransitionManager.return_from_battle()
+
+## 重置随机遇敌计数
+func _reset_encounter_counter() -> void:
+        # 在场景树中查找 RandomEncounter 节点并重置
+        var root = get_tree().root
+        for i in range(root.get_child_count()):
+                var child = root.get_child(i)
+                _find_and_reset_encounter(child)
+
+func _find_and_reset_encounter(node: Node) -> void:
+        if node.has_method("reset_encounter_counter"):
+                node.reset_encounter_counter()
+                print("[FightSettlement] 随机遇敌计数已重置")
+                return
+        for i in range(node.get_child_count()):
+                _find_and_reset_encounter(node.get_child(i))

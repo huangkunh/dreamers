@@ -49,6 +49,7 @@ func save_game(slot: int = 0) -> bool:
 		"tanks": _serialize_tanks(),
 		"achievements": _serialize_achievements(),
 		"quests": _serialize_quests(),
+		"bounties": _serialize_bounties(),
 		"current_area": GameData.game_flags.get("current_area", "aoduo"),
 		"flags": GameData.game_flags,
 	}
@@ -96,6 +97,7 @@ func load_game(slot: int = 0) -> bool:
 	_deserialize_tanks(data.get("tanks", []))
 	_deserialize_achievements(data.get("achievements", []))
 	_deserialize_quests(data.get("quests", []))
+	_deserialize_bounties(data.get("bounties", []))
 
 	print("[SaveSystem] 读档成功! slot=%d, coins=%d, play_time=%.0f" % [slot, GameData.coins, GameData.play_time])
 	game_loaded.emit()
@@ -187,6 +189,15 @@ func _serialize_quests() -> Array:
 		})
 	return result
 
+func _serialize_bounties() -> Array:
+	var result := []
+	for bounty in BountySystem.bounties.values():
+		result.append({
+			"id": bounty.id,
+			"status": bounty.status,
+		})
+	return result
+
 ## ---- 反序列化 ----
 
 func _deserialize_party(party_data: Array) -> void:
@@ -261,3 +272,11 @@ func _deserialize_quests(quest_data: Array) -> void:
 			obj.target = obj_data.get("target", obj.target)
 			obj.count = int(obj_data.get("count", obj.count))
 			obj.current = int(obj_data.get("current", 0))
+
+func _deserialize_bounties(bounty_data: Array) -> void:
+	for bd in bounty_data:
+		var id: String = bd.get("id", "")
+		if not BountySystem.bounties.has(id):
+			continue
+		var bounty = BountySystem.bounties[id]
+		bounty.status = int(bd.get("status", BountySystem.BountyStatus.AVAILABLE))
