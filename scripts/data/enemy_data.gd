@@ -242,8 +242,8 @@ var w04_mutant_bat: Dictionary = {
         "exp_reward": 15,
         "coin_reward": 8,
         "animated": ["w04_mutant_bat_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/mutant_bat.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/wasteland/mutant_bat_n.png",
         "enemy_position": Vector3.ZERO,
 }
 
@@ -262,8 +262,8 @@ var f01_spider_bot: Dictionary = {
         "exp_reward": 25,
         "coin_reward": 15,
         "animated": ["f01_spider_bot_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/factory/spider_bot.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/factory/spider_bot_n.png",
         "enemy_position": Vector3.ZERO,
 }
 
@@ -282,8 +282,8 @@ var r01_ancient_guard: Dictionary = {
         "exp_reward": 40,
         "coin_reward": 25,
         "animated": ["r01_ancient_guard_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/ancient_ruins/ancient_guard.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/ancient_ruins/ancient_guard_n.png",
         "enemy_position": Vector3.ZERO,
 }
 
@@ -383,8 +383,8 @@ var f02_security_bot: Dictionary = {
         "exp_reward": 45,
         "coin_reward": 70,
         "animated": ["f02_security_bot_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e02_cannon_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/factory/security_bot.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/factory/security_bot_n.png",
         "enemy_position": Vector3.ZERO,
 }
 
@@ -423,8 +423,8 @@ var l05_soldier_ant: Dictionary = {
         "exp_reward": 18,
         "coin_reward": 20,
         "animated": ["l05_soldier_ant_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/l01_giant_ants_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/soldier_ant.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/soldier_ant_n.png",
         "enemy_position": Vector3.ZERO,
 }
 
@@ -483,8 +483,8 @@ var r03_hologram_guard: Dictionary = {
         "exp_reward": 60,
         "coin_reward": 90,
         "animated": ["r03_hologram_guard_default"],
-        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns.png",
-        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/aoduo/e01_flame_guns_n.png",
+        "albedo_texture_path": "res://resource/sprite/ordinary_enemies/ancient_ruins/hologram_guard.png",
+        "normal_map_texture_path": "res://resource/sprite/ordinary_enemies/ancient_ruins/hologram_guard_n.png",
         "enemy_position": Vector3.ZERO,
 }
 

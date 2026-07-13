@@ -1,7 +1,7 @@
 shader_type canvas_item;
-## HD-2D 像素艺术增强着色器
-## 参考 Octopath Traveler 的像素渲染风格
-## 保持像素清晰度的同时添加微妙的光影效果
+// HD-2D 像素艺术增强着色器
+// 参考 Octopath Traveler 的像素渲染风格
+// 保持像素清晰度的同时添加微妙的光影效果
 
 uniform sampler2D screen_texture : hint_screen_texture;
 

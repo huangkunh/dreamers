@@ -2,6 +2,7 @@ extends Node3D
 ## 城市探索管理器 (CityExplorer)
 ## 管理城市/迷宫探索：随机遇敌、暂停菜单、战车切换、NPC交互、对话、商店
 ## 附加到城市场景的根节点下
+## HD-2D 效果管理：动态光照、天气粒子、环境氛围
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const TANK_HUD_SCENE := preload("res://scenes/ui/tank_hud.tscn")
@@ -10,6 +11,14 @@ const SHOP_SCENE := preload("res://scenes/ui/shop_system.tscn")
 const TANK_GARAGE_SCENE := preload("res://scenes/ui/tank_garage.tscn")
 const BOUNTY_GUILD_SCENE := preload("res://scenes/ui/bounty_guild.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/ui/game_hud.tscn")
+
+## HD-2D 环境节点引用
+@onready var environment_node: WorldEnvironment = $WorldEnvironment
+@onready var main_light: DirectionalLight3D = $DirectionalLight3D
+@onready var dust_particles: GPUParticles3D = $WeatherEffects/DustParticles if has_node("WeatherEffects/DustParticles") else null
+@onready var ambient_sound_bar: AudioStreamPlayer3D = $AmbientSounds/AudioStreamPlayer3D_Bar if has_node("AmbientSounds/AudioStreamPlayer3D_Bar") else null
+@onready var ambient_sound_guild: AudioStreamPlayer3D = $AmbientSounds/AudioStreamPlayer3D_Guild if has_node("AmbientSounds/AudioStreamPlayer3D_Guild") else null
+@onready var ambient_sound_mechanic: AudioStreamPlayer3D = $AmbientSounds/AudioStreamPlayer3D_Mechanic if has_node("AmbientSounds/AudioStreamPlayer3D_Mechanic") else null
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var player: CharacterBody3D = $Player
@@ -28,6 +37,11 @@ var _is_ui_open: bool = false
 var _is_playing_opening: bool = false
 var _cutscene_player: Node = null
 var area_id: String = "aoduo"
+
+## HD-2D 效果参数
+var _weather_intensity: float = 1.0
+var _time_of_day: float = 0.7  # 0.0-1.0 (日出到日落)
+var _light_flicker_timer: float = 0.0
 
 func _ready() -> void:
 	# 设置游戏状态
@@ -88,6 +102,101 @@ func _process(delta: float) -> void:
 	# 更新游戏时间
 	if not get_tree().paused:
 		GameData.play_time += delta
+		
+		# HD-2D 效果更新
+		_update_hd2d_effects(delta)
+		
+		# 更新玩家附近的交互提示
+		_update_nearby_interactions()
+
+## HD-2D 效果更新
+func _update_hd2d_effects(delta: float) -> void:
+	# 光影闪烁效果 (模拟废土城市的不稳定光源)
+	_light_flicker_timer += delta
+	if _light_flicker_timer > 0.1:
+		_light_flicker_timer = 0.0
+		# 获取所有街道灯光节点并添加微弱闪烁
+		var street_lights = get_node_or_null("StreetLights")
+		if street_lights:
+			for light in street_lights.get_children():
+				if light is OmniLight3D:
+					var base_energy = light.light_energy
+					var flicker = randf_range(-0.1, 0.1) * base_energy
+					light.light_energy = base_energy + flicker
+
+	# 粒子强度随时间变化
+	if dust_particles:
+		var intensity_mod = 0.8 + randf() * 0.4
+		dust_particles.amount_ratio = _weather_intensity * intensity_mod
+
+## 更新附近交互提示
+func _update_nearby_interactions() -> void:
+	if player and not _is_ui_open:
+		# 检测附近可交互对象
+		var interactables = get_tree().get_nodes_in_group("interactable")
+		var closest: Node = null
+		var closest_dist: float = 5.0
+		
+		for obj in interactables:
+			if obj is Node3D:
+				var dist = player.global_position.distance_to(obj.global_position)
+				if dist < closest_dist:
+					closest = obj
+					closest_dist = dist
+		
+		# 更新交互提示
+		if closest and closest_dist < 3.0:
+			_highlight_interactable(closest)
+		else:
+			_clear_highlights()
+
+## 高亮可交互对象
+func _highlight_interactable(obj: Node) -> void:
+	# 检查是否有交互标记并使其闪烁
+	var marker = obj.get_node_or_null("InteractionMarker")
+	if marker and marker is MeshInstance3D:
+		var material = marker.mesh.surface_get_material(0) as StandardMaterial3D
+		if material:
+			var pulse = 0.6 + sin(Time.get_ticks_msec() * 0.005) * 0.3
+			material.albedo_color.a = pulse
+
+## 清除所有高亮
+func _clear_highlights() -> void:
+	var interactables = get_tree().get_nodes_in_group("interactable")
+	for obj in interactables:
+		var marker = obj.get_node_or_null("InteractionMarker")
+		if marker and marker is MeshInstance3D:
+			var material = marker.mesh.surface_get_material(0) as StandardMaterial3D
+			if material:
+				material.albedo_color.a = 0.8
+
+## 设置天气强度
+func set_weather_intensity(intensity: float) -> void:
+	_weather_intensity = clamp(intensity, 0.0, 2.0)
+	if dust_particles:
+		dust_particles.amount_ratio = _weather_intensity
+	# 调整雾效密度
+	if environment_node and environment_node.environment:
+		var fog_density = 0.8 * _weather_intensity
+		environment_node.environment.volumetric_fog_density = fog_density
+
+## 切换时段效果 (黄昏/夜晚)
+func set_time_of_day(time: float) -> void:
+	_time_of_day = clamp(time, 0.0, 1.0)
+	if main_light:
+		# 调整主光源颜色和强度
+		if _time_of_day < 0.3:
+			# 早晨 - 柔和暖光
+			main_light.light_color = Color(1.0, 0.9, 0.7)
+			main_light.light_energy = 0.7
+		elif _time_of_day < 0.7:
+			# 下午 - 明亮暖黄
+			main_light.light_color = Color(1.0, 0.75, 0.45)
+			main_light.light_energy = 0.85
+		else:
+			# 黄昏/夜晚 - 低强度暖橙
+			main_light.light_color = Color(1.0, 0.6, 0.3)
+			main_light.light_energy = 0.5
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _is_ui_open:

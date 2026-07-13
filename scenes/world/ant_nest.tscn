@@ -1,15 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://bant_nest_001"]
+[gd_scene load_steps=35 format=3 uid="uid://bant_nest_001"]
 
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/ant_nest.gd" id="2_antnest"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="3_bgm"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="4_vignette"]
 
+# === 天空和环境 ===
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_ant"]
-sky_top_color = Color(0.15, 0.1, 0.08, 1)
-sky_horizon_color = Color(0.25, 0.15, 0.1, 1)
-ground_bottom_color = Color(0.1, 0.08, 0.05, 1)
-ground_horizon_color = Color(0.2, 0.12, 0.08, 1)
+sky_top_color = Color(0.08, 0.05, 0.03, 1)
+sky_horizon_color = Color(0.12, 0.08, 0.05, 1)
+ground_bottom_color = Color(0.05, 0.03, 0.02, 1)
+ground_horizon_color = Color(0.1, 0.06, 0.04, 1)
 
 [sub_resource type="Sky" id="Sky_ant"]
 sky_material = SubResource("SkyMat_ant")
@@ -17,53 +18,188 @@ sky_material = SubResource("SkyMat_ant")
 [sub_resource type="Environment" id="Env_ant"]
 background_mode = 2
 sky = SubResource("Sky_ant")
-ambient_light_color = Color(0.3, 0.2, 0.15, 1)
-ambient_light_energy = 0.4
+ambient_light_color = Color(0.2, 0.15, 0.1, 1)
+ambient_light_energy = 0.3
 fog_enabled = true
-fog_light_color = Color(0.2, 0.15, 0.1, 1)
-fog_density = 0.12
+fog_light_color = Color(0.15, 0.1, 0.08, 1)
+fog_density = 0.15
+fog_height = 2.0
+fog_height_density = 0.5
 volumetric_fog_enabled = true
-volumetric_fog_density = 1.2
-volumetric_fog_albedo = Color(0.3, 0.2, 0.15, 1)
+volumetric_fog_density = 1.5
+volumetric_fog_albedo = Color(0.2, 0.15, 0.1, 1)
+volumetric_fog_emission = Color(0.1, 0.05, 0.02, 1)
+volumetric_fog_emission_energy = 0.5
 tonemap_mode = 2
+ssao_enabled = true
+ssao_intensity = 1.5
+ssao_radius = 2.0
+ssao_power = 2.5
+glow_enabled = true
+glow_intensity = 0.8
+glow_strength = 1.2
+glow_bloom = 0.3
+glow_blend_mode = 1
 
+# === 有机材质 ===
+# 地面 - 深棕土质
 [sub_resource type="StandardMaterial3D" id="GroundMat"]
-albedo_color = Color(0.25, 0.18, 0.12, 1)
+albedo_color = Color(0.22, 0.15, 0.1, 1)
+roughness = 0.9
+normal_enabled = true
 
+# 墙壁 - 有机棕色
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.28, 0.18, 0.1, 1)
+roughness = 0.85
+
+# 蜂窝图案墙壁 - 琥珀色调
+[sub_resource type="StandardMaterial3D" id="HoneycombMat"]
+albedo_color = Color(0.35, 0.25, 0.12, 1)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.3, 0.2, 0.05, 1)
+emission_energy = 0.3
+
+# 卵室材质 - 淡绿色/白色
+[sub_resource type="StandardMaterial3D" id="EggChamberMat"]
+albedo_color = Color(0.4, 0.38, 0.32, 1)
+roughness = 0.6
+
+# 酸池材质 - 绿色发光
+[sub_resource type="StandardMaterial3D" id="AcidPoolMat"]
+albedo_color = Color(0.2, 0.5, 0.15, 0.7)
+roughness = 0.2
+metallic = 0.3
+emission_enabled = true
+emission = Color(0.15, 0.6, 0.1, 1)
+emission_energy = 1.2
+transparency = 1
+
+# 蜂蜜池材质 - 琥珀色发光
+[sub_resource type="StandardMaterial3D" id="HoneyPoolMat"]
+albedo_color = Color(0.6, 0.4, 0.1, 0.8)
+roughness = 0.15
+metallic = 0.2
+emission_enabled = true
+emission = Color(0.5, 0.3, 0.05, 1)
+emission_energy = 0.8
+transparency = 1
+
+# 有机支柱材质
+[sub_resource type="StandardMaterial3D" id="PillarMat"]
+albedo_color = Color(0.25, 0.16, 0.1, 1)
+roughness = 0.8
+
+# 生物发光材质 - 青绿色
+[sub_resource type="StandardMaterial3D" id="BiolumGreenMat"]
+albedo_color = Color(0.15, 0.4, 0.3, 1)
+emission_enabled = true
+emission = Color(0.2, 0.8, 0.4, 1)
+emission_energy = 2.0
+
+# 生物发光材质 - 琥珀色
+[sub_resource type="StandardMaterial3D" id="BiolumAmberMat"]
+albedo_color = Color(0.4, 0.3, 0.1, 1)
+emission_enabled = true
+emission = Color(0.6, 0.4, 0.1, 1)
+emission_energy = 1.5
+
+# BOSS房间 - 深红紫色调
+[sub_resource type="StandardMaterial3D" id="BossRoomMat"]
+albedo_color = Color(0.3, 0.15, 0.2, 1)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.2, 0.05, 0.1, 1)
+emission_energy = 0.2
+
+# 粘性地板材质
+[sub_resource type="StandardMaterial3D" id="StickyFloorMat"]
+albedo_color = Color(0.3, 0.25, 0.15, 1)
+roughness = 0.95
+
+# === 网格资源 ===
 [sub_resource type="PlaneMesh" id="GroundMesh"]
-size = Vector2(50, 50)
+size = Vector2(60, 80)
 material = SubResource("GroundMat")
 
+[sub_resource type="BoxMesh" id="WallBlock"]
+size = Vector3(2, 3, 2)
+
+[sub_resource type="SphereMesh" id="EggSphere"]
+radius = 0.5
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="PillarMesh"]
+top_radius = 0.4
+bottom_radius = 0.6
+height = 4.0
+
+[sub_resource type="CylinderMesh" id="StalactiteMesh"]
+top_radius = 0.1
+bottom_radius = 0.3
+height = 1.5
+
+# === HD-2D 后处理着色器 ===
 [sub_resource type="ShaderMaterial" id="VignetteMat"]
 shader = ExtResource("4_vignette")
-shader_parameter/vignette_intensity = 0.8
-shader_parameter/vignette_color = Color(0, 0, 0, 1)
+shader_parameter/vignette_intensity = 0.85
+shader_parameter/vignette_color = Color(0.02, 0.01, 0.0, 1)
+
+[sub_resource type="ShaderMaterial" id="HD2DPostProcess"]
+shader = ExtResource("4_vignette")
+shader_parameter/vignette_intensity = 1.0
+shader_parameter/vignette_color = Color(0.05, 0.02, 0.0, 1)
+
+# === 碰撞形状 ===
+[sub_resource type="BoxShape3D" id="BossTriggerShape"]
+size = Vector3(8, 4, 8)
+
+[sub_resource type="BoxShape3D" id="AcidPoolShape"]
+size = Vector3(4, 0.3, 4)
+
+[sub_resource type="BoxShape3D" id="StickyFloorShape"]
+size = Vector3(6, 0.2, 6)
+
+[sub_resource type="BoxShape3D" id="EnemySpawnShape"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="ChestShape"]
+size = Vector3(1, 0.8, 0.6)
 
 [node name="AntNest" type="Node3D"]
 script = ExtResource("2_antnest")
 
+# === 世界环境 ===
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Env_ant")
 
+# === 主方向光 ===
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.7, 0.3, -0.6, 0, 0.8, 0.5, 0.7, -0.5, 0.5, 5, 8, 5)
-light_color = Color(0.6, 0.4, 0.3, 1)
-light_energy = 0.4
+light_color = Color(0.5, 0.35, 0.2, 1)
+light_energy = 0.3
+shadow_enabled = true
 
+# === 相机 ===
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0, 6, 8)
 fov = 55.0
 
+# === 地面 ===
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("GroundMesh")
 
+# === 玩家 ===
 [node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
 
+# === 音频 ===
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_bgm")
 volume_db = -6.0
 
+# === HD-2D 后处理层 ===
 [node name="VignetteOverlay" type="ColorRect" parent="."]
 material = SubResource("VignetteMat")
 anchors_preset = 15
@@ -71,63 +207,717 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
+[node name="HD2DOverlay" type="ColorRect" parent="."]
+material = SubResource("HD2DPostProcess")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+modulate = Color(1, 0.95, 0.9, 0.1)
+
+# ========================================
+# === 蚁穴入口区域 (Ant Hill Entrance) ===
+# ========================================
+[node name="EntranceArea" type="Node3D" parent="."]
+
+[node name="AnthillStructure" type="CSGSphere3D" parent="EntranceArea"]
+transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 1.2, 0, 0.5, 20)
+radius = 3.0
+material = SubResource("WallMat")
+
+[node name="EntranceTunnel" type="CSGBox3D" parent="EntranceArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 17)
+size = Vector3(3, 1.5, 6)
+material = SubResource("WallMat")
+
+[node name="EntranceLight" type="OmniLight3D" parent="EntranceArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 18)
+light_color = Color(0.6, 0.5, 0.4, 1)
+light_energy = 0.6
+omni_range = 8.0
+
+# ========================================
+# === 主隧道系统 (Main Tunnels) ===
+# ========================================
+[node name="Tunnels" type="Node3D" parent="."]
+
+# 主走廊
+[node name="MainCorridor" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+size = Vector3(8, 3, 40)
+material = SubResource("WallMat")
+
+# 左侧隧道
+[node name="LeftTunnel" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.5, -10)
+size = Vector3(4, 2.5, 20)
+material = SubResource("WallMat")
+
+# 右侧隧道
+[node name="RightTunnel" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, -15)
+size = Vector3(4, 2.5, 18)
+material = SubResource("WallMat")
+
+# 连接通道
+[node name="Connector1" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, -5)
+size = Vector3(6, 2, 3)
+material = SubResource("WallMat")
+
+[node name="Connector2" type="CSGBox3D" parent="Tunnels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, -8)
+size = Vector3(6, 2, 3)
+material = SubResource("WallMat")
+
+# 隧道壁蜂窝纹理装饰
+[node name="HoneycombDecorations" type="Node3D" parent="Tunnels"]
+
+[node name="Honeycomb1" type="CSGBox3D" parent="Tunnels/HoneycombDecorations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.5, -12)
+size = Vector3(0.2, 2, 4)
+material = SubResource("HoneycombMat")
+
+[node name="Honeycomb2" type="CSGBox3D" parent="Tunnels/HoneycombDecorations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.5, -12)
+size = Vector3(0.2, 2, 4)
+material = SubResource("HoneycombMat")
+
+[node name="Honeycomb3" type="CSGBox3D" parent="Tunnels/HoneycombDecorations"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 1.5, -18)
+size = Vector3(0.2, 2, 6)
+material = SubResource("HoneycombMat")
+
+# ========================================
+# === 有机墙壁 (Organic Walls) ===
+# ========================================
 [node name="Walls" type="Node3D" parent="."]
 
 [node name="WallNorth" type="CSGBox3D" parent="Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -25)
-size = Vector3(50, 2, 1)
-material = SubResource("GroundMat")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -40)
+size = Vector3(60, 4, 2)
+material = SubResource("WallMat")
 
 [node name="WallSouth" type="CSGBox3D" parent="Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 25)
-size = Vector3(50, 2, 1)
-material = SubResource("GroundMat")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 25)
+size = Vector3(60, 4, 2)
+material = SubResource("WallMat")
 
 [node name="WallEast" type="CSGBox3D" parent="Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 0)
-size = Vector3(1, 2, 50)
-material = SubResource("GroundMat")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, -8)
+size = Vector3(2, 4, 65)
+material = SubResource("WallMat")
 
 [node name="WallWest" type="CSGBox3D" parent="Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 1, 0)
-size = Vector3(1, 2, 50)
-material = SubResource("GroundMat")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 2, -8)
+size = Vector3(2, 4, 65)
+material = SubResource("WallMat")
 
-[node name="Tunnels" type="Node3D" parent="."]
+# 墙壁蜂窝纹理
+[node name="WallHoneycombPattern" type="Node3D" parent="Walls"]
 
-[node name="Tunnel1" type="CSGBox3D" parent="Tunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -5)
-size = Vector3(2, 2, 8)
-material = SubResource("GroundMat")
+[node name="PatternNE" type="CSGSphere3D" parent="Walls/WallHoneycombPattern"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.3, 25, 1.5, -20)
+radius = 0.6
+material = SubResource("HoneycombMat")
 
-[node name="Tunnel2" type="CSGBox3D" parent="Tunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -10)
-size = Vector3(2, 2, 10)
-material = SubResource("GroundMat")
+[node name="PatternNW" type="CSGSphere3D" parent="Walls/WallHoneycombPattern"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.3, -25, 1.5, -20)
+radius = 0.6
+material = SubResource("HoneycombMat")
 
-[node name="Tunnel3" type="CSGBox3D" parent="Tunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -15)
-size = Vector3(6, 2, 4)
-material = SubResource("GroundMat")
+[node name="PatternSE" type="CSGSphere3D" parent="Walls/WallHoneycombPattern"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.3, 25, 1.5, 10)
+radius = 0.5
+material = SubResource("HoneycombMat")
 
-[node name="EggSacks" type="Node3D" parent="."]
+[node name="PatternSW" type="CSGSphere3D" parent="Walls/WallHoneycombPattern"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.3, -25, 1.5, 10)
+radius = 0.5
+material = SubResource("HoneycombMat")
 
-[node name="EggSack1" type="CSGSphere3D" parent="EggSacks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, -8)
+# ========================================
+# === 有机支柱 (Organic Pillars) ===
+# ========================================
+[node name="Pillars" type="Node3D" parent="."]
+
+[node name="Pillar1" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -5)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar2" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, -5)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar3" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2, -15)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar4" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, -15)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar5" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -22)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar6" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 2, -10)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Pillar7" type="MeshInstance3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2, -10)
+mesh = SubResource("PillarMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+# ========================================
+# === 钟乳石 (Stalactites) ===
+# ========================================
+[node name="Stalactites" type="Node3D" parent="."]
+
+[node name="Stalactite1" type="MeshInstance3D" parent="Stalactites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3.5, -8)
+mesh = SubResource("StalactiteMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Stalactite2" type="MeshInstance3D" parent="Stalactites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3.5, -8)
+mesh = SubResource("StalactiteMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Stalactite3" type="MeshInstance3D" parent="Stalactites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.5, -18)
+mesh = SubResource("StalactiteMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Stalactite4" type="MeshInstance3D" parent="Stalactites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, -18)
+mesh = SubResource("StalactiteMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+[node name="Stalactite5" type="MeshInstance3D" parent="Stalactites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -30)
+mesh = SubResource("StalactiteMesh")
+surface_material_override/0 = SubResource("PillarMat")
+
+# ========================================
+# === 卵室和幼虫房间 (Egg Chambers & Larva Rooms) ===
+# ========================================
+[node name="EggChambers" type="Node3D" parent="."]
+
+# 卵室1 - 主隧道左侧
+[node name="EggChamber1" type="Node3D" parent="EggChambers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -8)
+
+[node name="Chamber" type="CSGSphere3D" parent="EggChambers/EggChamber1"]
+radius = 3.5
+material = SubResource("EggChamberMat")
+
+[node name="Eggs" type="Node3D" parent="EggChambers/EggChamber1"]
+
+[node name="Egg1" type="CSGSphere3D" parent="EggChambers/EggChamber1/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, -1, 0.3, 0)
+radius = 0.4
+material = SubResource("EggChamberMat")
+
+[node name="Egg2" type="CSGSphere3D" parent="EggChambers/EggChamber1/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 0.5, 0.4, 0.5)
+radius = 0.35
+material = SubResource("EggChamberMat")
+
+[node name="Egg3" type="CSGSphere3D" parent="EggChambers/EggChamber1/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 0.8, 0.3, -0.3)
+radius = 0.4
+material = SubResource("EggChamberMat")
+
+[node name="Egg4" type="CSGSphere3D" parent="EggChambers/EggChamber1/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, -0.3, 0.5, -0.5)
+radius = 0.3
+material = SubResource("EggChamberMat")
+
+# 卵室2 - 主隧道右侧
+[node name="EggChamber2" type="Node3D" parent="EggChambers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -12)
+
+[node name="Chamber" type="CSGSphere3D" parent="EggChambers/EggChamber2"]
+radius = 4.0
+material = SubResource("EggChamberMat")
+
+[node name="Eggs" type="Node3D" parent="EggChambers/EggChamber2"]
+
+[node name="Egg1" type="CSGSphere3D" parent="EggChambers/EggChamber2/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, -1.2, 0.3, 0.5)
+radius = 0.4
+material = SubResource("EggChamberMat")
+
+[node name="Egg2" type="CSGSphere3D" parent="EggChambers/EggChamber2/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 0.8, 0.4, 0.8)
+radius = 0.45
+material = SubResource("EggChamberMat")
+
+[node name="Egg3" type="CSGSphere3D" parent="EggChambers/EggChamber2/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 1.0, 0.3, -0.5)
+radius = 0.35
+material = SubResource("EggChamberMat")
+
+[node name="Egg4" type="CSGSphere3D" parent="EggChambers/EggChamber2/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, -0.5, 0.5, -1.0)
+radius = 0.4
+material = SubResource("EggChamberMat")
+
+[node name="Egg5" type="CSGSphere3D" parent="EggChambers/EggChamber2/Eggs"]
+transform = Transform3D(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 0, 0.6, 0)
+radius = 0.5
+material = SubResource("EggChamberMat")
+
+# 幼虫室
+[node name="LarvaRoom" type="Node3D" parent="EggChambers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+
+[node name="Room" type="CSGBox3D" parent="EggChambers/LarvaRoom"]
+size = Vector3(6, 2.5, 6)
+material = SubResource("EggChamberMat")
+
+[node name="LarvaPlatform" type="CSGBox3D" parent="EggChambers/LarvaRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+size = Vector3(4, 0.5, 4)
+material = SubResource("HoneycombMat")
+
+# ========================================
+# === 酸池和蜂蜜池 (Acid & Honey Pools) ===
+# ========================================
+[node name="LiquidPools" type="Node3D" parent="."]
+
+# 酸池1
+[node name="AcidPool1" type="Area3D" parent="LiquidPools"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.1, -10)
+script = ExtResource("2_antnest")
+
+[node name="Collision" type="CollisionShape3D" parent="LiquidPools/AcidPool1"]
+shape = SubResource("AcidPoolShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="LiquidPools/AcidPool1"]
+mesh = BoxMesh.new()
+surface_material_override/0 = SubResource("AcidPoolMat")
+
+[node name="PoolMesh" type="CSGBox3D" parent="LiquidPools/AcidPool1"]
+size = Vector3(4, 0.3, 4)
+material = SubResource("AcidPoolMat")
+
+[node name="PoolLight" type="OmniLight3D" parent="LiquidPools/AcidPool1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(0.3, 0.8, 0.2, 1)
+light_energy = 1.0
+omni_range = 5.0
+
+# 酸池2
+[node name="AcidPool2" type="Area3D" parent="LiquidPools"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.1, -20)
+
+[node name="Collision" type="CollisionShape3D" parent="LiquidPools/AcidPool2"]
+shape = SubResource("AcidPoolShape")
+
+[node name="PoolMesh" type="CSGBox3D" parent="LiquidPools/AcidPool2"]
+size = Vector3(4, 0.3, 4)
+material = SubResource("AcidPoolMat")
+
+[node name="PoolLight" type="OmniLight3D" parent="LiquidPools/AcidPool2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(0.3, 0.8, 0.2, 1)
+light_energy = 1.0
+omni_range = 5.0
+
+# 蜂蜜池
+[node name="HoneyPool1" type="Area3D" parent="LiquidPools"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.1, -25)
+
+[node name="Collision" type="CollisionShape3D" parent="LiquidPools/HoneyPool1"]
+shape = SubResource("AcidPoolShape")
+
+[node name="PoolMesh" type="CSGBox3D" parent="LiquidPools/HoneyPool1"]
+size = Vector3(3, 0.3, 3)
+material = SubResource("HoneyPoolMat")
+
+[node name="PoolLight" type="OmniLight3D" parent="LiquidPools/HoneyPool1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(0.8, 0.5, 0.2, 1)
+light_energy = 0.8
+omni_range = 4.0
+
+# ========================================
+# === 粘性地板区域 (Sticky Floors) ===
+# ========================================
+[node name="StickyFloors" type="Node3D" parent="."]
+
+[node name="StickyFloor1" type="Area3D" parent="StickyFloors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.05, -5)
+
+[node name="Collision" type="CollisionShape3D" parent="StickyFloors/StickyFloor1"]
+shape = SubResource("StickyFloorShape")
+
+[node name="Mesh" type="CSGBox3D" parent="StickyFloors/StickyFloor1"]
+size = Vector3(6, 0.1, 6)
+material = SubResource("StickyFloorMat")
+
+[node name="StickyFloor2" type="Area3D" parent="StickyFloors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.05, -15)
+
+[node name="Collision" type="CollisionShape3D" parent="StickyFloors/StickyFloor2"]
+shape = SubResource("StickyFloorShape")
+
+[node name="Mesh" type="CSGBox3D" parent="StickyFloors/StickyFloor2"]
+size = Vector3(6, 0.1, 6)
+material = SubResource("StickyFloorMat")
+
+# ========================================
+# === 生物发光效果 (Bioluminescent Effects) ===
+# ========================================
+[node name="Bioluminescence" type="Node3D" parent="."]
+
+# 绿色发光蘑菇/晶体
+[node name="BiolumGreen1" type="MeshInstance3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -3)
+mesh = SubResource("EggSphere")
+surface_material_override/0 = SubResource("BiolumGreenMat")
+
+[node name="Light1" type="OmniLight3D" parent="Bioluminescence/BiolumGreen1"]
+light_color = Color(0.2, 0.8, 0.4, 1)
+light_energy = 1.5
+omni_range = 4.0
+
+[node name="BiolumGreen2" type="MeshInstance3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -8)
+mesh = SubResource("EggSphere")
+surface_material_override/0 = SubResource("BiolumGreenMat")
+
+[node name="Light2" type="OmniLight3D" parent="Bioluminescence/BiolumGreen2"]
+light_color = Color(0.2, 0.8, 0.4, 1)
+light_energy = 1.5
+omni_range = 4.0
+
+[node name="BiolumGreen3" type="MeshInstance3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -20)
+mesh = SubResource("EggSphere")
+surface_material_override/0 = SubResource("BiolumGreenMat")
+
+[node name="Light3" type="OmniLight3D" parent="Bioluminescence/BiolumGreen3"]
+light_color = Color(0.2, 0.8, 0.4, 1)
+light_energy = 1.5
+omni_range = 4.0
+
+# 琥珀色发光
+[node name="BiolumAmber1" type="MeshInstance3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -25)
+mesh = SubResource("EggSphere")
+surface_material_override/0 = SubResource("BiolumAmberMat")
+
+[node name="Light1" type="OmniLight3D" parent="Bioluminescence/BiolumAmber1"]
+light_color = Color(0.8, 0.5, 0.1, 1)
+light_energy = 1.2
+omni_range = 3.5
+
+[node name="BiolumAmber2" type="MeshInstance3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -18)
+mesh = SubResource("EggSphere")
+surface_material_override/0 = SubResource("BiolumAmberMat")
+
+[node name="Light2" type="OmniLight3D" parent="Bioluminescence/BiolumAmber2"]
+light_color = Color(0.8, 0.5, 0.1, 1)
+light_energy = 1.2
+omni_range = 3.5
+
+# 天花板发光点
+[node name="CeilingGlow1" type="OmniLight3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -10)
+light_color = Color(0.4, 0.3, 0.15, 1)
+light_energy = 0.5
+omni_range = 10.0
+
+[node name="CeilingGlow2" type="OmniLight3D" parent="Bioluminescence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -30)
+light_color = Color(0.4, 0.3, 0.15, 1)
+light_energy = 0.5
+omni_range = 10.0
+
+# ========================================
+# === BOSS 区域 - 蚁后王座室 (Ant Queen Chamber) ===
+# ========================================
+[node name="BossArea" type="Node3D" parent="."]
+
+# BOSS房间墙壁
+[node name="BossRoomWalls" type="Node3D" parent="BossArea"]
+
+[node name="BackWall" type="CSGBox3D" parent="BossArea/BossRoomWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -38)
+size = Vector3(16, 5, 2)
+material = SubResource("BossRoomMat")
+
+[node name="LeftWall" type="CSGBox3D" parent="BossArea/BossRoomWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2.5, -33)
+size = Vector3(2, 5, 12)
+material = SubResource("BossRoomMat")
+
+[node name="RightWall" type="CSGBox3D" parent="BossArea/BossRoomWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.5, -33)
+size = Vector3(2, 5, 12)
+material = SubResource("BossRoomMat")
+
+# BOSS房间入口
+[node name="BossEntrance" type="CSGBox3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -27)
+size = Vector3(5, 3, 2)
+material = SubResource("HoneycombMat")
+
+# 王座平台
+[node name="ThronePlatform" type="CSGBox3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -35)
+size = Vector3(8, 1, 6)
+material = SubResource("HoneycombMat")
+
+# BOSS房间发光装饰
+[nodeName="BossGlow1" type="OmniLight3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -35)
+light_color = Color(0.6, 0.2, 0.4, 1)
+light_energy = 2.0
+omni_range = 6.0
+
+[node name="BossGlow2" type="OmniLight3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, -35)
+light_color = Color(0.6, 0.2, 0.4, 1)
+light_energy = 2.0
+omni_range = 6.0
+
+[node name="BossGlowCenter" type="OmniLight3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -33)
+light_color = Color(0.5, 0.15, 0.3, 1)
+light_energy = 1.5
+omni_range = 8.0
+
+# BOSS触发区域
+[node name="BossTrigger" type="Area3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -32)
+
+[node name="Collision" type="CollisionShape3D" parent="BossArea/BossTrigger"]
+shape = SubResource("BossTriggerShape")
+
+[node name="TriggerVisual" type="MeshInstance3D" parent="BossArea/BossTrigger"]
+mesh = BoxMesh.new()
+surface_material_override/0 = SubResource("BossRoomMat")
+
+# 警示标记
+[node name="WarningSign" type="CSGBox3D" parent="BossArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -28)
+size = Vector3(3, 0.2, 0.2)
+material = SubResource("BossRoomMat")
+
+# BOSS房间蜂窝图案
+[node name="BossHoneycomb" type="Node3D" parent="BossArea"]
+
+[node name="HC1" type="CSGSphere3D" parent="BossArea/BossHoneycomb"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, -6, 2, -37)
 radius = 0.8
-material = SubResource("GroundMat")
+material = SubResource("BiolumAmberMat")
 
-[node name="EggSack2" type="CSGSphere3D" parent="EggSacks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, -12)
-radius = 1.0
-material = SubResource("GroundMat")
+[node name="HC2" type="CSGSphere3D" parent="BossArea/BossHoneycomb"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, 6, 2, -37)
+radius = 0.8
+material = SubResource("BiolumAmberMat")
 
-[node name="EggSack3" type="CSGSphere3D" parent="EggSacks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -18)
-radius = 0.9
-material = SubResource("GroundMat")
+[node name="HC3" type="CSGSphere3D" parent="BossArea/BossHoneycomb"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, -4, 3, -37)
+radius = 0.5
+material = SubResource("BiolumGreenMat")
 
-[node name="EggSack4" type="CSGSphere3D" parent="EggSacks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -20)
-radius = 1.2
-material = SubResource("GroundMat")
+[node name="HC4" type="CSGSphere3D" parent="BossArea/BossHoneycomb"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, 4, 3, -37)
+radius = 0.5
+material = SubResource("BiolumGreenMat")
+
+# ========================================
+# === 敌人生成区域 (Enemy Spawn Zones) ===
+# ========================================
+[node name="EnemySpawnZones" type="Node3D" parent="."]
+
+# 主走廊巡逻区
+[node name="SpawnZone_MainCorridor" type="Area3D" parent="EnemySpawnZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Collision" type="CollisionShape3D" parent="EnemySpawnZones/SpawnZone_MainCorridor"]
+shape = SubResource("EnemySpawnShape")
+
+[node name="SpawnPoint1" type="Marker3D" parent="EnemySpawnZones/SpawnZone_MainCorridor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 5)
+
+[node name="SpawnPoint2" type="Marker3D" parent="EnemySpawnZones/SpawnZone_MainCorridor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 5)
+
+# 左隧道
+[node name="SpawnZone_LeftTunnel" type="Area3D" parent="EnemySpawnZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1, -10)
+
+[node name="Collision" type="CollisionShape3D" parent="EnemySpawnZones/SpawnZone_LeftTunnel"]
+shape = SubResource("EnemySpawnShape")
+
+[node name="SpawnPoint1" type="Marker3D" parent="EnemySpawnZones/SpawnZone_LeftTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="SpawnPoint2" type="Marker3D" parent="EnemySpawnZones/SpawnZone_LeftTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+# 右隧道
+[node name="SpawnZone_RightTunnel" type="Area3D" parent="EnemySpawnZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, -15)
+
+[node name="Collision" type="CollisionShape3D" parent="EnemySpawnZones/SpawnZone_RightTunnel"]
+shape = SubResource("EnemySpawnShape")
+
+[node name="SpawnPoint1" type="Marker3D" parent="EnemySpawnZones/SpawnZone_RightTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="SpawnPoint2" type="Marker3D" parent="EnemySpawnZones/SpawnZone_RightTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+# 卵室守卫
+[node name="SpawnZone_EggChamber" type="Area3D" parent="EnemySpawnZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -8)
+
+[node name="Collision" type="CollisionShape3D" parent="EnemySpawnZones/SpawnZone_EggChamber"]
+shape = SubResource("EnemySpawnShape")
+
+[node name="SpawnPoint1" type="Marker3D" parent="EnemySpawnZones/SpawnZone_EggChamber"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="SpawnPoint2" type="Marker3D" parent="EnemySpawnZones/SpawnZone_EggChamber"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+# BOSS前厅守卫
+[node name="SpawnZone_PreBoss" type="Area3D" parent="EnemySpawnZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -25)
+
+[node name="Collision" type="CollisionShape3D" parent="EnemySpawnZones/SpawnZone_PreBoss"]
+shape = SubResource("EnemySpawnShape")
+
+[node name="SpawnPoint1" type="Marker3D" parent="EnemySpawnZones/SpawnZone_PreBoss"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="SpawnPoint2" type="Marker3D" parent="EnemySpawnZones/SpawnZone_PreBoss"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+# ========================================
+# === 宝箱 (Treasure Chests) ===
+# ========================================
+[node name="TreasureChests" type="Node3D" parent="."]
+
+# 宝箱1 - 入口附近
+[node name="Chest1_Entry" type="Area3D" parent="TreasureChests"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.4, 8)
+
+[node name="Collision" type="CollisionShape3D" parent="TreasureChests/Chest1_Entry"]
+shape = SubResource("ChestShape")
+
+[node name="Mesh" type="CSGBox3D" parent="TreasureChests/Chest1_Entry"]
+size = Vector3(1, 0.8, 0.6)
+material = SubResource("HoneycombMat")
+
+[node name="Lid" type="CSGBox3D" parent="TreasureChests/Chest1_Entry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(1, 0.2, 0.6)
+material = SubResource("HoneycombMat")
+
+# 宝箱2 - 左隧道
+[node name="Chest2_LeftTunnel" type="Area3D" parent="TreasureChests"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.4, -15)
+
+[node name="Collision" type="CollisionShape3D" parent="TreasureChests/Chest2_LeftTunnel"]
+shape = SubResource("ChestShape")
+
+[node name="Mesh" type="CSGBox3D" parent="TreasureChests/Chest2_LeftTunnel"]
+size = Vector3(1, 0.8, 0.6)
+material = SubResource("HoneycombMat")
+
+[node name="Lid" type="CSGBox3D" parent="TreasureChests/Chest2_LeftTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(1, 0.2, 0.6)
+material = SubResource("HoneycombMat")
+
+# 宝箱3 - 右隧道隐藏室
+[node name="Chest3_RightTunnel" type="Area3D" parent="TreasureChests"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.4, -22)
+
+[node name="Collision" type="CollisionShape3D" parent="TreasureChests/Chest3_RightTunnel"]
+shape = SubResource("ChestShape")
+
+[node name="Mesh" type="CSGBox3D" parent="TreasureChests/Chest3_RightTunnel"]
+size = Vector3(1, 0.8, 0.6)
+material = SubResource("HoneycombMat")
+
+[node name="Lid" type="CSGBox3D" parent="TreasureChests/Chest3_RightTunnel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(1, 0.2, 0.6)
+material = SubResource("HoneycombMat")
+
+# 宝箱4 - BOSS房间（稀有）
+[node name="Chest4_BossRoom" type="Area3D" parent="TreasureChests"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.4, -35)
+
+[node name="Collision" type="CollisionShape3D" parent="TreasureChests/Chest4_BossRoom"]
+shape = SubResource("ChestShape")
+
+[node name="Mesh" type="CSGBox3D" parent="TreasureChests/Chest4_BossRoom"]
+size = Vector3(1.2, 1, 0.8)
+material = SubResource("BiolumAmberMat")
+
+[node name="Lid" type="CSGBox3D" parent="TreasureChests/Chest4_BossRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+size = Vector3(1.2, 0.25, 0.8)
+material = SubResource("BiolumAmberMat")
+
+[node name="Glow" type="OmniLight3D" parent="TreasureChests/Chest4_BossRoom"]
+light_color = Color(0.8, 0.5, 0.2, 1)
+light_energy = 0.8
+omni_range = 3.0
+
+# 宝箱5 - BOSS房间另一侧
+[node name="Chest5_BossRoom" type="Area3D" parent="TreasureChests"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.4, -35)
+
+[node name="Collision" type="CollisionShape3D" parent="TreasureChests/Chest5_BossRoom"]
+shape = SubResource("ChestShape")
+
+[node name="Mesh" type="CSGBox3D" parent="TreasureChests/Chest5_BossRoom"]
+size = Vector3(1, 0.8, 0.6)
+material = SubResource("HoneycombMat")
+
+[node name="Lid" type="CSGBox3D" parent="TreasureChests/Chest5_BossRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(1, 0.2, 0.6)
+material = SubResource("HoneycombMat")
+
+# ========================================
+# === 环境音效区域 ===
+# ========================================
+[node name="AmbientAudio" type="Node3D" parent="."]
+
+[node name="DripSound1" type="AudioStreamPlayer3D" parent="AmbientAudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 2, -15)
+stream = null
+volume_db = -12.0
+autoplay = true
+
+[node name="DripSound2" type="AudioStreamPlayer3D" parent="AmbientAudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, -20)
+stream = null
+volume_db = -12.0
+autoplay = true
+
+[node name="ChitterSound" type="AudioStreamPlayer3D" parent="AmbientAudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -30)
+stream = null
+volume_db = -15.0
+autoplay = true

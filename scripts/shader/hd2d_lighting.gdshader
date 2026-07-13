@@ -1,7 +1,7 @@
 shader_type spatial;
-## HD-2D 光照着色器 (用于3D场景)
-## 模拟 Octopath Traveler 的柔和全局光照效果
-## 结合像素艺术精灵和3D环境
+// HD-2D 光照着色器 (用于3D场景)
+// 模拟 Octopath Traveler 的柔和全局光照效果
+// 结合像素艺术精灵和3D环境
 
 render_mode blend_mix, depth_draw_opaque, cull_back;
 

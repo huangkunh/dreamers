@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://wasteland_scene_001"]
+[gd_scene load_steps=25 format=3 uid="uid://wasteland_scene_001"]
 
 [ext_resource type="Environment" path="res://default_env.tres" id="1_env"]
 [ext_resource type="PackedScene" uid="uid://baci2p6bwnqan" path="res://scenes/characters/hero/player.tscn" id="2_player"]
@@ -6,8 +6,16 @@
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="4_bgm"]
 [ext_resource type="Shader" path="res://scripts/shader/vignette.gdshader" id="5_vignette"]
 [ext_resource type="Shader" path="res://scripts/shader/simulating_cloud_shadows.gdshader" id="6_cloud"]
-[ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="7_particles"]
-[ext_resource type="Script" path="res://scripts/components/area_entrance_trigger.gd" id="8_entrance"]
+[ext_resource type="Shader" path="res://scripts/shader/heat_haze.gdshader" id="7_heat_haze"]
+[ext_resource type="PackedScene" uid="uid://djfcf44g85nuy" path="res://resource/particles/luminous_particles.tscn" id="8_particles"]
+[ext_resource type="PackedScene" path="res://resource/particles/sand_particles.tscn" id="9_sand_particles"]
+[ext_resource type="Script" path="res://scripts/components/area_entrance_trigger.gd" id="10_entrance"]
+[ext_resource type="Script" path="res://scripts/components/sandstorm_zone.gd" id="11_sandstorm"]
+[ext_resource type="Script" path="res://scripts/components/radioactive_zone.gd" id="12_radiation"]
+[ext_resource type="Script" path="res://scripts/components/oasis_zone.gd" id="13_oasis"]
+[ext_resource type="Script" path="res://scripts/components/encounter_zone_hint.gd" id="14_encounter_hint"]
+[ext_resource type="Script" path="res://scripts/system/random_encounter.gd" id="15_random_encounter"]
+[ext_resource type="Script" path="res://scripts/components/wasteland_weather.gd" id="16_weather"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_waste"]
 sky_top_color = Color(0.75, 0.6, 0.4, 1)
@@ -25,17 +33,30 @@ ambient_light_color = Color(0.7, 0.55, 0.35, 1)
 ambient_light_energy = 0.6
 fog_enabled = true
 fog_light_color = Color(0.8, 0.65, 0.4, 1)
-fog_density = 0.08
+fog_density = 0.12
+fog_height = 2.0
+fog_height_density = 0.05
 glow_enabled = true
 glow_intensity = 0.6
 glow_strength = 0.8
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.02
+volumetric_fog_density = 0.04
 volumetric_fog_albedo = Color(0.8, 0.65, 0.4, 1)
+volumetric_fog_emission = 0.15
+volumetric_fog_emission_energy = 0.08
 
 [sub_resource type="StandardMaterial3D" id="GroundMat_waste"]
 albedo_color = Color(0.55, 0.4, 0.25, 1)
 roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="RockMat_waste"]
+albedo_color = Color(0.45, 0.35, 0.2, 1)
+roughness = 0.85
+metallic = 0.1
+
+[sub_resource type="StandardMaterial3D" id="DeadTreeMat"]
+albedo_color = Color(0.25, 0.15, 0.1, 1)
+roughness = 1.0
 
 [sub_resource type="PlaneMesh" id="GroundMesh_waste"]
 material = SubResource("GroundMat_waste")
@@ -56,6 +77,14 @@ shader = ExtResource("5_vignette")
 shader_parameter/vignette_intensity = 0.7
 shader_parameter/vignette_color = Color(0, 0, 0, 1)
 
+[sub_resource type="ShaderMaterial" id="HeatHaze_waste"]
+shader = ExtResource("7_heat_haze")
+shader_parameter/distortion_strength = 2.5
+shader_parameter/distortion_speed = 0.8
+shader_parameter/distortion_frequency = 6.0
+shader_parameter/direction_bias = 0.6
+shader_parameter/vertical_falloff = 0.4
+
 [node name="Wasteland" type="Node3D"]
 script = ExtResource("3_explorer")
 area_id = "wasteland"
@@ -66,7 +95,7 @@ environment = SubResource("Env_waste")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 10, 0)
 light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 1.2
+light_energy = 1.5
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -89,11 +118,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 stream = ExtResource("4_bgm")
 autoplay = true
 
-[node name="LuminousParticles" parent="." instance=ExtResource("7_particles")]
+[node name="LuminousParticles" parent="." instance=ExtResource("8_particles")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3)
+
+[node name="SandParticles" parent="." instance=ExtResource("9_sand_particles")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="VignetteOverlay" type="ColorRect" parent="."]
 material = SubResource("Vignette_waste")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="HeatHazeOverlay" type="ColorRect" parent="."]
+material = SubResource("HeatHaze_waste")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -116,6 +157,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.2, 6)
 size = Vector3(10, 0.4, 5)
 material = SubResource("GroundMat_waste")
 
+[node name="RockFormation1" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0.2, 0, 1, 0, -0.2, 0, 0.8, 12, 1.5, -15)
+size = Vector3(2, 3, 2)
+material = SubResource("RockMat_waste")
+
+[node name="RockFormation2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.2, -12)
+size = Vector3(1.5, 2.5, 1.5)
+material = SubResource("RockMat_waste")
+
+[node name="RockFormation3" type="CSGBox3D" parent="."]
+transform = Transform3D(0.9, 0, 0.1, 0, 1, 0, -0.1, 0, 0.9, 8, 0.8, 12)
+size = Vector3(3, 1.6, 2.5)
+material = SubResource("RockMat_waste")
+
+[node name="DeadTree1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.2, 5)
+size = Vector3(0.3, 2.5, 0.3)
+material = SubResource("DeadTreeMat")
+
+[node name="DeadTree2" type="CSGBox3D" parent="."]
+transform = Transform3D(0.7, 0.3, 0.1, -0.3, 0.9, 0, -0.1, 0, 0.7, -8, 1.0, 8)
+size = Vector3(0.25, 2.0, 0.25)
+material = SubResource("DeadTreeMat")
+
+[node name="DeadTreeBranch" type="CSGBox3D" parent="DeadTree2"]
+transform = Transform3D(0.5, 0.5, 0, -0.5, 0.5, 0, 0, 0, 1, 0.3, 0.8, 0)
+size = Vector3(0.8, 0.1, 0.1)
+material = SubResource("DeadTreeMat")
+
 [node name="Ruin1" type="CSGBox3D" parent="."]
 transform = Transform3D(0.9, 0, 0.4, 0, 1, 0, -0.4, 0, 0.9, -6, 0.75, 3)
 size = Vector3(2, 1.5, 2)
@@ -126,11 +197,107 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, 2)
 size = Vector3(1.5, 1.0, 1.5)
 material = SubResource("GroundMat_waste")
 
+[node name="RuinWall1" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0.2, 0.1, -0.2, 0.9, 0, -0.1, 0, 0.8, -20, 0.6, -10)
+size = Vector3(4, 1.2, 0.3)
+material = SubResource("GroundMat_waste")
+
+[node name="RuinWall2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.8, 15)
+size = Vector3(3, 1.6, 0.25)
+material = SubResource("GroundMat_waste")
+
+[node name="AbandonedVehicle" type="CSGBox3D" parent="."]
+transform = Transform3D(0.9, 0, 0.1, 0, 1, 0, -0.1, 0, 0.9, 15, 0.35, -5)
+size = Vector3(2.5, 0.7, 1.2)
+material = SubResource("RockMat_waste")
+
+[node name="RoadSign" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.5, -15)
+text = "→ 奥多市 (北)
+→ 荒野深处 (南)
+⚠ 危险区域"
+font_size = 18
+outline_modulate = Color.BLACK
+outline_size = 5
+billboard = BaseMaterial3D.BILLBOARD_ENABLED
+no_depth_test = true
+modulate = Color(0.6, 0.4, 0.2, 1)
+
+[node name="SandstormZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -20)
+script = ExtResource("11_sandstorm")
+damage_per_second = 2.0
+visibility_reduction = 0.6
+storm_intensity = 0.8
+zone_size = Vector3(12, 5, 12)
+is_active = true
+
+[node name="RadioactiveZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 12)
+script = ExtResource("12_radiation")
+damage_per_second = 5.0
+radiation_intensity = 0.7
+zone_size = Vector3(8, 4, 8)
+is_active = true
+radiation_type = "nuclear"
+
+[node name="OasisZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, -5)
+script = ExtResource("13_oasis")
+heal_per_second = 3.0
+zone_size = Vector3(5, 2, 5)
+is_active = true
+oasis_type = "oasis"
+
+[node name="EncounterZoneHint1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+script = ExtResource("14_encounter_hint")
+zone_size = Vector3(15, 3, 15)
+encounter_rate = 0.03
+area_name = "wasteland"
+warning_color = Color(0.5, 0.25, 0.1, 0.3)
+show_boundary = false
+
+[node name="EncounterZoneHint2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("14_encounter_hint")
+zone_size = Vector3(12, 3, 12)
+encounter_rate = 0.04
+area_name = "wasteland"
+warning_color = Color(0.6, 0.3, 0.15, 0.35)
+show_boundary = true
+
+[node name="RandomEncounter" type="Node" parent="."]
+script = ExtResource("15_random_encounter")
+encounter_rate = 0.03
+min_steps_between_encounters = 5
+area_id = "wasteland"
+
 [node name="AoduoEntrance" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
-script = ExtResource("8_entrance")
+script = ExtResource("10_entrance")
 target_scene = "city"
 entrance_name = "奥多市"
 trigger_size = Vector3(4, 3, 2)
 require_confirm = true
 show_hint = true
+
+[node name="AmbientLight1" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0.5, -5)
+light_color = Color(0.4, 0.8, 0.6)
+light_energy = 1.0
+omni_range = 5.0
+
+[node name="AmbientLight2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1, 12)
+light_color = Color(0.3, 1.0, 0.3)
+light_energy = 1.5
+omni_range = 8.0
+
+[node name="WastelandWeather" type="Node" parent="."]
+script = ExtResource("16_weather")
+current_weather = 0
+weather_cycle_duration = 300.0
+min_weather_change_interval = 60.0
+random_change_probability = 0.02

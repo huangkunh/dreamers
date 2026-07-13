@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dfvtakknajnao"]
+[gd_scene load_steps=25 format=3 uid="uid://dfvtakknajnao"]
 
 [ext_resource type="PackedScene" uid="uid://b4a8cfe8bslvj" path="res://scenes/city/aoduo_city.tscn" id="1_ekfak"]
 [ext_resource type="AudioStream" uid="uid://duhnqmw4qqmx4" path="res://music/background_music/hum_it_please_drive.ogg" id="2_2dl5q"]
@@ -12,15 +12,15 @@
 [ext_resource type="Script" path="res://scripts/components/npc_interactable.gd" id="9_npc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btvy4"]
-sky_top_color = Color(0.472203, 0.852221, 0.953419, 1)
-sky_horizon_color = Color(0.129087, 0.426709, 0.40324, 1)
-sky_curve = 0.487351
-sky_cover_modulate = Color(0.746851, 0.729463, 0.700702, 1)
-ground_bottom_color = Color(0.945457, 0.702902, 0.631797, 1)
-ground_horizon_color = Color(0.439216, 0.894118, 0.858824, 1)
-ground_curve = 0.342969
-sun_angle_max = 1.48
-sun_curve = 0.15529
+sky_top_color = Color(0.25, 0.15, 0.12, 1)
+sky_horizon_color = Color(0.6, 0.35, 0.2, 1)
+sky_curve = 0.35
+sky_cover_modulate = Color(0.8, 0.6, 0.4, 1)
+ground_bottom_color = Color(0.4, 0.3, 0.2, 1)
+ground_horizon_color = Color(0.7, 0.5, 0.35, 1)
+ground_curve = 0.25
+sun_angle_max = 1.8
+sun_curve = 0.08
 
 [sub_resource type="Sky" id="Sky_mklkd"]
 sky_material = SubResource("ProceduralSkyMaterial_btvy4")
@@ -29,27 +29,54 @@ sky_material = SubResource("ProceduralSkyMaterial_btvy4")
 background_mode = 2
 sky = SubResource("Sky_mklkd")
 sky_custom_fov = 13.7
-sky_rotation = Vector3(3.6425, 0.678933, 0)
-ambient_light_color = Color(0.855578, 0.81829, 0.670234, 1)
-ambient_light_sky_contribution = 0.3
-ambient_light_energy = 0.5
+sky_rotation = Vector3(3.8, 0.5, 0)
+ambient_light_color = Color(0.95, 0.85, 0.65, 1)
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.65
 tonemap_mode = 2
-ssr_fade_in = 0.439226
-ssao_radius = 2.01
-glow_strength = 0.31
-glow_bloom = 0.06
-glow_hdr_threshold = 1.45
+tonemap_exposure = 1.15
+tonemap_white = 1.2
+ssr_enabled = true
+ssr_fade_in = 0.6
+ssr_fade_out = 3.0
+ssr_max_steps = 64
+ssao_enabled = true
+ssao_radius = 2.5
+ssao_intensity = 1.2
+ssao_power = 1.8
+ssao_detail = 0.5
+ssao_horizon = 0.4
+ssil_enabled = true
+ssil_radius = 3.0
+ssil_intensity = 0.8
+sdfgi_enabled = true
+sdfgi_cascades = 4
+sdfgi_min_cell_size = 0.1
+glow_enabled = true
+glow_levels = "7"
+glow_intensity = 0.8
+glow_strength = 0.4
+glow_bloom = 0.15
+glow_blend_mode = 1
+glow_hdr_threshold = 1.2
+glow_hdr_scale = 1.5
+glow_map_strength = 0.5
+adjustment_enabled = true
+adjustment_brightness = 1.05
+adjustment_contrast = 1.15
+adjustment_saturation = 1.1
 volumetric_fog_enabled = true
-volumetric_fog_albedo = Color(0.635018, 0.62679, 0.406542, 1)
-volumetric_fog_emission = Color(0.999035, 0.906483, 0.849818, 1)
-volumetric_fog_emission_energy = 0.4
-volumetric_fog_anisotropy = -0.52
-volumetric_fog_length = 8.01
-volumetric_fog_detail_spread = 2.89781
-volumetric_fog_ambient_inject = 0.56
-volumetric_fog_sky_affect = 0.5
-volumetric_fog_temporal_reprojection_enabled = false
-volumetric_fog_temporal_reprojection_amount = 0.855
+volumetric_fog_albedo = Color(0.6, 0.5, 0.4, 1)
+volumetric_fog_emission = Color(0.9, 0.7, 0.5, 1)
+volumetric_fog_emission_energy = 0.35
+volumetric_fog_anisotropy = -0.35
+volumetric_fog_length = 12.0
+volumetric_fog_detail_spread = 3.5
+volumetric_fog_ambient_inject = 0.65
+volumetric_fog_sky_affect = 0.6
+volumetric_fog_temporal_reprojection_enabled = true
+volumetric_fog_temporal_reprojection_amount = 0.85
+volumetric_fog_density = 0.8
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_0rx03"]
 auto_exposure_enabled = true
@@ -58,10 +85,80 @@ dof_blur_near_enabled = true
 dof_blur_near_distance = 2.28
 
 [sub_resource type="FogMaterial" id="FogMaterial_4j1lr"]
-density = 0.4665
-albedo = Color(0.817454, 0.915451, 0.836101, 1)
-emission = Color(0.73468, 0.73468, 0.73468, 1)
-edge_fade = 0.292817
+density = 0.55
+albedo = Color(0.75, 0.65, 0.55, 1)
+emission = Color(0.85, 0.75, 0.6, 1)
+edge_fade = 0.35
+density_texture = null
+height_falloff = 2.0
+
+[sub_resource type="FogMaterial" id="FogMaterial_WastelandDust"]
+density = 0.35
+albedo = Color(0.7, 0.6, 0.5, 1)
+emission = Color(0.9, 0.8, 0.65, 1)
+edge_fade = 0.45
+height_falloff = 1.5
+
+[sub_resource type="FogMaterial" id="FogMaterial_StreetMist"]
+density = 0.25
+albedo = Color(0.8, 0.75, 0.65, 1)
+emission = Color(0.95, 0.85, 0.7, 1)
+edge_fade = 0.5
+height_falloff = 3.0
+
+[sub_resource type="Gradient" id="Gradient_DustParticle"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.9, 0.8, 0.65, 0.4, 0.85, 0.75, 0.6, 0.6, 0.8, 0.7, 0.55, 0.0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_DustParticle"]
+gradient = SubResource("Gradient_DustParticle")
+
+[sub_resource type="Curve" id="Curve_DustAlpha"]
+_data = [Vector2(0, 0), 0.0, 2.0, 0, 0, Vector2(0.2, 0.8), 2.0, 0.0, 0, 0, Vector2(0.8, 0.8), 0.0, -2.0, 0, 0, Vector2(1, 0), -2.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_DustAlpha"]
+curve = SubResource("Curve_DustAlpha")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_DustStorm"]
+emission_shape = 3
+emission_box_extents = Vector3(20, 3, 20)
+particle_flag_rotate_y = true
+particle_flag_damping_as_friction = true
+spread = 180.0
+initial_velocity_min = 0.2
+initial_velocity_max = 0.8
+angular_velocity_min = -15.0
+angular_velocity_max = 15.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+linear_accel_min = 0.05
+linear_accel_max = 0.2
+gravity = Vector3(0.02, -0.02, 0)
+scale_min = 0.02
+scale_max = 0.15
+scale_curve = SubResource("CurveTexture_DustAlpha")
+color_ramp = SubResource("GradientTexture_DustParticle")
+alpha_curve = SubResource("CurveTexture_DustAlpha")
+turbulence_enabled = true
+turbulence_noise_strength = 0.8
+turbulence_noise_scale = 3.0
+turbulence_noise_speed = Vector3(0.3, 0.1, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_DustParticle"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.85, 0.75, 0.6, 0.7)
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_DustParticle"]
+material = SubResource("StandardMaterial3D_DustParticle")
+size = Vector2(0.1, 0.1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_wwdkp"]
 
@@ -86,6 +183,19 @@ size = Vector2(20, 20)
 [sub_resource type="BoxShape3D" id="BoxShape3D_npc"]
 size = Vector3(2, 2, 2)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_Marker"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.9, 0.3, 0.8)
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="SphereMesh" id="SphereMarker"]
+material = SubResource("StandardMaterial3D_Marker")
+radius = 0.12
+height = 0.24
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_28j7m"]
 shader = ExtResource("5_kbaj2")
 shader_parameter/vignette_intensity = 0.4
@@ -97,9 +207,105 @@ script = ExtResource("8_city")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.90633, 0.223303, -0.358751, 1.93551e-08, 0.848972, 0.528438, 0.422571, -0.478939, 0.769449, 0.0971565, 4.969, -1.5083)
-light_color = Color(0.962185, 0.766538, 0.384759, 1)
-light_energy = 0.3
+light_color = Color(1.0, 0.75, 0.45, 1)
+light_energy = 0.85
+light_indirect_energy = 0.5
+light_volumetric_fog_energy = 0.8
 shadow_enabled = true
+shadow_mode = 1
+shadow_blur = 2.5
+shadow_transmittance_bias = 0.05
+
+[node name="DirectionalLight3D_WarmFill" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.707107, 0.5, 0.5, 0, 0.707107, -0.707107, -0.707107, -0.5, -0.5, -2.0, 3.0, 1.0)
+light_color = Color(1.0, 0.6, 0.3, 1)
+light_energy = 0.25
+light_indirect_energy = 0.3
+light_volumetric_fog_energy = 0.4
+shadow_enabled = false
+
+[node name="StreetLights" type="Node3D" parent="."]
+
+[node name="OmniLight3D_Bar" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 2.5, 2.0)
+light_color = Color(1.0, 0.85, 0.6, 1)
+light_energy = 3.0
+light_indirect_energy = 0.4
+light_volumetric_fog_energy = 1.5
+light_size = 0.3
+light_specular = 0.5
+shadow_enabled = true
+omni_range = 8.0
+omni_attenuation = 2.0
+
+[node name="OmniLight3D_Mechanic" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 2.5, -3.0)
+light_color = Color(0.8, 1.0, 0.9, 1)
+light_energy = 2.5
+light_indirect_energy = 0.3
+light_volumetric_fog_energy = 1.2
+light_size = 0.25
+light_specular = 0.5
+shadow_enabled = true
+omni_range = 7.0
+omni_attenuation = 2.0
+
+[node name="OmniLight3D_Guild" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.5, -6.0)
+light_color = Color(1.0, 0.9, 0.7, 1)
+light_energy = 3.5
+light_indirect_energy = 0.4
+light_volumetric_fog_energy = 1.8
+light_size = 0.35
+light_specular = 0.5
+shadow_enabled = true
+omni_range = 9.0
+omni_attenuation = 2.0
+
+[node name="OmniLight3D_Central" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 3.5, -5.0)
+light_color = Color(1.0, 0.8, 0.5, 1)
+light_energy = 4.0
+light_indirect_energy = 0.5
+light_volumetric_fog_energy = 2.0
+light_size = 0.4
+light_specular = 0.6
+shadow_enabled = true
+omni_range = 12.0
+omni_attenuation = 1.5
+
+[node name="OmniLight3D_AlleyLeft" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 1.8, -2.0)
+light_color = Color(0.7, 0.6, 0.5, 1)
+light_energy = 1.5
+light_indirect_energy = 0.2
+light_volumetric_fog_energy = 1.0
+light_size = 0.2
+shadow_enabled = false
+omni_range = 5.0
+omni_attenuation = 2.5
+
+[node name="OmniLight3D_AlleyRight" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0, 1.8, -2.0)
+light_color = Color(0.8, 0.7, 0.55, 1)
+light_energy = 1.5
+light_indirect_energy = 0.2
+light_volumetric_fog_energy = 1.0
+light_size = 0.2
+shadow_enabled = false
+omni_range = 5.0
+omni_attenuation = 2.5
+
+[node name="OmniLight3D_Entry" type="OmniLight3D" parent="StreetLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 15.0)
+light_color = Color(1.0, 0.9, 0.7, 1)
+light_energy = 2.0
+light_indirect_energy = 0.3
+light_volumetric_fog_energy = 1.2
+light_size = 0.25
+shadow_enabled = true
+omni_range = 8.0
+omni_attenuation = 2.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_yhmfj")
@@ -134,21 +340,182 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2567, 2.42718, -2.01451)
 
 [node name="FogVolume" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2842, 1.2304, -4.0659)
-size = Vector3(3, 2, 2)
+size = Vector3(5, 3, 4)
 shape = 2
 material = SubResource("FogMaterial_4j1lr")
 
 [node name="FogVolume2" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.48006, 1.2304, -1.05358)
-size = Vector3(3, 2, 2)
+size = Vector3(4, 2.5, 3)
 shape = 2
-material = SubResource("FogMaterial_4j1lr")
+material = SubResource("FogMaterial_WastelandDust")
 
 [node name="FogVolume3" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.20596, 1.2304, -10.271)
-size = Vector3(3, 2, 2)
+size = Vector3(6, 3, 5)
 shape = 2
-material = SubResource("FogMaterial_4j1lr")
+material = SubResource("FogMaterial_StreetMist")
+
+[node name="FogVolume_Street" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.5, 3.0)
+size = Vector3(15, 1.5, 10)
+shape = 2
+material = SubResource("FogMaterial_StreetMist")
+
+[node name="FogVolume_Entry" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.8, 18.0)
+size = Vector3(8, 2, 5)
+shape = 2
+material = SubResource("FogMaterial_WastelandDust")
+
+[node name="WeatherEffects" type="Node3D" parent="."]
+
+[node name="DustParticles" type="GPUParticles3D" parent="WeatherEffects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.5, 3.0)
+amount = 150
+lifetime = 8.0
+explosiveness = 0.05
+randomness = 0.5
+visibility_aabb = AABB(-25, -5, -25, 50, 10, 50)
+process_material = SubResource("ParticleProcessMaterial_DustStorm")
+draw_passes = 1
+draw_pass_1 = SubResource("QuadMesh_DustParticle")
+
+[node name="DustParticles_Ground" type="GPUParticles3D" parent="WeatherEffects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.5, 3.0)
+amount = 80
+lifetime = 12.0
+explosiveness = 0.02
+randomness = 0.7
+visibility_aabb = AABB(-25, -2, -25, 50, 4, 50)
+process_material = SubResource("ParticleProcessMaterial_DustStorm")
+draw_passes = 1
+draw_pass_1 = SubResource("QuadMesh_DustParticle")
+
+[node name="StreetProps" type="Node3D" parent="."]
+
+[node name="Crate1" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -5.5, 0.3, 1.5)
+size = Vector3(0.8, 0.8, 1.0)
+material = null
+
+[node name="Crate2" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -5.0, 0.25, 1.3)
+size = Vector3(0.7, 0.7, 0.9)
+material = null
+
+[node name="Barrel1" type="CSGCylinder3D" parent="StreetProps"]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -6.5, 0.35, 2.5)
+radius = 0.25
+height = 0.8
+material = null
+
+[node name="Barrel2" type="CSGCylinder3D" parent="StreetProps"]
+transform = Transform3D(0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, -6.8, 0.35, 2.2)
+radius = 0.25
+height = 0.8
+material = null
+
+[node name="CrateStack" type="Node3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -4.5)
+
+[node name="Crate3" type="CSGBox3D" parent="StreetProps/CrateStack"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+size = Vector3(0.6, 0.5, 0.6)
+material = null
+
+[node name="Crate4" type="CSGBox3D" parent="StreetProps/CrateStack"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.15, 0.55, 0.1)
+size = Vector3(0.5, 0.5, 0.5)
+material = null
+
+[node name="OilDrum" type="CSGCylinder3D" parent="StreetProps"]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 2.5, 0.45, -5.0)
+radius = 0.3
+height = 1.0
+material = null
+
+[node name="ScrapMetal1" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(0.5, 0.2, 0, 0, 0.8, 0.1, -0.2, 0, 0.5, -3.0, 0.15, -8.0)
+size = Vector3(1.2, 0.3, 0.6)
+material = null
+
+[node name="ScrapMetal2" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(0.6, -0.3, 0, 0, 0.6, -0.2, 0.3, 0, 0.6, -2.7, 0.1, -8.3)
+size = Vector3(0.8, 0.2, 0.4)
+material = null
+
+[node name="Pallet1" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.05, 0.5)
+size = Vector3(1.2, 0.1, 0.8)
+material = null
+
+[node name="SignBoard1" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 2.2, -0.5)
+size = Vector3(0.05, 0.8, 1.2)
+material = null
+
+[node name="SignBoard1_Pole" type="CSGBox3D" parent="StreetProps/SignBoard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.025, -0.4, 0.6)
+size = Vector3(0.1, 0.8, 0.1)
+material = null
+
+[node name="SignBoard2" type="CSGBox3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.0, -2.0)
+size = Vector3(0.05, 0.6, 1.0)
+material = null
+
+[node name="SignBoard2_Pole" type="CSGBox3D" parent="StreetProps/SignBoard2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.025, -0.3, 0.5)
+size = Vector3(0.08, 0.6, 0.08)
+material = null
+
+[node name="Tire1" type="CSGTorus3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.15, 3.5)
+inner_radius = 0.15
+outer_radius = 0.35
+material = null
+
+[node name="Tire2" type="CSGTorus3D" parent="StreetProps"]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.9, -7.3, 0.5, 3.3)
+inner_radius = 0.15
+outer_radius = 0.35
+material = null
+
+[node name="AmbientSounds" type="Node3D" parent="."]
+
+[node name="AudioStreamPlayer3D_Bar" type="AudioStreamPlayer3D" parent="AmbientSounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 1.5, 2.0)
+stream = ExtResource("2_2dl5q")
+volume_db = -5.0
+autoplay = true
+doppler_tracking = 1
+attenuation_model = 1
+max_distance = 15.0
+
+[node name="AudioStreamPlayer3D_Guild" type="AudioStreamPlayer3D" parent="AmbientSounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, -6.0)
+stream = ExtResource("2_2dl5q")
+volume_db = -8.0
+autoplay = true
+attenuation_model = 1
+max_distance = 12.0
+
+[node name="AudioStreamPlayer3D_Mechanic" type="AudioStreamPlayer3D" parent="AmbientSounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 1.5, -3.0)
+stream = ExtResource("2_2dl5q")
+volume_db = -6.0
+autoplay = true
+attenuation_model = 1
+max_distance = 10.0
+
+[node name="AudioStreamPlayer3D_Entry" type="AudioStreamPlayer3D" parent="AmbientSounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 15.0)
+stream = ExtResource("2_2dl5q")
+volume_db = -10.0
+autoplay = true
+attenuation_model = 1
+max_distance = 10.0
 
 [node name="Cloud" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.337922, 2.69073, -6.35437)
@@ -161,16 +528,22 @@ npc_name = "酒吧老板"
 dialogue_id = "start"
 dialogue_file = "res://assets/data/dialogues/bar_owner.json"
 one_shot = false
-interact_radius = 2.0
+interact_radius = 2.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NPC_BarOwner"]
 shape = SubResource("BoxShape3D_npc")
 
+[node name="InteractionMarker" type="MeshInstance3D" parent="NPC_BarOwner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+mesh = SubResource("SphereMarker")
+
 [node name="Label3D" type="Label3D" parent="NPC_BarOwner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 modulate = Color(1, 0.85, 0.3, 1)
 text = "酒吧老板"
-font_size = 24
+font_size = 28
+outline_size = 4
+billboard = 1
 
 [node name="NPC_Mechanic" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)
@@ -179,16 +552,22 @@ npc_name = "机械师"
 dialogue_id = "start"
 dialogue_file = "res://assets/data/dialogues/mechanic.json"
 one_shot = false
-interact_radius = 2.0
+interact_radius = 2.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NPC_Mechanic"]
 shape = SubResource("BoxShape3D_npc")
 
+[node name="InteractionMarker" type="MeshInstance3D" parent="NPC_Mechanic"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+mesh = SubResource("SphereMarker")
+
 [node name="Label3D" type="Label3D" parent="NPC_Mechanic"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 modulate = Color(0.8, 1, 0.8, 1)
 text = "机械师"
-font_size = 24
+font_size = 28
+outline_size = 4
+billboard = 1
 
 [node name="NPC_GuildMaster" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
@@ -197,16 +576,82 @@ npc_name = "公会会长"
 dialogue_id = "start"
 dialogue_file = "res://assets/data/dialogues/guild_master.json"
 one_shot = false
-interact_radius = 2.0
+interact_radius = 2.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NPC_GuildMaster"]
 shape = SubResource("BoxShape3D_npc")
 
+[node name="InteractionMarker" type="MeshInstance3D" parent="NPC_GuildMaster"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+mesh = SubResource("SphereMarker")
+
 [node name="Label3D" type="Label3D" parent="NPC_GuildMaster"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 modulate = Color(1, 0.7, 0.3, 1)
 text = "公会会长"
-font_size = 24
+font_size = 28
+outline_size = 4
+billboard = 1
+
+[node name="NPC_Wanderer" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0.5)
+script = ExtResource("9_npc")
+npc_name = "流浪商人"
+dialogue_id = "start"
+dialogue_file = "res://assets/data/dialogues/wanderer.json"
+one_shot = false
+interact_radius = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NPC_Wanderer"]
+shape = SubResource("BoxShape3D_npc")
+
+[node name="InteractionMarker" type="MeshInstance3D" parent="NPC_Wanderer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+mesh = SubResource("SphereMarker")
+
+[node name="Label3D" type="Label3D" parent="NPC_Wanderer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+modulate = Color(0.7, 0.9, 1, 1)
+text = "流浪商人"
+font_size = 26
+outline_size = 4
+billboard = 1
+
+[node name="InteractiveObjects" type="Node3D" parent="."]
+
+[node name="ItemCrate" type="Area3D" parent="InteractiveObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0, 0.4, -5.0)
+script = ExtResource("9_npc")
+npc_name = "物资箱"
+dialogue_id = "crate_inspect"
+dialogue_file = "res://assets/data/dialogues/item_crate.json"
+one_shot = true
+interact_radius = 1.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractiveObjects/ItemCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_npc")
+
+[node name="Marker3D" type="MeshInstance3D" parent="InteractiveObjects/ItemCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("SphereMarker")
+
+[node name="NoticeBoard" type="Area3D" parent="InteractiveObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 1.5, -1.0)
+script = ExtResource("9_npc")
+npc_name = "公告板"
+dialogue_id = "notice_board"
+dialogue_file = "res://assets/data/dialogues/notice_board.json"
+one_shot = false
+interact_radius = 1.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractiveObjects/NoticeBoard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_npc")
+
+[node name="Marker3D" type="MeshInstance3D" parent="InteractiveObjects/NoticeBoard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("SphereMarker")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_28j7m")

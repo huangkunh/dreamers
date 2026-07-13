@@ -98,6 +98,6 @@ func clear_saved_position() -> void:
 func return_to_nearest_city() -> void:
 	print("[SceneTransitionManager] 死亡后返回城市")
 	# 默认返回奥多市
-	GameFlow.change_scene("res://scenes/city/aoduo_base.tscn")
+	GameFlow.change_scene("city")
 	# 设置当前区域
 	GameData.game_flags["current_area"] = "aoduo"

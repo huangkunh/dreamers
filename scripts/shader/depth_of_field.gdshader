@@ -1,6 +1,6 @@
 shader_type canvas_item;
-## HD-2D 景深/移轴着色器 (Depth of Field / Tilt-Shift)
-## 模拟八方旅人风格的景深效果 - 画面边缘模糊，中心清晰
+// HD-2D 景深/移轴着色器 (Depth of Field / Tilt-Shift)
+// 模拟八方旅人风格的景深效果 - 画面边缘模糊，中心清晰
 
 uniform float blur_strength : hint_range(0.0, 10.0) = 2.0;
 uniform float blur_radius : hint_range(0.0, 1.0) = 0.4;
