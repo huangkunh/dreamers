@@ -368,13 +368,13 @@ func _refresh_equip_slot_list() -> void:
 		return
 	var member = party[_selected_member_index]
 	
-	var weapon_name := member.weapon.name if member.weapon else "无"
+	var weapon_name: String = member.weapon.name if member.weapon else "无"
 	_equip_slot_list.add_item("⚔ 武器: " + weapon_name)
 	
-	var armor_name := member.armor.name if member.armor else "无"
+	var armor_name: String = member.armor.name if member.armor else "无"
 	_equip_slot_list.add_item("🛡 防具: " + armor_name)
 	
-	var accessory_name := member.accessory.name if member.accessory else "无"
+	var accessory_name: String = member.accessory.name if member.accessory else "无"
 	_equip_slot_list.add_item("💍 饰品: " + accessory_name)
 
 func _on_equip_slot_selected(index: int) -> void:

@@ -640,9 +640,9 @@ func player_attck(attack_pointer_index):
                 fight.player_use_item(_pending_item_index, attack_pointer_index)
                 return
         
-        var weapons = fight_unit.weapons
-        if AttackData.Attack_Type.REMOTE == weapons.attack_type:
-                if AttackData.Attack_Target.FOE_ONE == weapons.attack_target:
+        var weapons: Dictionary = fight_unit.get("weapons", {})
+        if AttackData.Attack_Type.REMOTE == weapons.get("attack_type", 0):
+                if AttackData.Attack_Target.FOE_ONE == weapons.get("attack_target", 0):
                         fight.player_remote_foe_one(attack_pointer_index)                       
                         pass
                         
@@ -678,7 +678,7 @@ func player_remote_foe_one(attack_pointer_index):
 
         # 施加武器状态效果
         if not enemy_death:
-                _apply_skill_status(weapons, enemy_fight_unit)
+                _apply_skill_status(fight_unit.get("weapons", {}), enemy_fight_unit)
 
         # 怪物死亡
         if enemy_death:
@@ -724,14 +724,14 @@ func _player_tank_main_cannon_attack(attack_pointer_index: int, player_scene: Ch
 
         # 战车战伤害 = tank.attack + weapon_battle_lv - enemy.defense
         var fight_unit = fighting_unit_map[fighting_id]
-        var weapon_battle_lv = int(fight_unit.weapons.get("battle_lv", 0))
+        var weapon_battle_lv = int(fight_unit.get("weapons", {}).get("battle_lv", 0))
         var enemy_defense = int(enemy_fight_unit.get("defense", enemy_fight_unit.get("strength", 0)))
         var damage = max(1, tank.attack + weapon_battle_lv - enemy_defense)
         var enemy_death = _damage_enemy(enemy_scene, enemy_fight_unit, damage, weapons_tween)
 
         # 施加武器状态效果
         if not enemy_death:
-                _apply_skill_status(fight_unit.weapons, enemy_fight_unit)
+                _apply_skill_status(fight_unit.get("weapons", {}), enemy_fight_unit)
 
         # 怪物死亡
         if enemy_death:
@@ -1294,7 +1294,7 @@ func all_enemy_death():
                 var enemy_unit = fighting_unit_map[enemy_id]
                 var enemy_name = enemy_unit.get("player_name", "")
                 if enemy_name != "":
-                        var enemy_drops = EnemyData.calculate_enemy_drops(enemy_name)
+                        var enemy_drops = load("res://scripts/data/enemy_data.gd").new().calculate_enemy_drops(enemy_name)
                         drops.append_array(enemy_drops)
         # 通用掉落补充 (区域基础掉落)
         var battle_area = GameData.game_flags.get("battle_area", "aoduo")
