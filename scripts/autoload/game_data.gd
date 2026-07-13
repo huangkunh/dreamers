@@ -5,40 +5,40 @@ extends Node
 
 ## ---- 物品数据结构 ----
 class Item:
-        var id: String
-        var name: String
-        var description: String
-        var icon_path: String
-        var type: ItemType
-        var stackable: bool = true
-        var count: int = 1
-        var price: int = 0
-        # 装备属性
-        var attack: int = 0
-        var defense: int = 0
-        var speed: int = 0
+	var id: String
+	var name: String
+	var description: String
+	var icon_path: String
+	var type: ItemType
+	var stackable: bool = true
+	var count: int = 1
+	var price: int = 0
+	# 装备属性
+	var attack: int = 0
+	var defense: int = 0
+	var speed: int = 0
 
-        enum ItemType {
-                CONSUMABLE,  ## 消耗品
-                WEAPON,      ## 武器
-                ARMOR,       ## 防具
-                ACCESSORY,   ## 饰品
-                KEY_ITEM,    ## 关键道具
-        }
+	enum ItemType {
+		CONSUMABLE,  ## 消耗品
+		WEAPON,      ## 武器
+		ARMOR,       ## 防具
+		ACCESSORY,   ## 饰品
+		KEY_ITEM,    ## 关键道具
+	}
 
 ## ---- 队伍成员数据 ----
 class PartyMember:
-        var id: String
-        var name: String
-        var level: int = 1
-        var current_exp: int = 0
-        var max_exp: int = 55
-        var current_hp: int = 200
-        var max_hp: int = 200
-        var attack: int = 10
-        var defense: int = 5
-        var speed: int = 3
-        var weapon: Item = null
+	var id: String
+	var name: String
+	var level: int = 1
+	var current_exp: int = 0
+	var max_exp: int = 55
+	var current_hp: int = 200
+	var max_hp: int = 200
+	var attack: int = 10
+	var defense: int = 5
+	var speed: int = 3
+	var weapon: Item = null
 	var armor: Item = null
 	var accessory: Item = null
 	var skills: Array = []
@@ -57,81 +57,81 @@ var game_flags: Dictionary = {}  ## 游戏标志位 (用于剧情触发/存档)
 
 ## ---- 物品数据库 (Metal Max 忠实还原道具) ----
 var item_database: Dictionary = {
-        # ---- 恢复类消耗品 ----
-        "tea_egg": {
-                "name": "茶叶蛋",
-                "description": "恢复 50 HP",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 30,
-                "heal_hp": 50,
-        },
-        "instant_noodles": {
-                "name": "泡面",
-                "description": "恢复 100 HP",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 50,
-                "heal_hp": 100,
-        },
-        "full_recovery": {
-                "name": "全恢复药",
-                "description": "完全恢复 HP",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 200,
-                "heal_hp": -1,  ## -1 表示完全恢复
-        },
-        "repair_kit": {
-                "name": "修理包",
-                "description": "将战车完全修复",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 300,
-                "repair_tank": true,
-        },
-        "fuel_barrel": {
-                "name": "燃料桶",
-                "description": "补充战车燃料",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 100,
-                "refuel_tank": true,
-        },
-        # ---- 战斗类消耗品 ----
-        "smoke_bomb": {
-                "name": "烟雾弹",
-                "description": "70%概率提升逃跑成功率",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 80,
-                "escape_boost": 0.7,
-        },
-        "grenade": {
-                "name": "手榴弹",
-                "description": "对单个敌人造成 80 伤害",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 120,
-                "damage": 80,
-                "target": "FOE_ONE",
-        },
-        "molotov": {
-                "name": "火焰瓶",
-                "description": "对所有敌人造成 60 伤害",
-                "type": Item.ItemType.CONSUMABLE,
-                "price": 150,
-                "damage": 60,
-                "target": "FOE_ALL",
-        },
-        # ---- 关键道具 ----
-        "fathers_badge": {
-                "name": "父亲的徽章",
-                "description": "父亲留下的徽章，似乎与某段记忆有关。",
-                "type": Item.ItemType.KEY_ITEM,
-                "price": 0,
-                "stackable": false,
-        },
-        "ancient_key": {
-                "name": "古代钥匙",
-                "description": "可以打开古代遗迹中隐藏房间的门。",
-                "type": Item.ItemType.KEY_ITEM,
-                "price": 0,
-                "stackable": false,
-        },
+	# ---- 恢复类消耗品 ----
+	"tea_egg": {
+		"name": "茶叶蛋",
+		"description": "恢复 50 HP",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 30,
+		"heal_hp": 50,
+	},
+	"instant_noodles": {
+		"name": "泡面",
+		"description": "恢复 100 HP",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 50,
+		"heal_hp": 100,
+	},
+	"full_recovery": {
+		"name": "全恢复药",
+		"description": "完全恢复 HP",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 200,
+		"heal_hp": -1,  ## -1 表示完全恢复
+	},
+	"repair_kit": {
+		"name": "修理包",
+		"description": "将战车完全修复",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 300,
+		"repair_tank": true,
+	},
+	"fuel_barrel": {
+		"name": "燃料桶",
+		"description": "补充战车燃料",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 100,
+		"refuel_tank": true,
+	},
+	# ---- 战斗类消耗品 ----
+	"smoke_bomb": {
+		"name": "烟雾弹",
+		"description": "70%概率提升逃跑成功率",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 80,
+		"escape_boost": 0.7,
+	},
+	"grenade": {
+		"name": "手榴弹",
+		"description": "对单个敌人造成 80 伤害",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 120,
+		"damage": 80,
+		"target": "FOE_ONE",
+	},
+	"molotov": {
+		"name": "火焰瓶",
+		"description": "对所有敌人造成 60 伤害",
+		"type": Item.ItemType.CONSUMABLE,
+		"price": 150,
+		"damage": 60,
+		"target": "FOE_ALL",
+	},
+	# ---- 关键道具 ----
+	"fathers_badge": {
+		"name": "父亲的徽章",
+		"description": "父亲留下的徽章，似乎与某段记忆有关。",
+		"type": Item.ItemType.KEY_ITEM,
+		"price": 0,
+		"stackable": false,
+	},
+	"ancient_key": {
+		"name": "古代钥匙",
+		"description": "可以打开古代遗迹中隐藏房间的门。",
+		"type": Item.ItemType.KEY_ITEM,
+		"price": 0,
+		"stackable": false,
+	},
 }
 
 ## 信号
@@ -141,199 +141,199 @@ signal party_changed
 signal hp_changed(member_id: String, new_hp: int)
 
 func _ready() -> void:
-        _init_default_party()
-        _init_default_inventory()
-        # 初始化战斗模式标志 (false=步行战, true=战车战)
-        game_flags["battle_in_tank"] = false
+	_init_default_party()
+	_init_default_inventory()
+	# 初始化战斗模式标志 (false=步行战, true=战车战)
+	game_flags["battle_in_tank"] = false
 
 func _process(delta: float) -> void:
-        play_time += delta
+	play_time += delta
 
 ## 初始化默认队伍
 func _init_default_party() -> void:
-        # 雷班纳 - 主角
-        var rebana := PartyMember.new()
-        rebana.id = "rebana"
-        rebana.name = "雷班纳"
-        rebana.level = 1
-        rebana.current_hp = 199
-        rebana.max_hp = 200
-        rebana.attack = 10
-        rebana.defense = 5
-        rebana.speed = 3
-        rebana.in_party = true
-        party.append(rebana)
+	# 雷班纳 - 主角
+	var rebana := PartyMember.new()
+	rebana.id = "rebana"
+	rebana.name = "雷班纳"
+	rebana.level = 1
+	rebana.current_hp = 199
+	rebana.max_hp = 200
+	rebana.attack = 10
+	rebana.defense = 5
+	rebana.speed = 3
+	rebana.in_party = true
+	party.append(rebana)
 
 ## 初始化默认背包
 func _init_default_inventory() -> void:
-        # 恢复药
-        var potion := Item.new()
-        potion.id = "potion"
-        potion.name = "恢复药"
-        potion.description = "恢复 50 HP"
-        potion.type = Item.ItemType.CONSUMABLE
-        potion.count = 3
-        potion.price = 50
-        inventory.append(potion)
+	# 恢复药
+	var potion := Item.new()
+	potion.id = "potion"
+	potion.name = "恢复药"
+	potion.description = "恢复 50 HP"
+	potion.type = Item.ItemType.CONSUMABLE
+	potion.count = 3
+	potion.price = 50
+	inventory.append(potion)
 
-        # 弹弓 (初始武器)
-        var slingshot := Item.new()
-        slingshot.id = "slingshot"
-        slingshot.name = "弹弓"
-        slingshot.description = "简单的远程武器"
-        slingshot.type = Item.ItemType.WEAPON
-        slingshot.attack = 8
-        slingshot.price = 100
-        inventory.append(slingshot)
+	# 弹弓 (初始武器)
+	var slingshot := Item.new()
+	slingshot.id = "slingshot"
+	slingshot.name = "弹弓"
+	slingshot.description = "简单的远程武器"
+	slingshot.type = Item.ItemType.WEAPON
+	slingshot.attack = 8
+	slingshot.price = 100
+	inventory.append(slingshot)
 
 ## 获取队伍中参战的成员
 func get_active_party() -> Array[PartyMember]:
-        var active: Array[PartyMember] = []
-        for member in party:
-                if member.in_party and member.current_hp > 0:
-                        active.append(member)
-        return active
+	var active: Array[PartyMember] = []
+	for member in party:
+		if member.in_party and member.current_hp > 0:
+			active.append(member)
+	return active
 
 ## 添加金钱
 func add_coins(amount: int) -> void:
-        coins += amount
-        coins_changed.emit(coins)
+	coins += amount
+	coins_changed.emit(coins)
 
 ## 消费金钱 (返回是否成功)
 func spend_coins(amount: int) -> bool:
-        if coins < amount:
-                return false
-        coins -= amount
-        coins_changed.emit(coins)
-        return true
+	if coins < amount:
+		return false
+	coins -= amount
+	coins_changed.emit(coins)
+	return true
 
 ## 添加物品到背包
 func add_item(item: Item) -> void:
-        if item.stackable:
-                # 查找同类物品
-                for inv_item in inventory:
-                        if inv_item.id == item.id:
-                                inv_item.count += item.count
-                                inventory_changed.emit()
-                                return
-        inventory.append(item)
-        inventory_changed.emit()
+	if item.stackable:
+		# 查找同类物品
+		for inv_item in inventory:
+			if inv_item.id == item.id:
+				inv_item.count += item.count
+				inventory_changed.emit()
+				return
+	inventory.append(item)
+	inventory_changed.emit()
 
 ## 使用消耗品
 func use_consumable(item_id: String, target: PartyMember) -> bool:
-        for item in inventory:
-                if item.id == item_id and item.type == Item.ItemType.CONSUMABLE:
-                        # 恢复药效果
-                        if item_id == "potion":
-                                target.current_hp = min(target.current_hp + 50, target.max_hp)
-                                hp_changed.emit(target.id, target.current_hp)
-                        item.count -= 1
-                        if item.count <= 0:
-                                inventory.erase(item)
-                        inventory_changed.emit()
-                        return true
-        return false
+	for item in inventory:
+		if item.id == item_id and item.type == Item.ItemType.CONSUMABLE:
+			# 恢复药效果
+			if item_id == "potion":
+				target.current_hp = min(target.current_hp + 50, target.max_hp)
+				hp_changed.emit(target.id, target.current_hp)
+			item.count -= 1
+			if item.count <= 0:
+				inventory.erase(item)
+			inventory_changed.emit()
+			return true
+	return false
 
 ## 装备物品
 func equip_item(item: Item, target: PartyMember) -> void:
-        match item.type:
-                Item.ItemType.WEAPON:
-                        if target.weapon:
-                                # 卸下旧装备放回背包
-                                add_item(target.weapon)
-                        target.weapon = item
-                        target.attack += item.attack
-                Item.ItemType.ARMOR:
-                        if target.armor:
-                                add_item(target.armor)
-                        target.armor = item
-                        target.defense += item.defense
-                Item.ItemType.ACCESSORY:
-                        if target.accessory:
-                                add_item(target.accessory)
-                        target.accessory = item
-                        target.speed += item.speed
-        # 从背包移除
-        inventory.erase(item)
-        inventory_changed.emit()
-        party_changed.emit()
+	match item.type:
+		Item.ItemType.WEAPON:
+			if target.weapon:
+				# 卸下旧装备放回背包
+				add_item(target.weapon)
+			target.weapon = item
+			target.attack += item.attack
+		Item.ItemType.ARMOR:
+			if target.armor:
+				add_item(target.armor)
+			target.armor = item
+			target.defense += item.defense
+		Item.ItemType.ACCESSORY:
+			if target.accessory:
+				add_item(target.accessory)
+			target.accessory = item
+			target.speed += item.speed
+	# 从背包移除
+	inventory.erase(item)
+	inventory_changed.emit()
+	party_changed.emit()
 
 ## 获取格式化的游戏时间
 func get_play_time_string() -> String:
-        var hours = int(play_time) / 3600
-        var minutes = (int(play_time) % 3600) / 60
-        var seconds = int(play_time) % 60
-        return "%02d:%02d:%02d" % [hours, minutes, seconds]
+	var hours = int(play_time) / 3600
+	var minutes = (int(play_time) % 3600) / 60
+	var seconds = int(play_time) % 60
+	return "%02d:%02d:%02d" % [hours, minutes, seconds]
 
 ## ---- 区域描述数据 (Metal Max 世界观) ----
 const AREA_DESCRIPTIONS := {
-        "aoduo": {
-                "name": "奥多市",
-                "subtitle": "文明最后的堡垒",
-                "description": "大破坏后仅存的繁华都市，钢铁城墙保护着最后的居民。猎人公会的总部就坐落于此，是冒险者的起点与归宿。",
-                "ambient": "城市街道的喧嚣，远处工厂的轰鸣声",
-                "atmosphere_color": Color(0.8, 0.7, 0.5),
-        },
-        "wasteland": {
-                "name": "无尽荒野",
-                "subtitle": "变异生物的家园",
-                "description": "大破坏后形成的广阔沙漠，辐射尘暴常年肆虐。游荡着凶残的变异兽群，是猎人狩猎的试炼场。",
-                "ambient": "呼啸的风沙声，远处偶尔传来的兽吼",
-                "atmosphere_color": Color(0.7, 0.5, 0.3),
-        },
-        "factory": {
-                "name": "废弃工厂",
-                "subtitle": "机械的墓地",
-                "description": "大破坏前的大型军工厂遗址，到处都是锈蚀的机械残骸。仍有大量失控的安保机器人和改造兽在其中游荡。",
-                "ambient": "金属碰撞声，机械运转的嗡鸣",
-                "atmosphere_color": Color(0.4, 0.4, 0.5),
-        },
-        "ant_nest": {
-                "name": "蚁穴",
-                "subtitle": "变异虫族的巢穴",
-                "description": "地下深处的巨大蚁穴网络，巨型变异蚂蚁的王国。蚁后盘踞在最深处的王座中，统治着庞大的虫群。",
-                "ambient": "黏液滴落声，密集的虫足爬行声",
-                "atmosphere_color": Color(0.5, 0.3, 0.2),
-        },
-        "ancient_ruins": {
-                "name": "古代遗迹",
-                "subtitle": "诺亚文明的遗产",
-                "description": "大破坏前的古代文明遗迹，神秘的建筑群中充满了全息守卫和哨戒炮台。最深处隐藏着诺亚的核心服务器。",
-                "ambient": "低频电子嗡鸣，神秘的全息投影音效",
-                "atmosphere_color": Color(0.3, 0.4, 0.7),
-        },
+	"aoduo": {
+		"name": "奥多市",
+		"subtitle": "文明最后的堡垒",
+		"description": "大破坏后仅存的繁华都市，钢铁城墙保护着最后的居民。猎人公会的总部就坐落于此，是冒险者的起点与归宿。",
+		"ambient": "城市街道的喧嚣，远处工厂的轰鸣声",
+		"atmosphere_color": Color(0.8, 0.7, 0.5),
+	},
+	"wasteland": {
+		"name": "无尽荒野",
+		"subtitle": "变异生物的家园",
+		"description": "大破坏后形成的广阔沙漠，辐射尘暴常年肆虐。游荡着凶残的变异兽群，是猎人狩猎的试炼场。",
+		"ambient": "呼啸的风沙声，远处偶尔传来的兽吼",
+		"atmosphere_color": Color(0.7, 0.5, 0.3),
+	},
+	"factory": {
+		"name": "废弃工厂",
+		"subtitle": "机械的墓地",
+		"description": "大破坏前的大型军工厂遗址，到处都是锈蚀的机械残骸。仍有大量失控的安保机器人和改造兽在其中游荡。",
+		"ambient": "金属碰撞声，机械运转的嗡鸣",
+		"atmosphere_color": Color(0.4, 0.4, 0.5),
+	},
+	"ant_nest": {
+		"name": "蚁穴",
+		"subtitle": "变异虫族的巢穴",
+		"description": "地下深处的巨大蚁穴网络，巨型变异蚂蚁的王国。蚁后盘踞在最深处的王座中，统治着庞大的虫群。",
+		"ambient": "黏液滴落声，密集的虫足爬行声",
+		"atmosphere_color": Color(0.5, 0.3, 0.2),
+	},
+	"ancient_ruins": {
+		"name": "古代遗迹",
+		"subtitle": "诺亚文明的遗产",
+		"description": "大破坏前的古代文明遗迹，神秘的建筑群中充满了全息守卫和哨戒炮台。最深处隐藏着诺亚的核心服务器。",
+		"ambient": "低频电子嗡鸣，神秘的全息投影音效",
+		"atmosphere_color": Color(0.3, 0.4, 0.7),
+	},
 }
 
 ## 获取区域信息
 func get_area_info(area_id: String) -> Dictionary:
-        return AREA_DESCRIPTIONS.get(area_id, {})
+	return AREA_DESCRIPTIONS.get(area_id, {})
 
 ## ---- 死亡惩罚机制 ----
 
 ## 应用死亡惩罚 (丢失30%金币，保留至少100G)
 ## 返回 实际损失的金币数量
 func apply_death_penalty() -> int:
-        var lost_coins := int(coins * 0.3)
-        # 至少保留100G，避免破产
-        if coins - lost_coins < 100:
-                lost_coins = max(0, coins - 100)
-        coins = max(coins - lost_coins, 100)
-        coins_changed.emit(coins)
-        print("[GameData] 死亡惩罚：失去 %d G，当前 %d G" % [lost_coins, coins])
-        return lost_coins
+	var lost_coins := int(coins * 0.3)
+	# 至少保留100G，避免破产
+	if coins - lost_coins < 100:
+		lost_coins = max(0, coins - 100)
+	coins = max(coins - lost_coins, 100)
+	coins_changed.emit(coins)
+	print("[GameData] 死亡惩罚：失去 %d G，当前 %d G" % [lost_coins, coins])
+	return lost_coins
 
 ## 队伍复活 (HP恢复50%)
 func respawn_party() -> void:
-        for member in party:
-                member.current_hp = int(member.max_hp * 0.5)
-        party_changed.emit()
-        print("[GameData] 队伍复活，HP恢复至50%")
+	for member in party:
+		member.current_hp = int(member.max_hp * 0.5)
+	party_changed.emit()
+	print("[GameData] 队伍复活，HP恢复至50%")
 
 ## 战车复活 (HP恢复50%，燃料弹药全满)
 func respawn_tanks() -> void:
-        for tank in TankSystem.tanks.values():
-                if tank.is_active or tank.is_owned:
-                        tank.current_hp = int(tank.max_hp * 0.5)
-                        tank.current_fuel = tank.max_fuel
-                        tank.current_ammo = tank.max_ammo
-        print("[GameData] 战车复活，HP恢复至50%，燃料弹药全满")
+	for tank in TankSystem.tanks.values():
+		if tank.is_active or tank.is_owned:
+			tank.current_hp = int(tank.max_hp * 0.5)
+			tank.current_fuel = tank.max_fuel
+			tank.current_ammo = tank.max_ammo
+	print("[GameData] 战车复活，HP恢复至50%，燃料弹药全满")
